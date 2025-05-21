@@ -1,0 +1,6 @@
+@Diplomna_Netflix_HostAddress = http://localhost:5170
+
+GET {{Diplomna_Netflix_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
