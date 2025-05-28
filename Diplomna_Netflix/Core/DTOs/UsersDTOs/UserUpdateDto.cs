@@ -1,8 +1,8 @@
 namespace Core.DTOs.UsersDTOs
 {
-    public class UserUpdateDTO
+    public class UserUpdateDto
     {
-        public long Id { get; set; }
+        public string Id { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? Password { get; set; }

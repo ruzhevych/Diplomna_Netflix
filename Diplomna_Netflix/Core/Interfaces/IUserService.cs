@@ -4,11 +4,11 @@ namespace Core.Interfaces
 {
     public interface IUserService
     {
-        Task CreateUserAsync(UserCreateDTO dto);
-        Task UpdateUserAsync(UserUpdateDTO dto);
-        Task DeleteUserAsync(long id);
-        Task<UserDTO?> GetByEmailAsync(string email);
-        Task<UserDTO> GetByIdAsync(long id);
-        Task<List<UserDTO>> GetAllAsync();
+        //Task CreateUserAsync(UserCreateDto dto);
+        Task UpdateUserAsync(UserUpdateDto dto);
+        Task DeleteUserAsync(string id);
+        Task<UserDto?> GetByEmailAsync(string email);
+        Task<UserDto> GetByIdAsync(string id);
+        //Task<List<UserDto>> GetAllAsync();
     }
 }

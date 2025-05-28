@@ -15,37 +15,37 @@ namespace Diplomna_Netflix.Controllers.Users
             _userService = userService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<UserDTO>>> GetAll() =>
-            Ok(await _userService.GetAllAsync());
+        // [HttpGet]
+        // public async Task<ActionResult<List<UserDto>>> GetAll() =>
+        //     Ok(await _userService.GetAllAsync());
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetById(long id) =>
+        public async Task<ActionResult<UserDto>> GetById(string id) =>
             Ok(await _userService.GetByIdAsync(id));
 
-        [HttpPost]
-        public async Task<IActionResult> Create(UserCreateDTO dto)
-        {
-            await _userService.CreateUserAsync(dto);
-            return Ok();
-        }
+        // [HttpPost]
+        // public async Task<IActionResult> Create(UserCreateDto dto)
+        // {
+        //     await _userService.CreateUserAsync(dto);
+        //     return Ok();
+        // }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UserUpdateDTO dto)
+        public async Task<IActionResult> Update(UserUpdateDto dto)
         {
             await _userService.UpdateUserAsync(dto);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _userService.DeleteUserAsync(id);
             return Ok();
         }
 
         [HttpGet("email/{email}")]
-        public async Task<ActionResult<UserDTO?>> GetByEmail(string email)
+        public async Task<ActionResult<UserDto?>> GetByEmail(string email)
         {
             var user = await _userService.GetByEmailAsync(email);
             return user == null ? NotFound() : Ok(user);

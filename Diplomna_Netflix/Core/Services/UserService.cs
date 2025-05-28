@@ -1,71 +1,89 @@
 using AutoMapper;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
-using Data.Entities;
+using Data.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<UserEntity> _repository;
+        private readonly UserManager<UserEntity> _userManager;
         private readonly IMapper _mapper;
 
-        public UserService(IRepository<UserEntity> repository, IMapper mapper)
+        public UserService(UserManager<UserEntity> userManager, IMapper mapper)
         {
-            _repository = repository;
+            _userManager = userManager;
             _mapper = mapper;
         }
 
-        public async Task CreateUserAsync(UserCreateDTO dto)
+        public async Task CreateUserAsync(UserCreateDto dto)
         {
-            var user = _mapper.Map<UserEntity>(dto);
-            user.UserName = user.Email;
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            await _repository.Insert(user);
-            await _repository.SaveAsync();
-        }
-
-        public async Task DeleteUserAsync(long id)
-        {
-            await _repository.DeleteAsync(id);
-            await _repository.SaveAsync();
-        }
-
-        public async Task<List<UserDTO>> GetAllAsync()
-        {
-            var users = await _repository.GetAllQueryable().ToListAsync();
-            return _mapper.Map<List<UserDTO>>(users);
-        }
-
-        public async Task<UserDTO> GetByIdAsync(long id)
-        {
-            var user = await _repository.GetByID(id);
-            return _mapper.Map<UserDTO>(user);
-        }
-
-        public async Task UpdateUserAsync(UserUpdateDTO dto)
-        {
-            var user = await _repository.GetByID(dto.Id);
-            if (user != null)
+            var user = new UserEntity
             {
-                _mapper.Map(dto, user);
-                if (!string.IsNullOrWhiteSpace(dto.Password))
-                {
-                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-                }
+                UserName = dto.Email,
+                Email = dto.Email
+            };
 
-                await _repository.Update(user);
-                await _repository.SaveAsync();
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
             }
         }
 
-        public async Task<UserDTO?> GetByEmailAsync(string email)
+        public async Task DeleteUserAsync(string id)
         {
-            var user = await _repository.GetAllQueryable()
-                                        .FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+        }
 
-            return user == null ? null : _mapper.Map<UserDTO>(user);
+        public async Task<List<UserDto>> GetAllAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        public async Task<UserDto> GetByIdAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task UpdateUserAsync(UserUpdateDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(dto.Id);
+            if (user != null)
+            {
+                user.Email = dto.Email;
+                user.UserName = dto.Email;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(dto.Password))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResult = await _userManager.ResetPasswordAsync(user, token, dto.Password);
+                    if (!passwordResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ", passwordResult.Errors.Select(e => e.Description)));
+                    }
+                }
+            }
+        }
+
+        public async Task<UserDto?> GetByEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user == null ? null : _mapper.Map<UserDto>(user);
         }
     }
 }
