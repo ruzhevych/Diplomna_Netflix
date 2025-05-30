@@ -1,32 +1,16 @@
 import {Routes, Route } from 'react-router-dom';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
-import Home from './pages/Home/Home';
-import About from './pages/About/About';
-import NotFoundPage from './pages/NotFoundPage';
-import Login from './pages/Login/Login';
-import Profile from './pages/Profile'
-import ProtectedRoute from './components/ProtectedRoute'
-
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/Login/LoginPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
-    <div className="App">
-      <Header />
 
       <Routes>
-        <Route path="/profile" element={
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute> } />
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage />} />
       </Routes>
-
-      <Footer />
-    </div>
   );
 }
 
