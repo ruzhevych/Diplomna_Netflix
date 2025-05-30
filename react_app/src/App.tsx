@@ -5,6 +5,8 @@ import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import NotFoundPage from './pages/NotFoundPage';
 import Login from './pages/Login/Login';
+import Profile from './pages/Profile'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
@@ -13,6 +15,10 @@ function App() {
       <Header />
 
       <Routes>
+        <Route path="/profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute> } />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
