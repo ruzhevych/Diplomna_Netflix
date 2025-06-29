@@ -1,9 +1,8 @@
-const NotFoundPage = () => {
-  return (
-    <div className="container mt-5">
-      <h1>404 - Page Not Found</h1>
-    </div>
-  );
-};
+const NotFoundPage = () => (
+  <div style={{ textAlign: 'center', padding: '50px' }}>
+    <h1>404</h1>
+    <p>Сторінку не знайдено</p>
+  </div>
+);
 
 export default NotFoundPage;

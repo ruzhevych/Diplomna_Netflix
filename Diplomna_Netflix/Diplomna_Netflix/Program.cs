@@ -56,7 +56,15 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
     };
 });
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // URL вашого фронтенду
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Controllers, Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -67,9 +75,9 @@ var app = builder.Build();
 // Middleware
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Diplomna_Netflix"));
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication(); // ДОДАЙ це перед Authorization
-app.UseAuthorization();
+
 
 app.MapControllers();
 

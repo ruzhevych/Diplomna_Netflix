@@ -1,43 +1,39 @@
-import { createContext, useState, useContext } from 'react'
-import type { ReactNode } from 'react'
+// src/context/AuthContext.tsx
+import { createContext, useContext, useEffect, useState } from 'react';
+import type {ReactNode} from 'react'
 
-// Тип для користувача
-type User = {
-  email: string
-  name: string
+interface AuthContextType {
+  isAuthenticated: boolean;
+  login: (token: string) => void;
+  logout: () => void;
 }
 
-// Тип для контексту
-type AuthContextType = {
-  user: User | null
-  login: (userData: User) => void
-  logout: () => void
-}
 
-// Створюємо контекст
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = () => useContext(AuthContext)!;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = (userData: User) => {
-    setUser(userData)
-  }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  const login = (token: string) => {
+    localStorage.setItem('token', token);
+    setIsAuthenticated(true);
+  };
 
   const logout = () => {
-    setUser(null)
-  }
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
-  )
-}
-
-// Хук для використання
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within AuthProvider')
-  return context
-}
+  );
+};

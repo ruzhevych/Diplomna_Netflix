@@ -1,7 +1,17 @@
+import { useNavigate } from 'react-router-dom';
+
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
-    <div className="container mt-5">
-      <h1>Netflix Clone - Home Page</h1>
+    <div>
+      <h1>Привіт, це головна сторінка</h1>
+      <button onClick={handleLogout}>Вийти</button>
     </div>
   );
 };
