@@ -1,18 +1,19 @@
-import { Navigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import type { JSX } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-type Props = {
-  children: React.ReactNode
-}
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated, isAuthReady } = useAuth();
 
-const ProtectedRoute = ({ children }: Props) => {
-  const { user } = useAuth()
-
-  if (!user) {
-    return <Navigate to="/login" replace />
+  if (!isAuthReady) {
+    return <div className="text-white text-center mt-10">Перевірка авторизації...</div>;
   }
 
-  return <>{children}</>
-}
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-export default ProtectedRoute
+  return children;
+};
+
+export default ProtectedRoute;

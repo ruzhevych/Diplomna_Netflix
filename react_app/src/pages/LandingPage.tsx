@@ -1,7 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+
 const LandingPage: React.FC = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="landing-page">
       <div className="overlay">
@@ -24,7 +29,7 @@ const LandingPage: React.FC = () => {
           <p>Готові до перегляду? Введіть адресу електронної пошти, щоб оформити або поновити підписку.</p>
           <div className="email-form">
             <input type="email" placeholder="Адреса електронної пошти" />
-            <button>Почати</button>
+            <button onClick={() => navigate('/register')}>Почати</button>
           </div>
         </main>
       </div>
