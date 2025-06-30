@@ -4,8 +4,11 @@ using Core.Mappers;
 using Core.Options;
 using Core.Repositories;
 using Core.Services;
+using Core.Validators.Authorization;
 using Data.Context;
 using Data.Entities.Identity;
+using Diplomna_Netflix.ServiceExtensions;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -37,25 +40,34 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddDefaultTokenProviders();
 
 // JWT Authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("JwtOptions"));
+builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtOptions.Issuer,
-        ValidAudience = jwtOptions.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
-    };
-});
+        var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidAudience = jwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+        };
+    });
+
+
+// Validations
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+    });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -69,15 +81,17 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerJWT();
 
 var app = builder.Build();
 
 // Middleware
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Diplomna_Netflix"));
-app.UseCors("AllowFrontend");
-app.UseAuthentication(); // ДОДАЙ це перед Authorization
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
