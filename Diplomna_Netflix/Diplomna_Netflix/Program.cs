@@ -68,7 +68,15 @@ builder.Services.AddControllers()
         fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
     });
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // URL вашого фронтенду
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Controllers, Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -83,6 +91,7 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Diplomna_Ne
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
