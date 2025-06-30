@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,22 @@ namespace Diplomna_Netflix.Controllers.Users
         {
             var user = await _userService.GetByEmailAsync(email);
             return user == null ? NotFound() : Ok(user);
+        }
+
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userService.GetByIdAsync(userId);
+
+            if (user == null) return NotFound();
+
+            return Ok(new
+            {
+                fullName = user.FullName,
+                email = user.Email
+            });
         }
     }
 }
