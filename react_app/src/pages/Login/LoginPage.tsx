@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -16,11 +17,18 @@ const LoginPage = () => {
     try {
       const res = await login({ email, password });
       loginContext(res.token);
+      toast.success("Успішний вхід 🎉");
       navigate('/home');
     } catch (err: any) {
       setError(err.message);
     }
   };
+
+    useEffect(() => {
+      if (error) {
+        toast.error(error);
+      }
+    }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -43,7 +51,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          
           <button type="submit" className="w-full bg-red-600 py-3 rounded hover:bg-red-700">Увійти</button>
         </form>
         <p className="mt-4 text-center text-sm">

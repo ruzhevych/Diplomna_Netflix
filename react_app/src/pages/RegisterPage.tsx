@@ -1,19 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError('');
     navigate('/choose-plan', {
       state: { fullName, email, password }
     });
+    toast.success("Успішний вхід 🎉");
   };
+
+useEffect(() => {
+      if (error) {
+        toast.error(error);
+      }
+    }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
