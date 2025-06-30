@@ -10,6 +10,7 @@ export interface RegisterPayload {
   email: string;
   password: string;
   fullName: string;
+  plan: string;
 }
 
 export const login = async (data: LoginPayload) => {
@@ -32,6 +33,8 @@ export const register = async (data: RegisterPayload) => {
     },
     body: JSON.stringify(data),
   });
+
+  
 
   if (!res.ok) {
     const err = await res.json();
