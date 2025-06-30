@@ -6,6 +6,7 @@ import ProtectedRoute from './router/ProtectedRoute';
 import NotFoundPage from './pages/NotFoundPage';
 import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage';
+import ChoosePlanPage from './pages/ChoosePlanPage';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/choose-plan" element={<ChoosePlanPage />} />
         <Route
           path="/home"
           element={

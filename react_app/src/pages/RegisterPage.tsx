@@ -1,70 +1,57 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { register } from '../services/authService';
-
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
-    try {
-      await register({ fullName, email, password });
-      navigate('/login');
-    } catch (err: any) {
-      setError(err.message);
-    }
+    
+    navigate('/choose-plan', {
+      state: { fullName, email, password }
+    });
   };
 
   return (
-    <div className='container text-center mt-5'>
-    <div className="auth-page">
-        <div className="auth-form">
-            <h2>Реєстрація</h2>
-            <form onSubmit={handleRegister}>
-            <input className='formInput'
-                type="text"
-                placeholder="Ім’я"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-            />
-            <br />
-            <input className='formInput'
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-            />
-            <br />
-            <input className='formInput'
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-            <br />
-            <button type="submit" className='loginregBtn'>Зареєструватися</button>
-            </form>
-            <button type="button"
-            className="loginregBtn mt-3"
-            onClick={() => navigate('/')}
-            >
-            На головну
-            </button>
-            {error && <p className="error-text">{error}</p>}
-        </div>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="bg-zinc-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-6 text-center">Реєстрація</h2>
+        <form onSubmit={handleNext} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Ім’я"
+            className="w-full p-3 rounded bg-zinc-800"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 rounded bg-zinc-800"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Пароль"
+            className="w-full p-3 rounded bg-zinc-800"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="w-full bg-red-600 py-3 rounded hover:bg-red-700">Продовжити</button>
+        </form>
+        <p className="mt-4 text-center text-sm">
+          Вже маєте акаунт?{' '}
+          <button onClick={() => navigate('/login')} className="text-blue-400 hover:underline">Увійти</button>
+        </p>
+      </div>
     </div>
-    
   );
 };
 

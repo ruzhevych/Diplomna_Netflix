@@ -66,7 +66,8 @@ namespace Diplomna_Netflix.Controllers.Users
             return Ok(new
             {
                 fullName = user.FullName,
-                email = user.Email
+                email = user.Email,
+                //plan
             });
         }
     }
