@@ -11,6 +11,7 @@ body {
 }
 
 .landing-page {
+  color: white;
   height: 100vh;
   background: url('/bg.jpg') center center / cover no-repeat;
   position: relative;

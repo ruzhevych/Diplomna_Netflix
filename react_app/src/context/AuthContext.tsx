@@ -5,7 +5,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
-  isAuthReady: boolean; // 👈 нове
+  isAuthReady: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
