@@ -5,6 +5,7 @@ using Core.Options;
 using Core.Repositories;
 using Core.Services;
 using Core.Validators.Authorization;
+using Core.Validators.Subscriptions;
 using Data.Context;
 using Data.Entities.Identity;
 using Diplomna_Netflix.ServiceExtensions;
@@ -33,6 +34,8 @@ builder.Services.AddScoped<DbContext, NetflixDbContext>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAutoMapper(typeof(UserProfile));
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
@@ -89,13 +92,14 @@ builder.Services.AddControllers()
     .AddFluentValidation(fv =>
     {
         fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+        fv.RegisterValidatorsFromAssemblyContaining<SubscriptionCreateValidator>();
     });
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // URL вашого фронтенду
+        policy.WithOrigins("http://localhost:5173") // URL фронтенду
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
