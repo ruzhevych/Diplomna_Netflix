@@ -50,8 +50,24 @@ namespace Core.Services
 
         public async Task<UserDto> GetByIdAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            return _mapper.Map<UserDto>(user);
+            var user = await _userManager.Users
+                .Include(u => u.Subscriptions)
+                .FirstOrDefaultAsync(u => u.Id.ToString() == id);
+
+            if (user == null) throw new Exception("User not found");
+
+            var dto = _mapper.Map<UserDto>(user);
+
+            var activeSub = user.Subscriptions.FirstOrDefault(s => s.IsActive);
+            if (activeSub != null)
+            {
+                dto.SubscriptionType = activeSub.Type;
+                dto.SubscriptionStart = activeSub.StartDate;
+                dto.SubscriptionEnd = activeSub.EndDate;
+                dto.SubscriptionIsActive = activeSub.IsActive;
+            }
+
+            return dto;
         }
 
         public async Task UpdateUserAsync(UserUpdateDto dto)
@@ -61,6 +77,27 @@ namespace Core.Services
             {
                 user.Email = dto.Email;
                 user.UserName = dto.Email;
+                user.FullName = dto.FullName;
+                
+                if (dto.ProfilePictureFile != null && dto.ProfilePictureFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine("wwwroot", "profile-pictures");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ProfilePictureFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.ProfilePictureFile.CopyToAsync(stream);
+                    }
+
+                    user.ProfilePictureUrl = $"/profile-pictures/{fileName}";
+                }
+                else if (!string.IsNullOrWhiteSpace(dto.ProfilePictureUrl))
+                {
+                    user.ProfilePictureUrl = dto.ProfilePictureUrl;
+                }
 
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)

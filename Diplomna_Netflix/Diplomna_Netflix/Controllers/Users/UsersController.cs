@@ -33,8 +33,8 @@ namespace Diplomna_Netflix.Controllers.Users
         //     return Ok();
         // }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(UserUpdateDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromForm] UserUpdateDto dto)
         {
             await _userService.UpdateUserAsync(dto);
             return Ok();
@@ -55,20 +55,14 @@ namespace Diplomna_Netflix.Controllers.Users
         }
 
         [Authorize]
-        [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
+        [HttpGet("profile/{id}")]
+        public async Task<IActionResult> GetProfile(string id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userService.GetByIdAsync(userId);
-
+            var user = await _userService.GetByIdAsync(id);
+        
             if (user == null) return NotFound();
-
-            return Ok(new
-            {
-                fullName = user.FullName,
-                email = user.Email,
-                //plan
-            });
+        
+            return Ok(user);
         }
     }
 }
