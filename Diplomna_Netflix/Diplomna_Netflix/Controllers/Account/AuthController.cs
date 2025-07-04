@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Core.DTOs.AuthorizationDTOs;
 using Core.Options;
+using Data.Context;
+using Data.Entities;
 using Data.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +50,23 @@ namespace Diplomna_Netflix.Controllers.Account
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
+            }
+            
+            var subscription = new SubscriptionEntity
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Type = dto.SubscriptionType,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(30),
+                IsActive = true
+            };
+
+            using (var scope = HttpContext.RequestServices.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<NetflixDbContext>();
+                dbContext.Subscriptions.Add(subscription);
+                await dbContext.SaveChangesAsync();
             }
 
             return Ok();
