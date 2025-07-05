@@ -1,3 +1,4 @@
+using Data.Entities;
 using Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace Data.Context
         {
         }
 
-        // DbSet-и, якщо потрібно
+        // DbSet-и
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<UserRoleEntity> UserRoles { get; set; }
+        public DbSet<SubscriptionEntity> Subscriptions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -11,6 +11,7 @@ namespace Data.Entities.Identity
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? ProfilePictureUrl { get; set; }
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
+        public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; } = new List<SubscriptionEntity>();
 
     }
 }
