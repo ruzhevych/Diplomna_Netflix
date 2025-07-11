@@ -1,9 +1,11 @@
 using System.Text;
 using Core.Interfaces;
+using Core.Interfaces.Core.Interfaces;
 using Core.Mappers;
 using Core.Options;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Core.Services;
 using Core.Validators.Authorization;
 using Core.Validators.Subscriptions;
 using Data.Context;
@@ -35,6 +37,10 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
 
 
 // Identity
@@ -45,7 +51,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>()
 // JWT Authentication
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("JwtOptions"));
-builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //    .AddJwtBearer(options =>
