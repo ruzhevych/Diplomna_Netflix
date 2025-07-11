@@ -1,113 +1,79 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Core.DTOs.AuthorizationDTOs;
-using Core.Options;
-using Data.Context;
-using Data.Entities;
-using Data.Entities.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Core.Interfaces.Core.Interfaces;
+using Core.Models.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Diplomna_Netflix.Controllers.Account
 {
-
     //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly SignInManager<UserEntity> _signInManager;
-        private readonly IConfiguration _configuration;
-        private readonly JwtOptions _jwtOptions;
+        private readonly IAuthService authService;
 
-        public AuthController(UserManager<UserEntity> userManager,
-            SignInManager<UserEntity> signInManager,
-            IConfiguration configuration,
-            IOptions<JwtOptions> jwtOptions)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-            _jwtOptions = jwtOptions.Value;
+            this.authService = authService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        public async Task<IActionResult> Register(RegisterDto dto)
         {
-            var user = new UserEntity
-            {
-                UserName = dto.Email,
-                Email = dto.Email,
-                FullName = dto.FullName,
-            };
-
-            var result = await _userManager.CreateAsync(user, dto.Password);
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-            
-            var subscription = new SubscriptionEntity
-            {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                Type = dto.SubscriptionType,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                IsActive = true
-            };
-
-            using (var scope = HttpContext.RequestServices.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<NetflixDbContext>();
-                dbContext.Subscriptions.Add(subscription);
-                await dbContext.SaveChangesAsync();
-            }
-
-            return Ok();
+            var result = await authService.RegisterAsync(dto);
+            return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null) return Unauthorized();
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
-            if (!result.Succeeded) return Unauthorized();
-
-            var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            var result = await authService.LoginAsync(dto);
+            return Ok(result);
         }
 
-        private string GenerateJwtToken(UserEntity user)
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin(GoogleLogin dto)
         {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
-                claims: claims,
-                expires: DateTime.Now.AddHours(_jwtOptions.ExpirationHours),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var result = await authService.GoogleLoginAsync(dto);
+            return Ok(result);
         }
 
-    }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest dto)
+        {
+            var result = await authService.RefreshTokenAsync(dto.RefreshToken);
+            return Ok(result);
+        }
 
+        [HttpGet("is-registered/{email}")]
+        public async Task<IActionResult> IsRegistered(string email)
+        {
+            var result = await authService.IsRegisteredWithGoogleAsync(email);
+            return Ok(result);
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        {
+            await authService.ForgotPasswordAsync(dto);
+            return Ok();
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+        {
+            await authService.ResetPasswordAsync(dto);
+            return Ok();
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var userId = User.FindFirst("uid")?.Value;
+            if (userId == null) return Unauthorized();
+
+            await authService.LogOutAsync(userId);
+            return Ok();
+        }
+    }
 }

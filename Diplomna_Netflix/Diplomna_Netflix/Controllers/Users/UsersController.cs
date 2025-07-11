@@ -23,8 +23,11 @@ namespace Diplomna_Netflix.Controllers.Users
         //     Ok(await _userService.GetAllAsync());
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetById(string id) =>
-            Ok(await _userService.GetByIdAsync(id));
+        public async Task<ActionResult<UserDto>> GetById(string id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+            return user == null ? NotFound() : Ok(user);
+        }
 
         // [HttpPost]
         // public async Task<IActionResult> Create(UserCreateDto dto)
@@ -59,10 +62,7 @@ namespace Diplomna_Netflix.Controllers.Users
         public async Task<IActionResult> GetProfile(string id)
         {
             var user = await _userService.GetByIdAsync(id);
-        
-            if (user == null) return NotFound();
-        
-            return Ok(user);
+            return user == null ? NotFound() : Ok(user);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Core.Services
                 .Include(u => u.Subscriptions)
                 .FirstOrDefaultAsync(u => u.Id.ToString() == id);
 
-            if (user == null) throw new Exception("User not found");
+            if (user == null) return null;
 
             var dto = _mapper.Map<UserDto>(user);
 
