@@ -18,6 +18,7 @@ namespace Data.Context
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
+        public DbSet<MovieEntity> Movies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
