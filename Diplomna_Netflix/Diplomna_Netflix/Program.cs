@@ -35,6 +35,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+
 
 
 // Identity
@@ -93,6 +95,7 @@ builder.Services.AddControllers()
     {
         fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
         fv.RegisterValidatorsFromAssemblyContaining<SubscriptionCreateValidator>();
+        fv.RegisterValidatorsFromAssemblyContaining<MovieCreateValidator>();
     });
 
 builder.Services.AddCors(options =>
