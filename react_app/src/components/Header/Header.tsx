@@ -1,66 +1,39 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-
+import { useState, type FormEvent } from 'react';
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      setQuery('');
+    }
   };
 
   return (
-    // <header className="bg-black text-white p-4 flex justify-between items-center">
-    //   <Link to="/" className="text-2xl font-bold text-red-600">MyFlix</Link>
-    //   <nav className="flex gap-4">
-    //     {isAuthenticated ? (
-    //       <>
-    //         <Link to="/home" className="hover:underline">Головна</Link>
-    //         <Link to="/profile" className="hover:underline">Профіль</Link>
-    //         <button onClick={logout} className="text-red-400 hover:text-red-600">Вийти</button>
-    //       </>
-    //     ) : (
-    //       <>
-    //         <Link to="/login" className="hover:underline">Увійти</Link>
-    //         <Link to="/register" className="hover:underline">Реєстрація</Link>
-    //       </>
-    //     )}
-    //   </nav>
-    // </header>
-    <header className="bg-black text-white px-8 py-4 flex items-center justify-between shadow-lg">
-      <div
-        className="text-2xl font-bold cursor-pointer text-red-600"
-        onClick={() => navigate('/home')}
-      >
-        NetflixClone
+    <header className="fixed top-0 w-full bg-black bg-opacity-90 z-20">
+      <div className="container mx-auto flex items-center justify-between py-4 px-6">
+        <Link to="/home">
+          <img src="/logo.png" alt="Logo" className="h-8" />
+        </Link>
+        <form onSubmit={handleSearch} className="flex-1 mx-6">
+          <input
+            type="text"
+            placeholder="Пошук фільмів, серіалів..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full px-4 py-2 rounded bg-zinc-800 text-white focus:outline-none"
+          />
+        </form>
+        <nav className="flex items-center gap-4">
+          <Link to="/profile" className="text-white hover:underline">
+            Профіль
+          </Link>
+        </nav>
       </div>
-
-      <nav className="space-x-6 hidden md:block">
-        <button onClick={() => navigate('/home')} className="hover:text-red-500 transition">
-          Головна
-        </button>
-        {isAuthenticated ? (
-          <>
-            <Link to="/home" className="hover:underline">Головна</Link>
-            <Link to="/profile" className="hover:underline">Профіль</Link>
-            <button onClick={logout} className="text-red-400 hover:text-red-600">Вийти</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="hover:underline">Увійти</Link>
-            <Link to="/register" className="hover:underline">Реєстрація</Link>
-          </>
-        )}
-      </nav>
-
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 hover:bg-red-700 transition px-4 py-1 rounded text-sm"
-      >
-        Вийти
-      </button>
     </header>
   );
 };

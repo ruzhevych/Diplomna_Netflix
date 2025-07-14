@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Diplomna_Netflix.Controllers.Users
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -54,14 +55,15 @@ namespace Diplomna_Netflix.Controllers.Users
             return user == null ? NotFound() : Ok(user);
         }
 
-        [Authorize]
-        [HttpGet("profile/{id}")]
-        public async Task<IActionResult> GetProfile(string id)
+        //[Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
         {
-            var user = await _userService.GetByIdAsync(id);
-        
-            if (user == null) return NotFound();
-        
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                         User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (userId == null) return Unauthorized();
+
+            var user = await _userService.GetByIdAsync(userId);
             return Ok(user);
         }
     }

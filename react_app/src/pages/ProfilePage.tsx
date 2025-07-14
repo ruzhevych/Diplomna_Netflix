@@ -7,7 +7,10 @@ import Header from '../components/Header/Header'
 interface UserProfile {
   fullName: string;
   email: string;
-  plan: string;
+  subscriptionType?: string;
+  subscriptionStart?: string;
+  subscriptionEnd?: string;
+  subscriptionIsActive?: boolean;
 }
 
 const ProfilePage = () => {
@@ -84,10 +87,16 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <p className="text-sm text-gray-400">План підписки</p>
         <p className="text-base font-medium text-white">{user.plan || 'Не вказано'}</p>
-      </div>
+      </div> */}
+      <p className="text-base font-medium text-white">
+        {user.subscriptionType || 'Не вказано'}
+      </p>
+      <p className="text-sm text-gray-400">
+        {user.subscriptionIsActive ? 'Активна' : 'Не активна'}
+      </p>
 
       {/* <div className="mb-4">
         <p className="text-sm text-gray-400">Дата реєстрації</p>
