@@ -7,6 +7,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage';
 import ChoosePlanPage from './pages/ChoosePlanPage';
+import SearchPage from './pages/SearchPage';
 
 const App = () => {
   return (
@@ -25,6 +26,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>
+        }
+      />
         <Route
           path="/profile"
           element={

@@ -31,7 +31,10 @@ export const register = async (data: RegisterPayload) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      ...data,
+      subscriptionType: data.plan, // додаємо це
+    }),
   });
 
   
