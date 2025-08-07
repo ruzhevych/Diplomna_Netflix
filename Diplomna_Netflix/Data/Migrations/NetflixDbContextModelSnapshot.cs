@@ -22,6 +22,43 @@ namespace Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Data.Entities.Auth.RefreshTokenEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Revoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Data.Entities.Identity.RoleEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -314,6 +351,17 @@ namespace Data.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("Data.Entities.Auth.RefreshTokenEntity", b =>
+                {
+                    b.HasOne("Data.Entities.Identity.UserEntity", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Data.Entities.Identity.UserRoleEntity", b =>
                 {
                     b.HasOne("Data.Entities.Identity.RoleEntity", "Role")
@@ -387,6 +435,8 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.Identity.UserEntity", b =>
                 {
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("Subscriptions");
 
                     b.Navigation("UserRoles");

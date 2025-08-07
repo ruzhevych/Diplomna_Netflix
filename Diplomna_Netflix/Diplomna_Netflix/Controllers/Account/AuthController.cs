@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Core.DTOs.AuthorizationDTOs;
 using Core.Interfaces.Core.Interfaces;
 using Core.Models.Authentication;
@@ -69,7 +71,8 @@ namespace Diplomna_Netflix.Controllers.Account
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var userId = User.FindFirst("uid")?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                         User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (userId == null) return Unauthorized();
 
             await authService.LogOutAsync(userId);

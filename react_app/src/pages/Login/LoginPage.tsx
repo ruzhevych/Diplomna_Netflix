@@ -16,7 +16,7 @@ const LoginPage = () => {
     setError('');
     try {
       const res = await login({ email, password });
-      loginContext(res.token);
+      loginContext(res.accessToken);
       toast.success("Успішний вхід 🎉");
       navigate('/home');
     } catch (err: any) {

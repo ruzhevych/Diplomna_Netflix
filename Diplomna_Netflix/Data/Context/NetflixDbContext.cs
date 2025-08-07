@@ -1,4 +1,5 @@
 using Data.Entities;
+using Data.Entities.Auth;
 using Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace Data.Context
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }
-
+        public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,6 +51,13 @@ namespace Data.Context
             builder.Entity<RoleEntity>(entity =>
             {
                 entity.Property(r => r.Name).HasMaxLength(100);
+            });
+            builder.Entity<RefreshTokenEntity>(entity =>
+            {
+                entity.HasOne(rt => rt.User)
+                      .WithMany(u => u.RefreshTokens)
+                      .HasForeignKey(rt => rt.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
