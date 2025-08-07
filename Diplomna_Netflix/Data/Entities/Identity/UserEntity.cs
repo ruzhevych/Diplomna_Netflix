@@ -1,3 +1,4 @@
+using Data.Entities.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace Data.Entities.Identity
@@ -12,6 +13,8 @@ namespace Data.Entities.Identity
         public string? ProfilePictureUrl { get; set; }
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
         public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; } = new List<SubscriptionEntity>();
+        public virtual ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = new List<RefreshTokenEntity>();
+
 
     }
 }
