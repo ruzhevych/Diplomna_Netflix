@@ -17,12 +17,14 @@ const LoginPage = () => {
     try {
       const res = await login({ email, password });
       loginContext(res.token);
+      localStorage.setItem("token", res.token);
       toast.success("Успішний вхід 🎉");
       navigate('/home');
     } catch (err: any) {
       setError(err.message);
     }
   };
+  
 
     useEffect(() => {
       if (error) {
@@ -52,7 +54,7 @@ const LoginPage = () => {
             required
           />
           
-          <button type="submit" className="w-full bg-red-600 py-3 rounded hover:bg-red-700">Увійти</button>
+          <button type="submit"  className="w-full bg-red-600 py-3 rounded hover:bg-red-700">Увійти</button>
         </form>
         <p className="mt-4 text-center text-sm">
           Ще не маєте акаунту?{' '}

@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage';
 import ChoosePlanPage from './pages/ChoosePlanPage';
 import SearchPage from './pages/SearchPage';
+import MovieDetailsPage from './pages/MovieDetailsPage';
 
 const App = () => {
   return (
@@ -31,6 +32,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <SearchPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/movie/:id"
+        element={
+          <ProtectedRoute>
+            <MovieDetailsPage />
           </ProtectedRoute>
         }
       />

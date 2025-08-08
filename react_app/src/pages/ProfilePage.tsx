@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+
 import { getInitials } from '../utils/getInitials';
-import Header from '../components/Header/Header'
+
 
 interface UserProfile {
   fullName: string;
   email: string;
-  subscriptionType?: string;
-  subscriptionStart?: string;
-  subscriptionEnd?: string;
-  subscriptionIsActive?: boolean;
+  plan: string;
 }
 
 const ProfilePage = () => {
@@ -20,6 +17,9 @@ const ProfilePage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   // const { logout } = useAuth();
+
+  
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -87,16 +87,10 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* <div className="mb-4">
+      <div className="mb-4">
         <p className="text-sm text-gray-400">План підписки</p>
         <p className="text-base font-medium text-white">{user.plan || 'Не вказано'}</p>
-      </div> */}
-      <p className="text-base font-medium text-white">
-        {user.subscriptionType || 'Не вказано'}
-      </p>
-      <p className="text-sm text-gray-400">
-        {user.subscriptionIsActive ? 'Активна' : 'Не активна'}
-      </p>
+      </div>
 
       {/* <div className="mb-4">
         <p className="text-sm text-gray-400">Дата реєстрації</p>

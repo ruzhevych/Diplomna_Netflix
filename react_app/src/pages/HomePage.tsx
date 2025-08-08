@@ -3,6 +3,10 @@ import '../index.css'
 import Header from '../components/Header/Header'
 import { useEffect, useState } from 'react';
 import Row from '../components/Row';
+import HeroBanner from '../components/HeroBanner';
+
+
+
 import {
   getPopularMovies,
   getTopRatedMovies,
@@ -36,10 +40,11 @@ const HomePage = () => {
     
     <div className="bg-black text-white min-h-screen">
       <Header/>
-      <div className="px-8 pt-8">
+      <HeroBanner />
+      {/* <div className="px-8 pt-8">
         <h1 className="text-4xl font-bold mb-2">Ласкаво просимо,</h1>
         <p className="text-lg text-gray-400 mb-6">Обирай, дивись, насолоджуйся 🎬</p>
-      </div>
+      </div> */}
 
       <section className="px-8">
        <div className="bg-black min-h-screen">
