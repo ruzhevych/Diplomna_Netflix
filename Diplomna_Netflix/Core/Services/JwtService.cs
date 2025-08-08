@@ -1,48 +1,63 @@
-using Core.Options;
-using Data.Entities.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Core.Interfaces;
+using Core.Options;
+using Data.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
-namespace Core.Services
+public class JwtService : IJwtService
 {
-    public class JwtService
+    private readonly JwtOptions _jwtOptions;
+    private readonly UserManager<UserEntity> _userManager;
+
+    public JwtService(IConfiguration configuration, UserManager<UserEntity> userManager)
     {
-        private readonly JwtOptions _options;
+        _jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
+                      ?? throw new Exception("JwtOptions not configured");
+        _userManager = userManager;
+    }
 
-        public JwtService(IOptions<JwtOptions> options)
+    public string GenerateAccessToken(IEnumerable<Claim> claims)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
+            signingCredentials: creds
+        );
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomBytes = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+        return Convert.ToBase64String(randomBytes);
+    }
+
+    public async Task<IEnumerable<Claim>> GetUserClaimsAsync(UserEntity user)
+    {
+        var claims = new List<Claim>
         {
-            _options = options.Value;
-        }
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new ("id", user.Id.ToString()),
+            new (ClaimTypes.Email, user.Email ?? ""),
+            new ("fullName", user.FullName ?? "")
+        };
 
-        public string GenerateToken(UserEntity user, IList<string> roles)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName ?? ""),
-                new Claim(ClaimTypes.Email, user.Email ?? "")
-            };
-
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _options.Issuer,
-                audience: _options.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_options.ExpirationHours),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        var roles = await _userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        
+        return claims;
     }
 }

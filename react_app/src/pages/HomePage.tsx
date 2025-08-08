@@ -52,7 +52,7 @@ const HomePage = () => {
       <Row title="Рейтинг" fetcher={getTopRatedMovies} />
       <Row title="Скоро в кіно" fetcher={getUpcomingMovies} />
       <Row title="Популярні серіали" fetcher={getPopularTV} />
-      <Row title="Аніме" fetcher={getAnime} />
+      {/* <Row title="Аніме" fetcher={getAnime} /> */}
     </div>
       </section>
     </div>

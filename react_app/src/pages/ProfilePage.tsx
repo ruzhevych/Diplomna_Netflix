@@ -29,6 +29,8 @@ const ProfilePage = () => {
         return;
       }
 
+      console.log(token);
+
       try {
         const res = await fetch('http://localhost:5170/api/Users/profile', {
           headers: {
