@@ -1,20 +1,14 @@
+// src/router/ProtectedRoute.tsx
+import { type JSX } from 'react'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-import { Navigate } from 'react-router-dom';
-import type { ReactNode } from 'react';
-import { useAuth } from '../context/AuthContext';
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated, isAuthReady } = useAuth()
 
-interface Props {
-  children: ReactNode;
+  if (!isAuthReady) return null 
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
-const ProtectedRoute = ({ children }: Props) => {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-export default ProtectedRoute;
+export default ProtectedRoute
