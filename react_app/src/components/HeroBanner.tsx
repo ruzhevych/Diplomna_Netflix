@@ -1,7 +1,7 @@
 // src/components/HeroBanner.tsx
 import { useEffect, useState } from 'react';
 import type { Movie, TMDBResponse } from '../types/movie';
-import { getPopularMovies } from '../services/movieService';
+import { getPopularMovies } from '../services/movieApi';
 import { useNavigate } from 'react-router-dom';
 
 const HeroBanner = () => {

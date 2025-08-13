@@ -34,10 +34,17 @@ namespace Diplomna_Netflix.Controllers.Account
         }
 
         [HttpPost("google-login")]
-        public async Task<IActionResult> GoogleLogin(GoogleLogin dto)
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLogin dto)
         {
-            var result = await authService.GoogleLoginAsync(dto);
-            return Ok(result);
+            try
+            {
+                var response = await authService.GoogleLoginAsync(dto);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
         [HttpPost("refresh-token")]
@@ -47,26 +54,34 @@ namespace Diplomna_Netflix.Controllers.Account
             return Ok(result);
         }
 
-        [HttpGet("is-registered/{email}")]
-        public async Task<IActionResult> IsRegistered(string email)
-        {
-            var result = await authService.IsRegisteredWithGoogleAsync(email);
-            return Ok(result);
-        }
+        // [HttpGet("is-registered/{email}")]
+        // public async Task<IActionResult> IsRegistered(string email)
+        // {
+        //     var result = await authService.IsRegisteredWithGoogleAsync(email);
+        //     return Ok(result);
+        // }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             await authService.ForgotPasswordAsync(dto);
-            return Ok();
+            return Ok(new { message = "Лист для скидання пароля надіслано." });
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
-            await authService.ResetPasswordAsync(dto);
-            return Ok();
+            try
+            {
+                await authService.ResetPasswordAsync(dto);
+                return Ok(new { message = "Пароль успішно оновлено." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

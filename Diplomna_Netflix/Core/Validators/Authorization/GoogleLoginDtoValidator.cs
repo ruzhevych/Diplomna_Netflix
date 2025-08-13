@@ -7,7 +7,7 @@ namespace Core.Validators.Authorization
     {
         public GoogleLoginDtoValidator()
         {
-            RuleFor(x => x.IdToken).NotEmpty();
+            RuleFor(x => x.GoogleAccessToken).NotEmpty();
         }
     }
 }

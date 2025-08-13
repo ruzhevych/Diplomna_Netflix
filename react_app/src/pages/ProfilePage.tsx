@@ -23,7 +23,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         navigate('/login');
         return;
@@ -52,7 +52,7 @@ const ProfilePage = () => {
   }, []);
 
   const handleUpdateName = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (!token) return;
 
     const res = await fetch('http://localhost:5170/api/Users/update-name', {

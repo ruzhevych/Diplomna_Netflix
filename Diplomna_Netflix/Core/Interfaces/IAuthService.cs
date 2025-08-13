@@ -11,7 +11,7 @@ namespace Core.Interfaces
             Task<AuthResponse> LoginAsync(LoginDto dto);
             Task<AuthResponse> GoogleLoginAsync(GoogleLogin model);
             Task<AuthResponse> RefreshTokenAsync(string refreshToken);
-            Task<bool> IsRegisteredWithGoogleAsync(string email);
+            //Task<bool> IsRegisteredWithGoogleAsync(string email);
             Task ForgotPasswordAsync(ForgotPasswordDto dto);
             Task ResetPasswordAsync(ResetPasswordDto dto);
             Task LogOutAsync(string userId);

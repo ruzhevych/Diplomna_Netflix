@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Movie } from '../types/movie';
-import type { Video, VideosResponse } from '../services/movieService';
+import type { Video, VideosResponse } from '../services/movieApi';
 import {
   getMovieDetails,
   getMovieVideos
-} from '../services/movieService';
+} from '../services/movieApi';
 import {
   addToWatchlist,
   removeFromWatchlist,

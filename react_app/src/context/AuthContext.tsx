@@ -1,77 +1,59 @@
 // src/context/AuthContext.tsx
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../store/store'
+import { setTokens, clearTokens } from '../store/slices/authSlice'
 
-type AuthContextType = {
-  isAuthenticated: boolean;
-  userId: string | null;
-  isAuthReady: boolean;
-  login: (token: string, remember?: boolean) => void;
-  logout: () => void;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-function parseJwt(token: string | null) {
-  if (!token) return null;
-  try {
-    const [, payload] = token.split('.');
-    const json = atob(payload);
-    return JSON.parse(json);
-  } catch {
-    return null;
-  }
+interface AuthContextType {
+  isAuthenticated: boolean
+  login: (accessToken: string, refreshToken?: string) => void
+  logout: () => void
+  isAuthReady: boolean
 }
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
-  return ctx;
-};
+const AuthContext = createContext<AuthContextType | null>(null)
+
+export const useAuth = () => useContext(AuthContext)!
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isAuthReady, setIsAuthReady] = useState(false);
+  const dispatch = useDispatch<AppDispatch>()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthReady, setIsAuthReady] = useState(false)
 
   useEffect(() => {
-    // спочатку шукаємо у localStorage (remember), потім sessionStorage
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token') || null;
-    if (token) {
-      setIsAuthenticated(true);
-      const payload = parseJwt(token);
-      const id = payload?.uid || payload?.sub || null;
-      setUserId(id);
-    } else {
-      setIsAuthenticated(false);
-      setUserId(null);
-    }
-    setIsAuthReady(true);
-  }, []);
+    const accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
+    console.log('AuthProvider load tokens:', { accessToken, refreshToken })
 
-  const login = (token: string, remember = true) => {
-    if (remember) {
-      localStorage.setItem('token', token);
-      sessionStorage.removeItem('token');
+    if (accessToken || refreshToken) {
+      dispatch(setTokens({ accessToken, refreshToken }))
+      setIsAuthenticated(!!accessToken)
     } else {
-      sessionStorage.setItem('token', token);
-      localStorage.removeItem('token');
+      dispatch(clearTokens())
+      setIsAuthenticated(false)
     }
-    setIsAuthenticated(true);
-    const payload = parseJwt(token);
-    const id = payload?.uid || payload?.sub || null;
-    setUserId(id);
-  };
+
+    setIsAuthReady(true)
+  }, [dispatch])
+
+  const login = (accessToken: string, refreshToken?: string) => {
+    localStorage.setItem('accessToken', accessToken)
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+    dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null }))
+    setIsAuthenticated(true)
+  }
 
   const logout = () => {
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
-    setIsAuthenticated(false);
-    setUserId(null);
-  };
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    dispatch(clearTokens())
+    setIsAuthenticated(false)
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, isAuthReady, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, isAuthReady }}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
