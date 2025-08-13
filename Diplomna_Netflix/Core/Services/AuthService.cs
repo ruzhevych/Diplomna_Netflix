@@ -1,6 +1,8 @@
+using AutoMapper;
 using Core.DTOs.AuthorizationDTOs;
 using Core.Interfaces;
 using Core.Interfaces.Core.Interfaces;
+using Core.Models;
 using Core.Models.Authentication;
 using Data.Context;
 using Data.Entities;
@@ -19,6 +21,7 @@ public class AuthService : IAuthService
     private readonly IEmailService _emailService;
     private readonly IGoogleAuthService _googleAuthService;
     private readonly NetflixDbContext _dbContext;
+    private readonly IMapper mapper;
 
     public AuthService(
         UserManager<UserEntity> userManager,
@@ -26,7 +29,8 @@ public class AuthService : IAuthService
         IJwtService jwtService,
         IEmailService emailService,
         IGoogleAuthService googleAuthService,
-        NetflixDbContext dbContext)
+        NetflixDbContext dbContext,
+        IMapper mapper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -34,6 +38,7 @@ public class AuthService : IAuthService
         _emailService = emailService;
         _googleAuthService = googleAuthService;
         _dbContext = dbContext;
+        mapper = mapper;
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterDto dto)
@@ -118,15 +123,48 @@ public class AuthService : IAuthService
         };
     }
     
-    public async Task<AuthResponse> GoogleLoginAsync(GoogleLogin dto)
+    public async Task<AuthResponse> GoogleLoginAsync(GoogleLogin model)
     {
-        return await _googleAuthService.AuthenticateAsync(dto);
+        if (string.IsNullOrWhiteSpace(model.GoogleAccessToken))
+            throw new ArgumentException("Google access token is required.");
+
+        var userInfo = await _googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+
+        if (userInfo == null)
+        {
+            throw new Exception($"Google login failed: no user info returned. Token: {model.GoogleAccessToken}");
+        }
+
+        if (string.IsNullOrWhiteSpace(userInfo.Email))
+        {
+            throw new Exception($"Google login failed: email not provided. Full user info: {System.Text.Json.JsonSerializer.Serialize(userInfo)}");
+        }
+
+        var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+        if (user == null)
+        {
+            user = mapper.Map<UserEntity>(userInfo);
+            user.UserName = userInfo.Name;
+            user.EmailConfirmed = true;
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+                throw new Exception("Failed to create user from Google account: " +
+                                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
+
+            await _userManager.AddToRoleAsync(user, "User");
+        }
+
+        return await GetAuthTokens(user);
     }
+
+
     
-    public async Task<bool> IsRegisteredWithGoogleAsync(string email)
-    {
-        return await _googleAuthService.IsRegisteredAsync(email);
-    }
+    // public async Task<bool> IsRegisteredWithGoogleAsync(string email)
+    // {
+    //     return await _googleAuthService.IsRegisteredAsync(email);
+    // }
 
     public async Task ForgotPasswordAsync(ForgotPasswordDto dto)
     {
@@ -153,11 +191,36 @@ public class AuthService : IAuthService
         var token = await _dbContext.RefreshTokens
             .FirstOrDefaultAsync(t => t.Token == refreshToken);
 
+        Console.WriteLine($"Токен перед видаленням:  Id: {token.Id}, Token: {token.Token}, Expires: {token.Expires}");
+        
         if (token != null)
         {
             token.Revoked = true;
             await _dbContext.SaveChangesAsync();
         }
+    }
+    
+    private async Task<AuthResponse> GetAuthTokens(UserEntity user)
+    {
+        return new()
+        {
+            AccessToken = _jwtService.GenerateAccessToken(await _jwtService.GetUserClaimsAsync(user)),
+            RefreshToken = await CreateRefreshToken(user.Id)
+        };
+    }
+    
+    private async Task<string> CreateRefreshToken(long userId)
+    {
+        var refeshToken = _jwtService.GenerateRefreshToken();
+        var refreshTokenEntity = new RefreshTokenEntity
+        {
+            Token = refeshToken,
+            UserId = userId,
+            Expires = DateTime.UtcNow.AddDays(_jwtService.GetRefreshTokenLiveTime())
+        };
+        _dbContext.RefreshTokens.Add(refreshTokenEntity);
+        await _dbContext.SaveChangesAsync();
+        return refeshToken;
     }
 
 }

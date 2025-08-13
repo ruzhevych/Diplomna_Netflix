@@ -18,3 +18,17 @@ export interface IAuthResponse {
   token(token: any): unknown;
   accessToken: string;
 }
+
+export interface IGoogleLoginRequest {
+    googleAccessToken: string;  
+}
+
+export interface IForgotPasswordRequest {
+    email: string;
+}
+
+export interface IResetPasswordRequest {
+    email: string;
+    token: string;
+    newPassword: string;
+}

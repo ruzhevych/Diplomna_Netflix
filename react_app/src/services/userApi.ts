@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { createBaseQueryWithReauth } from '../../utils/createBaseQuery';
-import type { IUserCreateDTO, IUserDTO } from '../../types/user';
-import type { IAuthResponse } from '../../types/auth';
-import { handleAuthQueryStarted } from '../../utils/handleAuthQueryStarted';
+import { createBaseQueryWithReauth } from '../utils/createBaseQuery';
+import type { IUserCreateDTO, IUserDTO } from '../types/user';
+import type { IAuthResponse } from '../types/auth';
+import { handleAuthQueryStarted } from '../utils/handleAuthQueryStarted';
 
 export const userApi = createApi({
   reducerPath: 'userApi',

@@ -1,10 +1,11 @@
-using Core.Models.Authentication;
+using Core.Models;
+using Core.Options;
 
 namespace Core.Interfaces
 {
     public interface IGoogleAuthService
     {
-        Task<AuthResponse> AuthenticateAsync(GoogleLogin model);
-        Task<bool> IsRegisteredAsync(string email);
+        Task<GoogleUserInfo?> GetUserInfoAsync(string accessToken);
     }
+
 }

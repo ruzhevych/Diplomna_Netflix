@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux'
 import { store } from './store/store.ts';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { APP_ENV } from './env/index.ts';
 
 
 
@@ -17,8 +19,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <Provider store={store}>
-          <App />
-          <ToastContainer position="top-right" autoClose={3000} />
+          <GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
+            <App/>
+            <ToastContainer position="top-right" autoClose={3000} />
+          </GoogleOAuthProvider>
         </Provider>
       </AuthProvider>
     </BrowserRouter>

@@ -60,4 +60,7 @@ public class JwtService : IJwtService
         
         return claims;
     }
+    
+    public int GetRefreshTokenLiveTime() => _jwtOptions.ExpirationDays;
+
 }
