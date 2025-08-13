@@ -1,10 +1,12 @@
-using Core.Models.Authentication;
+using System.Security.Claims;
 using Data.Entities.Identity;
 
 namespace Core.Interfaces
 {
     public interface IJwtService
     {
-        AuthResponse GenerateTokens(UserEntity user);
+        string GenerateAccessToken(IEnumerable<Claim> claims);
+        string GenerateRefreshToken();
+        Task<IEnumerable<Claim>> GetUserClaimsAsync(UserEntity user);
     }
 }
