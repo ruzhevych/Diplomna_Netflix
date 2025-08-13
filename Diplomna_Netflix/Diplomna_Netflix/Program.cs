@@ -5,7 +5,6 @@ using Core.Mappers;
 using Core.Options;
 using Core.Repositories;
 using Core.Services;
-using Core.Services.Core.Services;
 using Core.Validators.Authorization;
 using Core.Validators.Subscriptions;
 using Data.Context;
@@ -40,9 +39,9 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-
 builder.Services.AddScoped<IMovieService, MovieService>();
 
+builder.Services.AddTransient<DataSeeder>();
 
 
 // Identity
@@ -133,5 +132,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var dataSeeder = app.Services.GetRequiredService<DataSeeder>();
+await dataSeeder.SeedAsync();
 
 app.Run();

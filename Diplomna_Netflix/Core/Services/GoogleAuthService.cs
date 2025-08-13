@@ -1,27 +1,31 @@
+using System.Net.Http.Headers;
+using System.Text.Json;
 using Core.Interfaces;
-using Core.Models.Authentication;
+using Core.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.Services
 {
-    namespace Core.Services
+    public class GoogleAuthService : IGoogleAuthService
     {
-        public class GoogleAuthService : IGoogleAuthService
-        {
-            public Task<AuthResponse> AuthenticateAsync(GoogleLogin dto)
-            {
-                // TODO: Validate token with Google API
-                return Task.FromResult(new AuthResponse
-                {
-                    AccessToken = "google_access_token",
-                    RefreshToken = "google_refresh_token"
-                });
-            }
+        private readonly IConfiguration _config;
 
-            public Task<bool> IsRegisteredAsync(string email)
-            {
-                // TODO: Lookup user by email
-                return Task.FromResult(true);
-            }
+        public GoogleAuthService( IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public async Task<GoogleUserInfo?> GetUserInfoAsync(string googleAccessToken)
+        {
+            var userInfoUrl = _config["GoogleUserInfoUrl"];
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", googleAccessToken);
+
+            var response = await httpClient.GetAsync(userInfoUrl);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<GoogleUserInfo>(json);
         }
     }
 }

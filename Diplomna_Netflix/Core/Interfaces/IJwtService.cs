@@ -8,5 +8,6 @@ namespace Core.Interfaces
         string GenerateAccessToken(IEnumerable<Claim> claims);
         string GenerateRefreshToken();
         Task<IEnumerable<Claim>> GetUserClaimsAsync(UserEntity user);
+        int GetRefreshTokenLiveTime();
     }
 }

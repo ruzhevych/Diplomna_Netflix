@@ -9,7 +9,7 @@ import {
   getUpcomingMovies,
   getPopularTV,
   getAnime
-} from '../services/movieService';
+} from '../services/movieApi';
 import type { Movie } from '../types/movie';
 
 const HomePage = () => {

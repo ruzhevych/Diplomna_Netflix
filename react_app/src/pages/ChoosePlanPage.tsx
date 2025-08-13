@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { register } from '../services/authService';
+import { useRegisterMutation } from '../services/authApi';
+import { toast } from 'react-toastify';
 
 const plans = ['Basic', 'Standard', 'Premium'];
 
@@ -11,17 +12,22 @@ const ChoosePlanPage = () => {
   const [selectedPlan, setSelectedPlan] = useState('');
   const [error, setError] = useState('');
 
+  const [register, { isLoading }] = useRegisterMutation();
+
   const handleSubmit = async () => {
     if (!selectedPlan) {
       setError('Оберіть план підписки');
       return;
     }
 
+    setError('');
+
     try {
-      await register({ fullName, email, password, plan: selectedPlan });
+      await register({ fullName, email, password, plan: selectedPlan }).unwrap();
+      toast.success('Реєстрація успішна!');
       navigate('/login');
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.data?.message || 'Сталася помилка під час реєстрації');
     }
   };
 
@@ -50,8 +56,9 @@ const ChoosePlanPage = () => {
       <button
         onClick={handleSubmit}
         className="bg-red-600 px-6 py-3 rounded hover:bg-red-700"
+        disabled={isLoading}
       >
-        Зареєструватися
+        {isLoading ? 'Реєстрація...' : 'Зареєструватися'}
       </button>
     </div>
   );
