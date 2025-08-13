@@ -12,3 +12,22 @@ export const getTopRatedMovies = () => fetchFromTMDB('/movie/top_rated');
 export const getUpcomingMovies = () => fetchFromTMDB('/movie/upcoming');
 export const getPopularTV = () => fetchFromTMDB('/tv/popular');
 export const getAnime = () => fetchFromTMDB('/discover/tv&with_genres=16');
+export const getMovieDetails = (id: number) =>
+  fetchFromTMDB(`/movie/${id}`);
+
+export interface Video {
+  id: string;
+  key: string;       
+  name: string;
+  site: string;     
+  type: string;      
+}
+
+export interface VideosResponse {
+  id: number;
+  results: Video[];
+}
+
+
+export const getMovieVideos = (id: number): Promise<VideosResponse> =>
+  fetchFromTMDB(`/movie/${id}/videos`);

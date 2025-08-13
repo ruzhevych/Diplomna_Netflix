@@ -5,11 +5,12 @@ import { useLoginMutation, useGoogleLoginMutation } from '../../services/authApi
 import { useAuth } from '../../context/AuthContext';
 import { useGoogleLogin } from '@react-oauth/google';
 import GoogleIcon from '../../icons/GoogleIcon';
-//import { APP_ENV } from '../../env';
+import logo from '../../../public/logo-green.png'; // свій логотип сюди
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login: loginContext } = useAuth();
@@ -33,7 +34,7 @@ const LoginPage = () => {
   const onLoginGoogleResult = async (googleToken: string) => {
     if (!googleToken) return;
     try {
-      await googleLogin({ googleAccessToken: googleToken, });
+      await googleLogin({ googleAccessToken: googleToken });
       navigate("/home");
     } catch (error) {
       console.log("Google error : ", error);
@@ -43,7 +44,6 @@ const LoginPage = () => {
   const googleLoginFunc = useGoogleLogin({
     scope: 'openid email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
     onSuccess: async (tokenResponse) => {
-      console.log("Access token:", tokenResponse.access_token);
       await onLoginGoogleResult(tokenResponse.access_token);
     },
     onError: () => toast.error("Помилка при вході через Google"),
@@ -56,61 +56,89 @@ const LoginPage = () => {
   }, [error]);
 
   return (
-    //<GoogleOAuthProvider clientId={APP_ENV.CLIENT_ID}>
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="bg-zinc-900 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center">Вхід у Netflix</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 rounded bg-zinc-800"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Пароль"
-            className="w-full p-3 rounded bg-zinc-800"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+    <div 
+      className="min-h-screen bg-cover bg-center flex flex-col" 
+      style={{ backgroundImage: "url('/public/login-bg.png')" }} // свій фон
+    >
+      
+      {/* Логотип */}
+      <div className="p-6">
+        <img src={logo} alt="logo" className="l-10 w-32" />
+      </div>
+
+      {/* Форма логіну */}
+      <div className="flex flex-1 items-center justify-center">
+        <div className="bg-black/70 p-8  w-full max-w-sm">
+          <h2 className="text-white text-3xl font-bold mb-6 text-center">Sign In</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email or mobile number"
+              className="w-full p-3 rounded bg-transparent border border-gray-500 text-white"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className="w-full p-3 rounded-sm bg-transparent border border-gray-500 text-white  "
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-gray-400 hover:text-white"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-lime-400/90 text-black font-semibold py-3 rounded-sm hover:bg-lime-500 transition"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Зачекайте...' : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="flex justify-between items-center text-sm text-gray-400 mt-3">
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" className="accent-lime-400" />
+              <span>Remember me</span>
+            </label>
+            <button 
+              onClick={() => navigate('/forgot-password')} 
+              className="hover:underline"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          <p className="mt-4 text-center text-sm text-gray-400">
+            New to Bingatch?{' '}
+            <button onClick={() => navigate('/register')} className="text-white hover:underline">
+              Sign Up now.
+            </button>
+          </p>
+
           <button
-            type="submit"
-            className="w-full bg-red-600 py-3 rounded hover:bg-red-700"
-            disabled={isLoading}
+            type="button"
+            className="flex items-center justify-center w-full bg-gray-800 hover:bg-gray-700 transition text-white font-semibold px-4 py-3 rounded-sm mt-4"
+            onClick={() => googleLoginFunc()}
           >
-            {isLoading ? 'Зачекайте...' : 'Увійти'}
+            <GoogleIcon className="w-5 h-5 mr-2" />
+            Sign in with Google
           </button>
-        </form>
-
-        <button
-          type="button"
-          className="flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold px-4 py-3 rounded mt-4"
-          onClick={() => googleLoginFunc()}
-        >
-          <GoogleIcon className="w-5 h-5 mr-2" />
-          Увійти через Google
-        </button>
-
-        <p className="mt-4 text-center text-sm">
-          <button 
-            onClick={() => navigate('/forgot-password')} 
-            className="text-blue-400 hover:underline"
-          >
-            Забули пароль?
-          </button>
-        </p>
-
-        <p className="mt-4 text-center text-sm">
-          Ще не маєте акаунту?{' '}
-          <button onClick={() => navigate('/register')} className="text-blue-400 hover:underline">Зареєструйтесь</button>
-        </p>
+        </div>
       </div>
     </div>
-    //</GoogleOAuthProvider>
   );
 };
 

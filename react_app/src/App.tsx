@@ -8,8 +8,11 @@ import LandingPage from './pages/LandingPage'
 import ProfilePage from './pages/ProfilePage';
 import ChoosePlanPage from './pages/ChoosePlanPage';
 import SearchPage from './pages/SearchPage';
+import MovieDetailsPage from './pages/MovieDetailsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import PlanIntroPage from './pages/PlanIntroPage';
+
 
 const App = () => {
   return (
@@ -22,6 +25,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/choose-plan" element={<ChoosePlanPage />} />
+        <Route path="/plan-intro" element={<PlanIntroPage />} />
         <Route
           path="/home"
           element={
@@ -35,6 +39,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <SearchPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/movie/:id"
+        element={
+          <ProtectedRoute>
+            <MovieDetailsPage />
           </ProtectedRoute>
         }
       />
