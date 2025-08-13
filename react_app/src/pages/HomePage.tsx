@@ -36,7 +36,7 @@ const HomePage = () => {
     
     <div className="bg-black text-white min-h-screen">
       <Header/>
-      <div className="px-8 pt-8">
+      <div className="px-8 pt-28">
         <h1 className="text-4xl font-bold mb-2">Ласкаво просимо,</h1>
         <p className="text-lg text-gray-400 mb-6">Обирай, дивись, насолоджуйся 🎬</p>
       </div>
