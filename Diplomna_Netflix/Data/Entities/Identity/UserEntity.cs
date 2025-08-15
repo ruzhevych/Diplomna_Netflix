@@ -14,6 +14,8 @@ namespace Data.Entities.Identity
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
         public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; } = new List<SubscriptionEntity>();
         public virtual ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = new List<RefreshTokenEntity>();
+        public ICollection<AdminMessageEntity> AdminMessages { get; set; } = new List<AdminMessageEntity>();
+
 
 
     }

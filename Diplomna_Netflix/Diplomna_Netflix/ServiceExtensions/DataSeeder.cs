@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using Data.Entities.Identity;
 
 namespace Diplomna_Netflix.ServiceExtensions;
@@ -20,19 +19,44 @@ public class DataSeeder
         using var scope = _serviceProvider.CreateScope();
         var sp = scope.ServiceProvider;
 
-        await SeedRoles(sp);
+        await SeedRolesAndAdminAsync(sp);
     }
 
-    #region Roles
-    private static async Task SeedRoles(IServiceProvider sp)
+    #region Roles & Admin
+    private static async Task SeedRolesAndAdminAsync(IServiceProvider sp)
     {
         var roleManager = sp.GetRequiredService<RoleManager<RoleEntity>>();
+        var userManager = sp.GetRequiredService<UserManager<UserEntity>>();
 
+        // Створюємо ролі
         if (!await roleManager.RoleExistsAsync("Admin"))
             await roleManager.CreateAsync(new RoleEntity { Name = "Admin" });
 
         if (!await roleManager.RoleExistsAsync("User"))
             await roleManager.CreateAsync(new RoleEntity { Name = "User" });
+
+        // Створюємо дефолтного адміна
+        var adminEmail = "admin@netflix.com";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+        if (adminUser == null)
+        {
+            adminUser = new UserEntity
+            {
+                UserName = "admin",
+                Email = adminEmail,
+                FirstName = "System",
+                LastName = "Admin",
+                EmailConfirmed = true
+            };
+
+            var result = await userManager.CreateAsync(adminUser, "Admin123!");
+
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        }
     }
     #endregion
 }

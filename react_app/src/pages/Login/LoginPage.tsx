@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useGoogleLogin } from '@react-oauth/google';
 import GoogleIcon from '../../icons/GoogleIcon';
 import logo from '../../../public/logo-green.png'; // свій логотип сюди
+import eye_open from '../../../public/eye-open.png'
+import eye_close from '../../../public/eye-close.png'
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -95,7 +97,7 @@ const LoginPage = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-gray-400 hover:text-white"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <img src={eye_close}/> : <img src={eye_open}/>}
               </button>
             </div>
 

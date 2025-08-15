@@ -34,16 +34,16 @@ const HeroBanner = () => {
       <div className="absolute bottom-16 left-8 max-w-xl text-white">
         <h1 className="text-5xl font-bold drop-shadow-lg">{movie.title || movie.name}</h1>
         <p className="mt-4 text-lg line-clamp-3 drop-shadow-md">{movie.overview}</p>
-        <div className="mt-6 flex gap-4">
+        <div className="mt-6 flex gap-4 text-black">
           <button
             onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded text-lg font-semibold transition"
+            className="bg-original px-6 py-3 rounded text-lg font-semibold transition"
           >
             Дивитися
           </button>
           <button
             onClick={() => {}}
-            className="bg-white bg-opacity-30 hover:bg-opacity-50 px-6 py-3 rounded text-lg font-semibold transition"
+            className="bg-gray-100 hover:bg-gray-500 bg-opacity-30 hover:bg-opacity-50 px-6 py-3 rounded text-lg font-semibold transition"
           >
             Мій список
           </button>
