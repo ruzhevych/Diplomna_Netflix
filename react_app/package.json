@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.7",
     "clsx": "^2.1.1",
     "formdata-node": "^6.0.3",
+    "lucide-react": "^0.539.0",
     "object-to-formdata": "^4.5.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
