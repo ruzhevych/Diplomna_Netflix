@@ -21,6 +21,7 @@ namespace Data.Context
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+        public DbSet<AdminMessageEntity> AdminMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -58,6 +59,16 @@ namespace Data.Context
                       .WithMany(u => u.RefreshTokens)
                       .HasForeignKey(rt => rt.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+            
+            builder.Entity<AdminMessageEntity>(entity =>
+            {
+                entity.HasKey(m => m.Id);
+
+                entity.HasOne(m => m.User)
+                    .WithMany(u => u.AdminMessages)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

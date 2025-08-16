@@ -1,10 +1,12 @@
 using System.Text;
 using Core.Interfaces;
+using Core.Interfaces.Admin;
 using Core.Interfaces.Core.Interfaces;
 using Core.Mappers;
 using Core.Options;
 using Core.Repositories;
 using Core.Services;
+using Core.Services.Admin;
 using Core.Validators.Authorization;
 using Core.Validators.Subscriptions;
 using Data.Context;
@@ -40,6 +42,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 
 builder.Services.AddTransient<DataSeeder>();
 
@@ -53,23 +56,6 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>()
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("JwtOptions"));
 builder.Services.AddScoped<IJwtService, JwtService>();
-
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = jwtOptions.Issuer,
-//            ValidAudience = jwtOptions.Audience,
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
-//        };
-//    });
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -92,6 +78,13 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes("qz+vXe9TZhM1EC2y+N6qMu7hfWqupZ0EjyiRZX+51zA="))
     };
 });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy =>
+        policy.RequireRole("Admin"));
+});
+
 
 
 // Validations
@@ -121,6 +114,12 @@ builder.Services.AddSwaggerJWT();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = new DataSeeder(scope.ServiceProvider, builder.Configuration);
+    await seeder.SeedAsync();
+}
+
 // Middleware
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Diplomna_Netflix"));
@@ -132,8 +131,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-var dataSeeder = app.Services.GetRequiredService<DataSeeder>();
-await dataSeeder.SeedAsync();
 
 app.Run();

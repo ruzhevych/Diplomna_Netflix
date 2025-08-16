@@ -10,10 +10,11 @@ export interface IUser {
 export interface UserProfile {
 id: number;
 email: string;
-username: string;
+fullName: string;
 firstName?: string;
 lastName?: string;
 avatarUrl?: string;
+subscriptionType: string;
 }
 
 export interface IUserAuth {

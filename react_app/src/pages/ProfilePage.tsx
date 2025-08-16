@@ -2,13 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getInitials } from '../utils/getInitials';
-
-
-interface UserProfile {
-  fullName: string;
-  email: string;
-  plan: string;
-}
+import type { UserProfile } from '../types/user';
 
 const ProfilePage = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -17,8 +11,6 @@ const ProfilePage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   // const { logout } = useAuth();
-
-  
 
 
   useEffect(() => {
@@ -91,7 +83,7 @@ const ProfilePage = () => {
 
       <div className="mb-4">
         <p className="text-sm text-gray-400">План підписки</p>
-        <p className="text-base font-medium text-white">{user.plan || 'Не вказано'}</p>
+        <p className="text-base font-medium text-white">{user.subscriptionType || 'Не вказано'}</p>
       </div>
 
       {/* <div className="mb-4">
@@ -111,7 +103,7 @@ const ProfilePage = () => {
 
         <button
           onClick={() => {
-            localStorage.removeItem('token');
+            localStorage.removeItem('accessToken');
             navigate('/login');
           }}
           className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"

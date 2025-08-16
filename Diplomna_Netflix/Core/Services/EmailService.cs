@@ -1,11 +1,8 @@
 using Core.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System.Net;
-using System.Net.Mail;
+using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MimeKit;
-using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace Core.Services
 {
@@ -34,38 +31,35 @@ namespace Core.Services
                 string.IsNullOrWhiteSpace(password) ||
                 port <= 0)
             {
-                var errMsg = "Email settings are not configured properly.";
-                Console.Error.WriteLine(errMsg);
-                throw new Exception(errMsg);
+                throw new Exception("Email settings are not configured properly.");
             }
 
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress(senderName ?? senderEmail, senderEmail));
             emailMessage.To.Add(MailboxAddress.Parse(toEmail));
             emailMessage.Subject = subject;
-
-            var bodyBuilder = new BodyBuilder { HtmlBody = message };
-            emailMessage.Body = bodyBuilder.ToMessageBody();
+            emailMessage.Body = new BodyBuilder { HtmlBody = message }.ToMessageBody();
 
             using var smtpClient = new SmtpClient();
 
+            smtpClient.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
             try
             {
-                await smtpClient.ConnectAsync(smtpServer, port, SecureSocketOptions.SslOnConnect);
+                SecureSocketOptions options = port switch
+                {
+                    465 => SecureSocketOptions.SslOnConnect,
+                    587 => SecureSocketOptions.StartTls,
+                    _ => SecureSocketOptions.Auto
+                };
+
+                await smtpClient.ConnectAsync(smtpServer, port, options);
                 await smtpClient.AuthenticateAsync(senderEmail, password);
                 await smtpClient.SendAsync(emailMessage);
             }
-            catch (SmtpCommandException ex)
-            {
-                throw new Exception($"SMTP command error: {ex.Message}", ex);
-            }
-            catch (SmtpProtocolException ex)
-            {
-                throw new Exception($"SMTP protocol error: {ex.Message}", ex);
-            }
             catch (Exception ex)
             {
-                throw new Exception($"Unexpected error while sending email: {ex.Message}", ex);
+                throw new Exception($"SMTP error while sending email: {ex.Message}", ex);
             }
             finally
             {
@@ -76,7 +70,7 @@ namespace Core.Services
         public async Task SendResetPasswordEmailAsync(string toEmail, string resetToken)
         {
             var frontendUrl = _configuration["App:FrontendUrl"];
-            var resetUrl = $"{frontendUrl}/reset-password?email={WebUtility.UrlEncode(toEmail)}&token={WebUtility.UrlEncode(resetToken)}";
+            var resetUrl = $"{frontendUrl}/reset-password?email={Uri.EscapeDataString(toEmail)}&token={Uri.EscapeDataString(resetToken)}";
 
             var subject = "Відновлення пароля";
             var body = $@"
