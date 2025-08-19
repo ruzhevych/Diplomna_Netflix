@@ -15,7 +15,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login: loginContext } = useAuth();
+  const { setGoogleTempToken, login: loginContext } = useAuth();
 
   const [login, { isLoading }] = useLoginMutation();
   const [googleLogin] = useGoogleLoginMutation();
@@ -36,8 +36,15 @@ const LoginPage = () => {
   const onLoginGoogleResult = async (googleToken: string) => {
     if (!googleToken) return;
     try {
-      await googleLogin({ googleAccessToken: googleToken });
-      navigate("/home");
+      const res = await googleLogin({ googleAccessToken: googleToken }).unwrap();
+      if(res.accessToken && res.isActive){
+        loginContext(res.accessToken);
+        navigate("/home");
+      } else {
+        setGoogleTempToken(googleToken)
+        navigate("/plan-intro");
+      }
+
     } catch (error) {
       console.log("Google error : ", error);
     }

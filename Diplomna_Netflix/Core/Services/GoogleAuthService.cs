@@ -17,14 +17,19 @@ namespace Core.Services
 
         public async Task<GoogleUserInfo?> GetUserInfoAsync(string googleAccessToken)
         {
-            var userInfoUrl = _config["GoogleUserInfoUrl"];
+            var userInfoUrl = _config["GoogleUserInfoUrl"] ?? "https://www.googleapis.com/oauth2/v3/userinfo";
+            if (string.IsNullOrEmpty(userInfoUrl))
+                throw new Exception("GoogleUserInfoUrl is not configured in appsettings.json");
+
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", googleAccessToken);
 
             var response = await httpClient.GetAsync(userInfoUrl);
-            response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Google API error: {response.StatusCode}, {json}");
+            
             return JsonSerializer.Deserialize<GoogleUserInfo>(json);
         }
     }
