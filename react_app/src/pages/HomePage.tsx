@@ -11,7 +11,7 @@ import {
   getTopRatedMovies,
   getUpcomingMovies,
   getPopularTV,
-  getAnime,
+  //getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
 
@@ -83,7 +83,7 @@ const HomePage = () => {
       <section className="px-">
         <Row title="Movies" fetcher={getPopularMovies} />
         <Row title="TV Series" fetcher={getPopularTV} />
-        <Row title="Anime" fetcher={getAnime} />
+        {/* <Row title="Anime" fetcher={getAnime} /> */}
         <Row title="Cartoons" fetcher={getTopRatedMovies} />
         <Row title="New & Popular" fetcher={getUpcomingMovies} />
         <Top10Row title="Top 10 TV Series Today" fetcher={getPopularTV} />

@@ -11,6 +11,8 @@ export const getPopularMovies = () => fetchFromTMDB('/movie/popular');
 export const getTopRatedMovies = () => fetchFromTMDB('/movie/top_rated');
 export const getUpcomingMovies = () => fetchFromTMDB('/movie/upcoming');
 export const getPopularTV = () => fetchFromTMDB('/tv/popular');
+export const getMovieGenres = () => fetchFromTMDB("/genre/movie/list");
+export const getTvGenres = () => fetchFromTMDB("/genre/tv/list");
 export const getAnime = () => fetchFromTMDB('/discover/tv&with_genres=16');
 export const getMovieDetails = (id: number) =>
   fetchFromTMDB(`/movie/${id}`);

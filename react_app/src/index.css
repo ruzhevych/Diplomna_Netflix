@@ -10,7 +10,9 @@ LIGHT GRAY - #3D3B3A
 LIME - #C4FF00 
 */
 
-
+.overlay-movie:hover{
+   opacity:100%;
+}
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

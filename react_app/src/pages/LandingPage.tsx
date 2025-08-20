@@ -261,7 +261,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
       ].map((item, i) => (
         <details
           key={i}
-          className="bg-gradient-to-b from-lime-500/70 to-lime-800/60 p-4 rounded"
+          className="bg-gradient-to-b from-lime-500/70 to-lime-800/60 p-4 "
         >
           <summary className="cursor-pointer font-semibold">{item.q}</summary>
           <p className="mt-2 text-sm text-gray-300">{item.a}</p>

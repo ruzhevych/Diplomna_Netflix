@@ -1,8 +1,16 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQuery } from '../utils/createBaseQuery';
-import type { IAuthResponse, IForgotPasswordRequest, IGoogleLoginRequest, IResetPasswordRequest, LoginPayload, RefreshPayload, RegisterPayload } from '../types/auth';
 import { handleAuthQueryStarted } from '../utils/handleAuthQueryStarted';
-//import { serialize } from 'object-to-formdata';
+import type { 
+  IAuthResponse, 
+  IForgotPasswordRequest, 
+  IGoogleLoginRequest, 
+  IGoogleRegisterRequest, 
+  IResetPasswordRequest, 
+  LoginPayload, 
+  RefreshPayload, 
+  RegisterPayload 
+} from '../types/auth';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -10,7 +18,7 @@ export const authApi = createApi({
   baseQuery: createBaseQuery('Auth'),
   endpoints: (builder) => ({
 
-    register: builder.mutation<void, RegisterPayload>({
+    register: builder.mutation<IAuthResponse, RegisterPayload>({
       query: (data) => ({
         url: '/register',
         method: 'POST',
@@ -19,6 +27,7 @@ export const authApi = createApi({
           subscriptionType: data.plan,
         },
       }),
+      onQueryStarted: handleAuthQueryStarted,
       invalidatesTags: ['AuthUser'],
     }),
 
@@ -55,6 +64,19 @@ export const authApi = createApi({
       invalidatesTags: ['AuthUser'],
     }),
 
+    googleRegister: builder.mutation<IAuthResponse, IGoogleRegisterRequest>({
+      query: (data) => ({
+        url: '/google-register',
+        method: 'POST',
+        body: data,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+      onQueryStarted: handleAuthQueryStarted,
+      invalidatesTags: ['AuthUser'],
+    }),
+
     forgotPassword: builder.mutation<void, IForgotPasswordRequest>({
       query: (emailDto) => ({
         url: '/forgot-password',
@@ -80,5 +102,6 @@ export const {
   useRefreshMutation, 
   useGoogleLoginMutation, 
   useForgotPasswordMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useGoogleRegisterMutation
 } = authApi;

@@ -21,7 +21,7 @@ public class AuthService : IAuthService
     private readonly IEmailService _emailService;
     private readonly IGoogleAuthService _googleAuthService;
     private readonly NetflixDbContext _dbContext;
-    private readonly IMapper mapper;
+    private readonly IMapper _mapper;
 
     public AuthService(
         UserManager<UserEntity> userManager,
@@ -38,7 +38,7 @@ public class AuthService : IAuthService
         _emailService = emailService;
         _googleAuthService = googleAuthService;
         _dbContext = dbContext;
-        mapper = mapper;
+        _mapper = mapper;
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterDto dto)
@@ -74,11 +74,14 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            throw new UnauthorizedAccessException("Invalid credentials");
+            throw new UnauthorizedAccessException("Invalid email or password.");
 
+        if (!await _userManager.HasPasswordAsync(user))
+            throw new UnauthorizedAccessException("This account uses Google login only.");
+        
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
         if (!result.Succeeded)
-            throw new UnauthorizedAccessException("Invalid credentials");
+            throw new UnauthorizedAccessException("Invalid email or password.");
 
         return await GenerateTokensAsync(user);
     }
@@ -123,42 +126,74 @@ public class AuthService : IAuthService
         };
     }
     
+    public async Task<AuthResponse> GoogleRegisterAsync(GoogleRegister model)
+    {
+        var userInfo = await _googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
+        var user = new UserEntity
+        {
+            UserName = userInfo.Email,
+            Email = userInfo.Email,
+            FullName = userInfo.Name,
+            FirstName = userInfo.GivenName,
+            LastName = userInfo.FamilyName,
+            ProfilePictureUrl = userInfo.Picture,
+        };
+
+        var result = await _userManager.CreateAsync(user);
+        if (!result.Succeeded)
+            throw new ApplicationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+        var subscription = new SubscriptionEntity
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Type = model.SubscriptionType,
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddDays(30),
+            IsActive = true
+        };
+
+        _dbContext.Subscriptions.Add(subscription);
+        return await GetAuthTokens(user);
+    }
+    
     public async Task<AuthResponse> GoogleLoginAsync(GoogleLogin model)
     {
         if (string.IsNullOrWhiteSpace(model.GoogleAccessToken))
             throw new ArgumentException("Google access token is required.");
-
+        
         var userInfo = await _googleAuthService.GetUserInfoAsync(model.GoogleAccessToken);
-
+        
         if (userInfo == null)
         {
             throw new Exception($"Google login failed: no user info returned. Token: {model.GoogleAccessToken}");
         }
-
+        
         if (string.IsNullOrWhiteSpace(userInfo.Email))
         {
             throw new Exception($"Google login failed: email not provided. Full user info: {System.Text.Json.JsonSerializer.Serialize(userInfo)}");
         }
-
-        var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-        if (user == null)
+        
+        var existingUser = await _userManager.FindByEmailAsync(userInfo.Email);
+        if (existingUser != null)
         {
-            user = mapper.Map<UserEntity>(userInfo);
-            user.UserName = userInfo.Name;
-            user.EmailConfirmed = true;
-
-            var createResult = await _userManager.CreateAsync(user);
-            if (!createResult.Succeeded)
-                throw new Exception("Failed to create user from Google account: " +
-                                    string.Join(", ", createResult.Errors.Select(e => e.Description)));
-
-            await _userManager.AddToRoleAsync(user, "User");
+            var userLoginGoogle = await _userManager.FindByLoginAsync("Google", userInfo.Sub);
+        
+            if (userLoginGoogle == null)
+            {
+                await _userManager.AddLoginAsync(existingUser, new UserLoginInfo("Google", userInfo.Sub, "Google"));
+            }
+            
+            return await GetAuthTokens(existingUser);
         }
-
-        return await GetAuthTokens(user);
+        else
+        {
+            return new AuthResponse
+            { 
+                IsActive = false,
+            };
+        }
     }
-
 
     
     // public async Task<bool> IsRegisteredWithGoogleAsync(string email)
@@ -202,10 +237,20 @@ public class AuthService : IAuthService
     
     private async Task<AuthResponse> GetAuthTokens(UserEntity user)
     {
-        return new()
+        var accessToken = _jwtService.GenerateAccessToken(await _jwtService.GetUserClaimsAsync(user));
+        var refreshToken = await CreateRefreshToken(user.Id);
+
+        // 🔎 Перевірка підписки
+        var subscription = await _dbContext.Subscriptions
+            .Where(s => s.UserId == user.Id && s.IsActive && s.EndDate > DateTime.UtcNow)
+            .OrderByDescending(s => s.EndDate)
+            .FirstOrDefaultAsync();
+
+        return new AuthResponse
         {
-            AccessToken = _jwtService.GenerateAccessToken(await _jwtService.GetUserClaimsAsync(user)),
-            RefreshToken = await CreateRefreshToken(user.Id)
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            IsActive = subscription != null
         };
     }
     

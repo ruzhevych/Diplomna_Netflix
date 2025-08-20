@@ -1,40 +1,52 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getInitials } from "../utils/getInitials";
+import type { UserProfile } from "../types/user";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
+import {
+  User,
+  Shield,
+  MonitorSmartphone,
+  Users,
+  CreditCard,
+  LogOut,
+  Edit,
+} from "lucide-react";
 
-import { getInitials } from '../utils/getInitials';
-import type { UserProfile } from '../types/user';
+const tabs = [
+  { id: "overview", label: "Огляд", icon: User },
+  { id: "subscription", label: "Підписка", icon: CreditCard },
+  { id: "security", label: "Безпека", icon: Shield },
+  { id: "devices", label: "Пристрої", icon: MonitorSmartphone },
+  { id: "profiles", label: "Профілі", icon: Users },
+];
 
 const ProfilePage = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [editingName, setEditingName] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
-  // const { logout } = useAuth();
-
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
       if (!token) {
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
-      console.log(token);
-
       try {
-        const res = await fetch('http://localhost:5170/api/Users/profile', {
+        const res = await fetch("http://localhost:5170/api/Users/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!res.ok) throw new Error('Помилка при завантаженні профілю');
+        if (!res.ok) throw new Error("Помилка при завантаженні профілю");
 
         const data = await res.json();
         setUser(data);
-        setNewName(data.fullName);
       } catch (err: any) {
         setError(err.message);
       }
@@ -43,86 +55,138 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const handleUpdateName = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) return;
-
-    const res = await fetch('http://localhost:5170/api/Users/update-name', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ fullName: newName }),
-    });
-
-    if (res.ok) {
-      setUser((prev) => prev && { ...prev, fullName: newName });
-      setEditingName(false);
-    }
-  };
-
-  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
-  if (!user) return <p className="text-center mt-10 text-white">Завантаження...</p>;
+  if (error)
+    return <p className="text-red-500 text-center mt-10">{error}</p>;
+  if (!user)
+    return <p className="text-center mt-10 text-white">Завантаження...</p>;
 
   return (
-  <div className="min-h-screen bg-black text-white py-16 px-4 flex justify-center">
-    
-    <div className="w-full max-w-md bg-[#141414] rounded-lg shadow-lg p-6">
-      <h2 className="text-3xl font-bold mb-6 border-b border-gray-600 pb-2">Профіль</h2>
-      
-      <div className="flex items-center gap-4 mb-6">
-        <div className="bg-red-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold">
-          {getInitials(user.fullName)}
-        </div>
-        <div>
-          <p className="text-xl font-semibold">{user.fullName}</p>
-          <p className="text-sm text-gray-400">{user.email}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white flex flex-col">
+      <Header />
+
+      <div className="max-w-7xl mx-auto flex-1 w-full py-12 px-6 mt-16 flex gap-10">
+        {/* Ліве меню */}
+        <aside className="w-72 bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-xl ">
+          <h2 className="text-lg font-bold mb-6 text-gray-200 tracking-wide">
+            Обліковий запис
+          </h2>
+          <ul className="space-y-3 text-sm">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <li
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition ${
+                    activeTab === tab.id
+                      ? "bg-lime-500/20 text-lime-400 font-semibold"
+                      : "text-gray-300 hover:text-lime-400 hover:bg-white/5"
+                  }`}
+                >
+                  <Icon size={18} />
+                  {tab.label}
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+
+        {/* Основний контент */}
+        <main className="flex-1 space-y-8">
+          {/* Вкладки */}
+          {activeTab === "overview" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-lg ">
+              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+                Профіль користувача
+              </h3>
+              <div className="flex items-center gap-6">
+                <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold shadow-md">
+                  {getInitials(user.fullName)}
+                </div>
+                <div>
+                  <p className="text-lg font-semibold">{user.fullName}</p>
+                  <p className="text-gray-400">{user.email}</p>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {activeTab === "subscription" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-lg ">
+              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+                Інформація про підписку
+              </h3>
+              <div className="space-y-3">
+                <p>
+                  <span className="text-gray-400">План: </span>
+                  <span className="font-medium text-lime-400">
+                    {user.subscriptionType || "Не вказано"}
+                  </span>
+                </p>
+                <button className="px-4 py-2  -lime-500 text-lime-400 hover:bg-lime-500 hover:text-black rounded-lg transition font-medium">
+                  Змінити план
+                </button>
+              </div>
+            </section>
+          )}
+
+          {activeTab === "security" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-lg ">
+              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+                Безпека
+              </h3>
+              <p className="text-gray-400">
+                🔒 Тут будуть налаштування пароля, 2FA і т.д.
+              </p>
+            </section>
+          )}
+
+          {activeTab === "devices" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-lg ">
+              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+                Пристрої
+              </h3>
+              <p className="text-gray-400">📱 Тут список активних пристроїв.</p>
+            </section>
+          )}
+
+          {activeTab === "profiles" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-2xl p-6 shadow-lg ">
+              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+                Профілі
+              </h3>
+              <p className="text-gray-400">
+                👥 Тут можна буде керувати профілями користувачів.
+              </p>
+            </section>
+          )}
+
+          {/* Кнопки */}
+          <div className="flex justify-between gap-4">
+            <button
+              onClick={() => navigate("/profile/edit")}
+              className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition font-medium"
+            >
+              <Edit size={18} />
+              Редагувати профіль
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+              }}
+              className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-lg transition"
+            >
+              <LogOut size={18} />
+              Вийти
+            </button>
+          </div>
+        </main>
       </div>
 
-      <div className="mb-4">
-        <p className="text-sm text-gray-400">План підписки</p>
-        <p className="text-base font-medium text-white">{user.subscriptionType || 'Не вказано'}</p>
-      </div>
-
-      {/* <div className="mb-4">
-        <p className="text-sm text-gray-400">Дата реєстрації</p>
-        <p className="text-base font-medium text-white">
-          {new Date(user.createdAt).toLocaleDateString()}
-        </p>
-      </div> */}
-
-      <div className="flex justify-between items-center mt-6">
-        <button
-          onClick={() => navigate('/profile/edit')}
-          className="text-blue-400 hover:underline text-sm"
-        >
-          Редагувати профіль
-        </button>
-
-        <button
-          onClick={() => {
-            localStorage.removeItem('accessToken');
-            navigate('/login');
-          }}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
-        >
-          Вийти
-        </button>
-      </div>
-      <div className="mt-4 text-center">
-        <button
-          onClick={() => navigate('/home')}
-          className="text-white hover:underline text-sm"
-        >
-          На головну
-        </button>
-      </div>
+      <Footer />
     </div>
-  </div>
-);
-
+  );
 };
 
 export default ProfilePage;

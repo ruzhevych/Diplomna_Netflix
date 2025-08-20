@@ -38,15 +38,15 @@ const Header = () => {
 
   const menuItems = [
     { path: "/movies", label: "Movies" },
-    { path: "/tv", label: "TV Series" },
+    { path: "/tvseries", label: "TV Series" },
     { path: "/anime", label: "Anime" },
     { path: "/cartoons", label: "Cartoons" },
-    { path: "/popular", label: "New & Popular" },
+    { path: "/newandpopular", label: "New & Popular" },
   ];
 
   return (
     <header
-      className={`fixed top-0 w-full bg-black/70 backdrop-blur-md z-20 transition-transform duration-300 ${
+      className={`fixed top-0 w-full bg-black/90 backdrop-blur-md z-20 transition-transform duration-300 ${
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >

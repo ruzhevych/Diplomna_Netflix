@@ -17,10 +17,16 @@ export interface RefreshPayload {
 export interface IAuthResponse {
   token(token: any): unknown;
   accessToken: string;
+  isActive: boolean;
 }
 
 export interface IGoogleLoginRequest {
     googleAccessToken: string;  
+}
+
+export interface IGoogleRegisterRequest {
+    googleAccessToken: string;
+    subscriptionType: string;
 }
 
 export interface IForgotPasswordRequest {
