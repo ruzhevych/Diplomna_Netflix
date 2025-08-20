@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, type FormEvent } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Search, User } from "lucide-react";
 
 import logo from "../../../public/logo-green.png";
@@ -7,6 +7,10 @@ import logo from "../../../public/logo-green.png";
 const Header = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -16,8 +20,36 @@ const Header = () => {
     }
   };
 
+  // Хедер ховається при прокрутці вниз, з'являється при прокрутці вгору
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current) {
+        setShowHeader(false); // скрол вниз — ховати
+      } else {
+        setShowHeader(true); // скрол вгору — показати
+      }
+      lastScrollY.current = window.scrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const menuItems = [
+    { path: "/movies", label: "Movies" },
+    { path: "/tv", label: "TV Series" },
+    { path: "/anime", label: "Anime" },
+    { path: "/cartoons", label: "Cartoons" },
+    { path: "/popular", label: "New & Popular" },
+  ];
+
   return (
-    <header className="fixed top-0 w-full bg-black/70 backdrop-blur-md z-20">
+    <header
+      className={`fixed top-0 w-full bg-black/70 backdrop-blur-md z-20 transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto flex items-left justify-between py-4 px-6">
         {/* Лого */}
         <Link to="/home">
@@ -26,30 +58,23 @@ const Header = () => {
 
         {/* Навігація */}
         <nav className="hidden md:flex items-center gap-6 text-white font-medium">
-          <Link to="/movies" className=" text-white hover:text-lime-400">
-            Movies
-          </Link>
-          <Link to="/tv" className="text-white hover:text-lime-400">
-            TV Series
-          </Link>
-          <Link to="/anime" className="text-white hover:text-lime-400">
-            Anime
-          </Link>
-          <Link to="/cartoons" className="text-white hover:text-lime-400">
-            Cartoons
-          </Link>
-          <Link to="/popular" className="text-white hover:text-lime-400">
-            New & Popular
-          </Link>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`text-white hover:text-lime-400 transition no-underline ${
+          location.pathname === item.path ? "border-b-2 border-lime-400 pb-1" : ""
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Праворуч: пошук і профіль */}
         <div className="flex items-center gap-4">
-          {/* Пошук (іконка відкриває інпут) */}
-          <form
-            onSubmit={handleSearch}
-            className="relative hidden md:block"
-          >
+          {/* Пошук */}
+          <form onSubmit={handleSearch} className="relative hidden md:block">
             <input
               type="text"
               placeholder="Search"

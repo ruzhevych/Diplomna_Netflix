@@ -89,11 +89,11 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
               placeholder="Адреса електронної пошти"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-3 rounded w-full sm:w-96 bg-black/70 border border-gray-500"
+              className="px-4 py-3  w-full sm:w-112 bg-black/70 border border-gray-500"
             />
             <button
               onClick={() => navigate("/register")}
-              className="bg-lime-500 px-6 py-3 rounded font-bold text-lg hover:bg-lime-400 transition"
+              className="bg-lime-500 px-6 py-3  font-bold text-lg hover:bg-lime-400 transition"
             >
               Почати
             </button>
@@ -134,17 +134,17 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
       className="relative min-w-[20%] flex-shrink-0 cursor-pointer group"
       onClick={() => setSelectedMovie(movie)}
     >
-      {/* Номер */}
+      
       <div className="absolute -left-3 top-2 z-10 text-white text-6xl font-extrabold drop-shadow-[2px_2px_4px_rgba(0,0,0,0.9)]">
         {index + 1}
       </div>
-      {/* Постер */}
+      
       <img
         src={`${IMG_BASE}${movie.poster_path}`}
         alt={movie.title || movie.name}
         className="rounded-lg w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
       />
-      {/* Назва */}
+      
       <p className="mt-2 text-sm text-gray-300 truncate">
         {movie.title || movie.name}
       </p>
@@ -156,7 +156,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
         {selectedMovie && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black/90 rounded-lg p-6 max-w-xl w-full max-h-[80vh] overflow-y-auto relative">
-            {/* Закрити */}
+           
             <button
               className="absolute top-3 right-3 text-white text-xl font-bold"
               onClick={() => setSelectedMovie(null)}
@@ -164,21 +164,21 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
               &times;
             </button>
 
-            {/* Постер */}
+            
             <img
               src={`${IMG_BASE}${selectedMovie.poster_path}`}
               alt={selectedMovie.title || selectedMovie.name}
               className="rounded-lg w-full mb-4 h-96 object-cover"
             />
-            {/* Назва */}
+            
             <h3 className="text-xl font-bold text-white mb-2">
               {selectedMovie.title || selectedMovie.name}
             </h3>
-            {/* Опис */}
+            
             <p className="text-gray-300 mb-4">
               {selectedMovie.overview || "Немає опису."}
             </p>
-            {/* Кнопка */}
+            
             <a
               href="/login"
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
@@ -234,26 +234,42 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
       {/* FAQ SECTION */}
       <section className="bg-black py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6">Поширені запитання</h2>
-          <div className="space-y-4">
-            {[
-              "Що таке сервіс?",
-              "Скільки коштує підписка?",
-              "Де можна дивитися?",
-              "Як скасувати підписку?",
-              "Чи є контент для дітей?",
-            ].map((q, i) => (
-              <details key={i} className="bg-gradient-to-b from-lime-500/70 to-lime-800/60 p-4 rounded">
-                <summary className="cursor-pointer font-semibold">{q}</summary>
-                <p className="mt-2 text-sm text-gray-300">
-                  Тут буде відповідь на питання "{q}".
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+  <div className="max-w-6xl mx-auto">
+    <h2 className="text-2xl font-bold mb-6">Поширені запитання</h2>
+    <div className="text-xl space-y-4">
+      {[
+        {
+          q: "Що таке сервіс?",
+          a: "Це онлайн-платформа для перегляду фільмів і серіалів у будь-який час і на будь-якому пристрої."
+        },
+        {
+          q: "Скільки коштує підписка?",
+          a: "Підписка починається від 4,99 EUR на місяць. Ви можете обрати тариф, який підходить саме вам."
+        },
+        {
+          q: "Де можна дивитися?",
+          a: "Дивіться на телевізорах, смартфонах, планшетах та комп’ютерах. Достатньо мати інтернет-з’єднання."
+        },
+        {
+          q: "Як скасувати підписку?",
+          a: "Ви можете скасувати підписку у будь-який момент в налаштуваннях акаунта без жодних додаткових зборів."
+        },
+        {
+          q: "Чи є контент для дітей?",
+          a: "Так! Ви можете створити дитячий профіль із безпечним переглядом та обмеженим доступом до контенту."
+        }
+      ].map((item, i) => (
+        <details
+          key={i}
+          className="bg-gradient-to-b from-lime-500/70 to-lime-800/60 p-4 rounded"
+        >
+          <summary className="cursor-pointer font-semibold">{item.q}</summary>
+          <p className="mt-2 text-sm text-gray-300">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* FOOTER */}
       <Footer/>

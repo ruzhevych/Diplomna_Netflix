@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 
+/* 
+BREND COLORS
+GRAY - #191716
+LIGHT GRAY - #3D3B3A
+LIME - #C4FF00 
+*/
+
+
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -14,7 +22,7 @@
 }
 body {
   margin: 0;
-  background-color: black;
+  background-color: #191716;
   color: white;
   font-family: Arial, sans-serif;
 }
