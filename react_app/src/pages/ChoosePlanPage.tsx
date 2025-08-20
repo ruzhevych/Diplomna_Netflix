@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useRegisterMutation } from "../services/authApi";
+import { useGoogleRegisterMutation, useRegisterMutation} from "../services/authApi";
 import { toast } from "react-toastify";
 import logo from "../../public/logo-green.png";
+import { useAuth } from "../context/AuthContext";
 
 const plans = [
   {
@@ -41,28 +42,52 @@ const ChoosePlanPage = () => {
   const { fullName, email, password } = location.state || {};
   const [selectedPlan, setSelectedPlan] = useState("");
   const [error, setError] = useState("");
+  const { googleTempToken, setGoogleTempToken, login: loginContext } = useAuth();
+  const [register] = useRegisterMutation();
+  const [googleRegister, { isLoading }] = useGoogleRegisterMutation();
 
-  const [register, { isLoading }] = useRegisterMutation();
-
+  
   const handleSubmit = async () => {
     if (!selectedPlan) {
       setError("Please choose a plan");
       return;
     }
     setError("");
+
     try {
-      await register({ fullName, email, password, plan: selectedPlan }).unwrap();
-      toast.success("Registration successful!");
-      navigate("/login");
+      let res;
+
+      if (googleTempToken) {
+        const payload = { googleAccessToken: googleTempToken, subscriptionType: selectedPlan };
+        res = await googleRegister(payload).unwrap();
+
+        loginContext(res.accessToken);
+        setGoogleTempToken(null);
+        toast.success("Google registration successful!");
+        navigate("/home");
+        return;
+      }
+
+      if (fullName && email && password) {
+        const res = await register({ fullName, email, password, plan: selectedPlan }).unwrap();
+        loginContext(res.accessToken);
+        toast.success("Registration successful!");
+        navigate("/home");
+        return;
+      }
+
+      toast.error("Invalid registration flow. Please try again.");
+      navigate("/register");
     } catch (err: any) {
-      setError(err?.data?.message || "Something went wrong");
+      console.error("Registration error:", err);
+      toast.error(err?.data?.message || "Something went wrong during registration");
     }
   };
 
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col"
-      style={{ backgroundImage: "url('/public/login-bg.png')" }}
+      style={{ backgroundImage: "url('/login-bg.png')" }}
     >
       {/* Logo & Back */}
       <div className="flex justify-between items-center p-6">

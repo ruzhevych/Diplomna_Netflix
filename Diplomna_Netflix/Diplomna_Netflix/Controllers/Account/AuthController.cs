@@ -47,6 +47,20 @@ namespace Diplomna_Netflix.Controllers.Account
             }
         }
 
+        [HttpPost("google-register")]
+        public async Task<IActionResult> GoogleRegister([FromBody] GoogleRegister dto)
+        {
+            try
+            {
+                var response = await authService.GoogleRegisterAsync(dto);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
+        }
+
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest dto)
         {
