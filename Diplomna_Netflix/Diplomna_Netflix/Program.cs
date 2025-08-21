@@ -11,6 +11,7 @@ using Core.Validators.Authorization;
 using Core.Validators.Subscriptions;
 using Data.Context;
 using Data.Entities.Identity;
+using Diplomna_Netflix.Core.Interfaces;
 using Diplomna_Netflix.ServiceExtensions;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,10 +43,10 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-builder.Services.AddScoped<IMovieService, MovieService>();
-builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-builder.Services.AddTransient<DataSeeder>();
+
+
 
 
 // Identity
@@ -94,7 +95,7 @@ builder.Services.AddControllers()
     {
         fv.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
         fv.RegisterValidatorsFromAssemblyContaining<SubscriptionCreateValidator>();
-        fv.RegisterValidatorsFromAssemblyContaining<MovieCreateValidator>();
+        
     });
 
 builder.Services.AddCors(options =>
