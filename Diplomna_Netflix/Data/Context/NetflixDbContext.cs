@@ -22,6 +22,8 @@ namespace Data.Context
         public DbSet<MovieEntity> Movies { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
         public DbSet<AdminMessageEntity> AdminMessages { get; set; }
+        public DbSet<FavoriteEntity> Favorites { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

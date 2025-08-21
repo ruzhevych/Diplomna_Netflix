@@ -44,9 +44,12 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<FavoriteService>();
+
 
 builder.Services.AddTransient<DataSeeder>();
 
+builder.Services.AddHttpContextAccessor();
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()

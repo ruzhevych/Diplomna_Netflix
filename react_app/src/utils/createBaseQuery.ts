@@ -9,7 +9,8 @@ export const createBaseQuery = (endpoint: string) => {
     baseUrl: `${APP_ENV.REMOTE_BASE_URL}/api/${endpoint}/`,
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).user.token;
+      const token = (getState() as RootState).auth.accessToken;
+      console.log("[API] sending token:", token);
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }

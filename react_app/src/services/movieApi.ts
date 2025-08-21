@@ -16,6 +16,8 @@ export const getTvGenres = () => fetchFromTMDB("/genre/tv/list");
 export const getAnime = () => fetchFromTMDB('/discover/tv&with_genres=16');
 export const getMovieDetails = (id: number) =>
   fetchFromTMDB(`/movie/${id}`);
+export const getSeriesDetails = (id: number) =>
+    fetchFromTMDB(`/tv/${id}`);
 
 export interface Video {
   id: string;
