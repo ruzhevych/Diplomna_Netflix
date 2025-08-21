@@ -17,6 +17,7 @@ import CartoonsPage from './pages/Categories/CartoonsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PlanIntroPage from './pages/PlanIntroPage';
+import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
 
 
 const App = () => {
@@ -38,7 +39,8 @@ const App = () => {
         <Route path="/anime" element={<AnimePage />} />
         <Route path="/tvseries" element={<SeriesPage />} /> 
         <Route path="/cartoons" element={<CartoonsPage />} />
-        <Route path="/newandpopular" element={<NewPage />} /> 
+        <Route path="/newandpopular" element={<NewPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
 
         <Route
           path="/home"

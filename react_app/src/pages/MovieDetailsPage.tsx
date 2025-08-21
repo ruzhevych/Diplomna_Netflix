@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Movie } from '../types/movie';
-import type { Video, VideosResponse } from '../services/movieApi';
+import { type Video} from '../services/movieApi';
 import {
+  //getSeriesDetails,
   getMovieDetails,
   getMovieVideos
 } from '../services/movieApi';

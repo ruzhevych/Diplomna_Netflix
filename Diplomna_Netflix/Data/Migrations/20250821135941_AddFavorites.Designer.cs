@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(NetflixDbContext))]
-    partial class NetflixDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250821135941_AddFavorites")]
+    partial class AddFavorites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,45 +25,40 @@ namespace Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CategoryEntity", b =>
+            modelBuilder.Entity("Data.Entities.AdminMessageEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("ExternalApiId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
-                    b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentCategoryId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("CategoryEntityMediaItem", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MediaItemsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CategoriesId", "MediaItemsId");
-
-                    b.HasIndex("MediaItemsId");
-
-                    b.ToTable("CategoryEntityMediaItem");
+                    b.ToTable("AdminMessages");
                 });
 
             modelBuilder.Entity("Data.Entities.Auth.RefreshTokenEntity", b =>
@@ -291,41 +289,6 @@ namespace Data.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("MediaItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Description")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
-
-                    b.Property<int>("MediaTypeId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MediaItems");
-
-                    b.HasDiscriminator().HasValue("MediaItem");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.Property<int>("Id")
@@ -414,66 +377,46 @@ namespace Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SeasonEntity", b =>
+            modelBuilder.Entity("MovieEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("EpisodeCount")
-                        .HasColumnType("integer");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
-                    b.Property<int>("SeasonNumber")
-                        .HasColumnType("integer");
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("SeriesId")
+                    b.Property<string>("PosterUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubGenre")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VideoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Year")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SeriesId");
-
-                    b.ToTable("Seasons");
-                });
-
-            modelBuilder.Entity("MovieEntity", b =>
-                {
-                    b.HasBaseType("MediaItem");
-
-                    b.HasDiscriminator().HasValue("MovieEntity");
-                });
-
-            modelBuilder.Entity("SeriesEntity", b =>
-                {
-                    b.HasBaseType("MediaItem");
-
-                    b.HasDiscriminator().HasValue("SeriesEntity");
-                });
-
-            modelBuilder.Entity("CategoryEntity", b =>
-                {
-                    b.HasOne("CategoryEntity", "ParentCategory")
-                        .WithMany("Subcategories")
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.Navigation("ParentCategory");
-                });
-
-            modelBuilder.Entity("CategoryEntityMediaItem", b =>
-                {
-                    b.HasOne("CategoryEntity", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MediaItem", null)
-                        .WithMany()
-                        .HasForeignKey("MediaItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("Data.Entities.AdminMessageEntity", b =>
@@ -573,22 +516,6 @@ namespace Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SeasonEntity", b =>
-                {
-                    b.HasOne("SeriesEntity", "Series")
-                        .WithMany()
-                        .HasForeignKey("SeriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Series");
-                });
-
-            modelBuilder.Entity("CategoryEntity", b =>
-                {
-                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("Data.Entities.Identity.RoleEntity", b =>

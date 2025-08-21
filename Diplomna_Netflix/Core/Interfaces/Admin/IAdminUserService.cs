@@ -1,4 +1,4 @@
-using Core.DTOs.Admin;
+using Core.DTOs.AdminDTOs;
 using Core.Models;
 
 namespace Core.Interfaces.Admin

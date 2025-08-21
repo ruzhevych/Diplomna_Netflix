@@ -14,3 +14,10 @@ export interface TMDBResponse<T> {
   total_pages: number;
   total_results: number;
 }
+
+export interface Favorite {
+  id: number;
+  contentId: number;
+  contentType: string;
+  createdAt: Date;
+}
