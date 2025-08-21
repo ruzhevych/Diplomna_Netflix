@@ -42,11 +42,15 @@ const ProfilePage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        
 
         if (!res.ok) throw new Error("Помилка при завантаженні профілю");
 
         const data = await res.json();
-        setUser(data);
+        setUser({
+          ...data,
+          avatarUrl: data.profilePictureUrl,
+        });
       } catch (err: any) {
         setError(err.message);
       }
@@ -100,14 +104,22 @@ const ProfilePage = () => {
                 Профіль користувача
               </h3>
               <div className="flex items-center gap-6">
-                <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold shadow-md">
-                  {getInitials(user.fullName)}
-                </div>
-                <div>
-                  <p className="text-lg font-semibold">{user.fullName}</p>
-                  <p className="text-gray-400">{user.email}</p>
-                </div>
+            {user.profilePictureUrl ? (
+              <img
+                src={user.profilePictureUrl}
+                alt={user.fullName}
+                className="w-20 h-20 rounded-full object-cover shadow-md border border-gray-700"
+              />
+            ) : (
+              <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold shadow-md">
+                {getInitials(user.fullName)}
               </div>
+            )}
+            <div>
+              <p className="text-lg font-semibold">{user.fullName}</p>
+              <p className="text-gray-400">{user.email}</p>
+            </div>
+          </div>
             </section>
           )}
 
@@ -164,7 +176,7 @@ const ProfilePage = () => {
           {/* Кнопки */}
           <div className="flex justify-between gap-4">
             <button
-              onClick={() => navigate("/profile/edit")}
+              onClick={() => navigate("/profile/edit", { state: { user } })}
               className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition font-medium"
             >
               <Edit size={18} />
