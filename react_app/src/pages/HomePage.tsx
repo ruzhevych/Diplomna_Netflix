@@ -38,7 +38,7 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
       <div className="flex gap-4 overflow-x-auto scrollbar-hide">
         {items.map((item, index) => (
           <div key={item.id} className="relative flex-shrink-0">
-            <span className="absolute -left-4 top-2 text-6xl font-bold text-lime-400 drop-shadow-md">
+            <span className="absolute -right-6 bottom-5 text-9xl font-bold text-white drop-shadow-xl">
               {index + 1}
             </span>
             <img
@@ -80,7 +80,7 @@ const HomePage = () => {
       <Header />
       <HeroBanner />
 
-      <section className="px-8">
+      <section className="px-">
         <Row title="Movies" fetcher={getPopularMovies} />
         <Row title="TV Series" fetcher={getPopularTV} />
         {/* <Row title="Anime" fetcher={getAnime} /> */}

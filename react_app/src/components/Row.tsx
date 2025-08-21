@@ -56,7 +56,7 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
         {items.map(item => (
           <div
             key={item.id}
-            className="min-w-[150px] cursor-pointer hover:scale-105 transition-transform"
+            className="min-w-[230px] cursor-pointer hover:scale-105 transition-transform"
             onClick={() => navigate(`/movie/${item.id}`)}
           >
             <img
