@@ -17,6 +17,7 @@ import CartoonsPage from './pages/Categories/CartoonsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PlanIntroPage from './pages/PlanIntroPage';
+import ProfileEditPage from './pages/ProfileEditPage';
 
 
 const App = () => {
@@ -39,6 +40,8 @@ const App = () => {
         <Route path="/tvseries" element={<SeriesPage />} /> 
         <Route path="/cartoons" element={<CartoonsPage />} />
         <Route path="/newandpopular" element={<NewPage />} /> 
+
+        <Route path="/profile/edit" element={<ProfileEditPage />} /> 
 
         <Route
           path="/home"
