@@ -41,12 +41,15 @@ export const userApi = createApi({
 
     // Оновити користувача (наприклад, фото профілю)
     updateUser: builder.mutation<void, FormData>({
-      query: (data) => ({
-        url: `/users`,
-        method: "PUT",
-        body: data,
-      }),
-    }),
+  query: (formData) => {
+    const id = formData.get("Id");
+    return {
+      url: `/${id}`,   // ✅ обов’язково з ID
+      method: "PUT",
+      body: formData,
+    };
+  },
+}),
           
 
     // Видалити користувача за ID
