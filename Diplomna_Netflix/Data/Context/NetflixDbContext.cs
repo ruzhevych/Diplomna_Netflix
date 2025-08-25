@@ -20,6 +20,8 @@ namespace Data.Context
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+        public DbSet<AdminMessageEntity> AdminMessages { get; set; }
+        public DbSet<FavoriteEntity> Favorites { get; set; }
         public DbSet<MediaItem> MediaItems { get; set; }
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }

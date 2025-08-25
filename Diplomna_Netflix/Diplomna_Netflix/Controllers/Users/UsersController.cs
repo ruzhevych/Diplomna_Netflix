@@ -37,14 +37,14 @@ namespace Diplomna_Netflix.Controllers.Users
         //     return Ok();
         // }
 
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update([FromForm] UserUpdateDto dto)
         {
             await _userService.UpdateUserAsync(dto);
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             await _userService.DeleteUserAsync(id);

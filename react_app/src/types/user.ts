@@ -13,7 +13,8 @@ email: string;
 fullName: string;
 firstName?: string;
 lastName?: string;
-avatarUrl?: string;
+// avatarUrl?: string;
+profilePictureUrl?: string;
 subscriptionType: string;
 }
 

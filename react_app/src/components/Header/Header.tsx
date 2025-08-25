@@ -20,13 +20,13 @@ const Header = () => {
     }
   };
 
-  // Хедер ховається при прокрутці вниз, з'являється при прокрутці вгору
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > lastScrollY.current) {
-        setShowHeader(false); // скрол вниз — ховати
+        setShowHeader(false); 
       } else {
-        setShowHeader(true); // скрол вгору — показати
+        setShowHeader(true); 
       }
       lastScrollY.current = window.scrollY;
     };
@@ -42,6 +42,7 @@ const Header = () => {
     { path: "/anime", label: "Anime" },
     { path: "/cartoons", label: "Cartoons" },
     { path: "/newandpopular", label: "New & Popular" },
+    { path: "/favorites", label: "Favorites" },
   ];
 
   return (

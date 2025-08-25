@@ -40,15 +40,17 @@ export const userApi = createApi({
     }),
 
     // Оновити користувача (наприклад, фото профілю)
-    updateUser: builder.mutation<IAuthResponse, FormData>({
-      query: (formData) => ({
-        url: '',
-        method: 'PUT',
-        body: formData,
-      }),
-      onQueryStarted: handleAuthQueryStarted,
-      invalidatesTags: ['Users'],
-    }),
+    updateUser: builder.mutation<void, FormData>({
+  query: (formData) => {
+    const id = formData.get("Id");
+    return {
+      url: `/${id}`,   // ✅ обов’язково з ID
+      method: "PUT",
+      body: formData,
+    };
+  },
+}),
+          
 
     // Видалити користувача за ID
     deleteUser: builder.mutation<void, number>({
