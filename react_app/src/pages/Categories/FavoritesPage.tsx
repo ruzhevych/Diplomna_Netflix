@@ -84,7 +84,7 @@ export default function FavoritesPage() {
   return (
     <div className="bg-black text-white min-h-screen">
       <Header />
-      <div className="px-8 py-10 max-w-[1600px] mx-auto">
+      <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
         <h1 className="text-3xl font-bold mb-6">Улюблене</h1>
 
         {(isLoading || loadingDetails) && (

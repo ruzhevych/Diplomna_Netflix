@@ -14,6 +14,7 @@ import {
   //getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
+import MovieCard from "../components/MovieCard";
 
 
 // Топ-10 рядок
@@ -78,17 +79,18 @@ const HomePage = () => {
     <div className="bg-black/95 text-white min-h-screen">
       
       <Header />
-      <HeroBanner />
+      <div className="mt-20">
+        <HeroBanner />
 
-      <section className="px-">
-        <Row title="Movies" fetcher={getPopularMovies} />
-        <Row title="TV Series" fetcher={getPopularTV} />
-        {/* <Row title="Anime" fetcher={getAnime} /> */}
-        <Row title="Cartoons" fetcher={getTopRatedMovies} />
-        <Row title="New & Popular" fetcher={getUpcomingMovies} />
-        <Top10Row title="Top 10 TV Series Today" fetcher={getPopularTV} />
-      </section>
-
+        <section className="px-">
+          <Row title="Movies" fetcher={getPopularMovies} />
+          <Row title="TV Series" fetcher={getPopularTV} />
+          {/* <Row title="Anime" fetcher={getAnime} /> */}
+          <Row title="Cartoons" fetcher={getTopRatedMovies} />
+          <Row title="New & Popular" fetcher={getUpcomingMovies} />
+          <Top10Row title="Top 10 TV Series Today" fetcher={getPopularTV} />
+        </section>
+      </div>
       {/* Футер */}
       <Footer />
     </div>

@@ -13,6 +13,7 @@ import {
   LogOut,
   Edit,
 } from "lucide-react";
+import { useGetProfileQuery } from "../services/userApi";
 
 const tabs = [
   { id: "overview", label: "Огляд", icon: User },
@@ -23,45 +24,46 @@ const tabs = [
 ];
 
 const ProfilePage = () => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [error, setError] = useState("");
+  const { data: user, error, isLoading } = useGetProfileQuery();
+  // const [user, setUser] = useState<UserProfile | null>(null);
+  // const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     const token = localStorage.getItem("accessToken");
+  //     if (!token) {
+  //       navigate("/login");
+  //       return;
+  //     }
 
-      try {
-        const res = await fetch("http://localhost:5170/api/Users/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  //     try {
+  //       const res = await fetch("http://localhost:5170/api/Users/profile", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
         
 
-        if (!res.ok) throw new Error("Помилка при завантаженні профілю");
+  //       if (!res.ok) throw new Error("Помилка при завантаженні профілю");
 
-        const data = await res.json();
-        setUser({
-          ...data,
-          avatarUrl: data.profilePictureUrl,
-        });
-      } catch (err: any) {
-        setError(err.message);
-      }
-    };
+  //       const data = await res.json();
+  //       setUser({
+  //         ...data,
+  //         avatarUrl: data.profilePictureUrl,
+  //       });
+  //     } catch (err: any) {
+  //       setError(err.message);
+  //     }
+  //   };
 
-    fetchProfile();
-  }, []);
+  //   fetchProfile();
+  // }, []);
 
   if (error)
-    return <p className="text-red-500 text-center mt-10">{error}</p>;
-  if (!user)
+    return <p className="text-red-500 text-center mt-10">{(error as any).data?.message || "Помилка"}</p>;
+  if (isLoading)
     return <p className="text-center mt-10 text-white">Завантаження...</p>;
 
   return (
@@ -104,7 +106,7 @@ const ProfilePage = () => {
                 Профіль користувача
               </h3>
               <div className="flex items-center gap-6">
-            {user.profilePictureUrl ? (
+            {user?.profilePictureUrl ? (
               <img
                 src={user.profilePictureUrl}
                 alt={user.fullName}
@@ -112,12 +114,12 @@ const ProfilePage = () => {
               />
             ) : (
               <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold shadow-md">
-                {getInitials(user.fullName)}
+                {getInitials(user?.fullName || "")}
               </div>
             )}
             <div>
-              <p className="text-lg font-semibold">{user.fullName}</p>
-              <p className="text-gray-400">{user.email}</p>
+              <p className="text-lg font-semibold">{user?.fullName}</p>
+              <p className="text-gray-400">{user?.email}</p>
             </div>
           </div>
             </section>
@@ -132,7 +134,7 @@ const ProfilePage = () => {
                 <p>
                   <span className="text-gray-400">План: </span>
                   <span className="font-medium text-lime-400">
-                    {user.subscriptionType || "Не вказано"}
+                    {user?.subscriptionType || "Не вказано"}
                   </span>
                 </p>
                 <button className="px-4 py-2  -lime-500 text-lime-400 hover:bg-lime-500 hover:text-black rounded-lg transition font-medium">

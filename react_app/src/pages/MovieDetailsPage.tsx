@@ -9,6 +9,7 @@ import {
   useGetFavoritesQuery,
 } from "../services/favoritesApi";
 import { toast } from "react-toastify";
+import Header from "../components/Header/Header";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -71,7 +72,8 @@ const MovieDetailsPage = () => {
 
   return (
     <div className="bg-black text-white min-h-screen p-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
+      <Header />
+      <div className="max-w-6xl mt-20 mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
         {/* Poster */}
         <div className="relative w-full md:w-1/3">
           <img
