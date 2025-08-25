@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Core.DTOs.AuthorizationDTOs;
+using Core.Interfaces;
 using Core.Interfaces.Core.Interfaces;
 using Core.Models.Authentication;
+using Diplomna_Netflix.ServiceExtensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Diplomna_Netflix.Controllers.Account
@@ -13,10 +15,12 @@ namespace Diplomna_Netflix.Controllers.Account
     public class AuthController : ControllerBase
     {
         private readonly IAuthService authService;
+        private readonly ICookieService _cookieService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ICookieService cookieService)
         {
             this.authService = authService;
+            _cookieService = cookieService;
         }
 
         [HttpPost("register")]
@@ -30,6 +34,10 @@ namespace Diplomna_Netflix.Controllers.Account
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await authService.LoginAsync(dto);
+            var refreshToken = result.RefreshToken;
+
+            // Зберігаємо refresh токен у cookie
+            _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
             return Ok(result);
         }
 
@@ -39,6 +47,10 @@ namespace Diplomna_Netflix.Controllers.Account
             try
             {
                 var response = await authService.GoogleLoginAsync(dto);
+                var refreshToken = response.RefreshToken;
+
+                // Зберігаємо refresh токен у cookie
+                _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
                 return Ok(response);
             }
             catch (UnauthorizedAccessException ex)
@@ -62,10 +74,21 @@ namespace Diplomna_Netflix.Controllers.Account
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenRequest dto)
+        public async Task<IActionResult> RefreshToken()
         {
-            var result = await authService.RefreshTokenAsync(dto.RefreshToken);
-            return Ok(result);
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized();
+
+            var result = await authService.RefreshTokenAsync(refreshToken);
+
+            _cookieService.AppendRefreshTokenCookie(Response, result.RefreshToken);
+
+            return Ok(new
+            {
+                accessToken = result.AccessToken
+            });
         }
 
         // [HttpGet("is-registered/{email}")]
