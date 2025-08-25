@@ -47,11 +47,6 @@ builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-
-
-
-builder.Services.AddHttpContextAccessor();
-
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
     .AddEntityFrameworkStores<NetflixDbContext>()
