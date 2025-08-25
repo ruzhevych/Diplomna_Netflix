@@ -19,23 +19,12 @@ namespace Diplomna_Netflix.Controllers.Users
             _userService = userService;
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<UserDto>>> GetAll() =>
-        //     Ok(await _userService.GetAllAsync());
-
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(string id)
         {
             var user = await _userService.GetByIdAsync(id);
             return user == null ? NotFound() : Ok(user);
         }
-
-        // [HttpPost]
-        // public async Task<IActionResult> Create(UserCreateDto dto)
-        // {
-        //     await _userService.CreateUserAsync(dto);
-        //     return Ok();
-        // }
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update([FromForm] UserUpdateDto dto)

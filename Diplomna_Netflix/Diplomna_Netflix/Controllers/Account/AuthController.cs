@@ -27,6 +27,10 @@ namespace Diplomna_Netflix.Controllers.Account
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             var result = await authService.RegisterAsync(dto);
+            var refreshToken = result.RefreshToken;
+
+            // Зберігаємо refresh токен у cookie
+            _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
             return Ok(result);
         }
 
@@ -65,6 +69,10 @@ namespace Diplomna_Netflix.Controllers.Account
             try
             {
                 var response = await authService.GoogleRegisterAsync(dto);
+                var refreshToken = response.RefreshToken;
+
+                // Зберігаємо refresh токен у cookie
+                _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
                 return Ok(response);
             }
             catch (UnauthorizedAccessException ex)

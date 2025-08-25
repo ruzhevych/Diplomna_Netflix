@@ -46,6 +46,7 @@ builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICookieService, CookieService>();
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
