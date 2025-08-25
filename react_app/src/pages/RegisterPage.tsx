@@ -6,6 +6,8 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useGoogleLoginMutation } from '../services/authApi';
 import GoogleIcon from '../icons/GoogleIcon';
 import { useAuth } from '../context/AuthContext';
+import eye_open from '../../public/eye-open.png'
+import eye_close from '../../public/eye-close.png'
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -112,7 +114,7 @@ const RegisterPage = () => {
                 className="absolute rounded-sm right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <img src={eye_close}/> : <img src={eye_open}/>}
               </button>
             </div>
 
@@ -131,7 +133,7 @@ const RegisterPage = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showConfirmPassword ? "🙈" : "👁️"}
+                {showConfirmPassword ? <img src={eye_close}/> : <img src={eye_open}/>}
               </button>
             </div>
 

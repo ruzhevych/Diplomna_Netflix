@@ -26,9 +26,10 @@ namespace Diplomna_Netflix.Controllers.Users
             return user == null ? NotFound() : Ok(user);
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> Update([FromForm] UserUpdateDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromForm] UserUpdateDto dto)
         {
+            dto.Id = id; // ïðîáðîñèìî id ç ðîóòà â DTO
             await _userService.UpdateUserAsync(dto);
             return Ok();
         }

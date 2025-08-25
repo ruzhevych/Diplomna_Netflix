@@ -19,7 +19,10 @@ namespace Diplomna_Netflix.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] FavoriteCreateDto dto)
+
         {
+            if (dto == null)
+                return BadRequest("DTO is null");
             var result = await _favoriteService.AddAsync(dto);
             return Ok(result);
         }
