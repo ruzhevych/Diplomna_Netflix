@@ -41,11 +41,10 @@ export const authApi = createApi({
       invalidatesTags: ['AuthUser'],
     }),
 
-    refresh: builder.mutation<IAuthResponse, RefreshPayload>({
-      query: (refreshTokenDto) => ({
+    refresh: builder.mutation<IAuthResponse, void>({
+      query: () => ({
         url: '/refresh-token',
         method: 'POST',
-        body: refreshTokenDto,
       }),
       onQueryStarted: handleAuthQueryStarted,
       invalidatesTags: ['AuthUser'],

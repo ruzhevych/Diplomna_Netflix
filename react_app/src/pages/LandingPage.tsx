@@ -47,7 +47,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
           <img src={logo} alt="Logo" className="w-32 md:w-40" />
           <div className="flex items-center gap-4">
-            <select className="bg-black/70 border border-gray-500 px-3 py-1 rounded text-sm">
+            <select className="bg-black/70  px-3 py-1 rounded text-sm">
               <option value="ua">Українська</option>
               <option value="en">English</option>
             </select>
@@ -193,50 +193,60 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   
 
       {/* FEATURES SECTION */}
-      <section className="bg-black py-12 px-6">
-        <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Ще більше причин підписатися</h2>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-6 text-center">
-    {[
-      { 
-        title: "Дивіться на телевізорі", 
-        subtitle: "Смарт-ТВ, Playstation, Xbox, Chromecast, Apple TV та інші пристрої.",
-        icon: <FaTv className="text-lime-400 text-5xl" /> 
-      },
-      { 
-        title: "Завантажуйте й дивіться офлайн", 
-        subtitle: "Легко зберігайте улюблені фільми та серіали на телефон чи планшет.",
-        icon: <FaDownload className="text-lime-400 text-5xl" /> 
-      },
-      { 
-        title: "Дивіться будь-де", 
-        subtitle: "Переглядайте на телефоні, планшеті, ноутбуку або телевізорі без обмежень.",
-        icon: <FaMobileAlt className="text-lime-400 text-5xl" /> 
-      },
-      { 
-        title: "Створюйте профілі для дітей", 
-        subtitle: "Безпечний перегляд для малечі з власними профілями.",
-        icon: <FaChild className="text-lime-400 text-5xl" /> 
-      },
-    ].map((f, i) => (
-      <div
-        key={i}
-        className="bg-gradient-to-b from-lime-600/30 to-lime-900/10 rounded-xl p-6 hover:scale-105 transition-transform shadow-lg"
-      >
-        <div className="flex justify-center mb-4">{f.icon}</div>
-        <h3 className="font-semibold text-lg">{f.title}</h3>
-        <p className="mt-2 text-sm text-gray-300">{f.subtitle}</p>
-      </div>
-    ))}
-  </div>
+      
+<section className="bg-black py-12 px-6">
+  <div className="max-w-6xl mx-auto">
+    <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-12 text-center tracking-wide">
+      Ще більше причин підписатися
+    </h2>
+    <div className="grid md:grid-cols-4 gap-8 text-center">
+      {[
+        { 
+          title: "Дивіться на телевізорі", 
+          subtitle: "Смарт-ТВ, Playstation, Xbox, Chromecast, Apple TV та інші пристрої.",
+          icon: <FaTv className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+        },
+        { 
+          title: "Завантажуйте й дивіться офлайн", 
+          subtitle: "Легко зберігайте улюблені фільми та серіали на телефон чи планшет.",
+          icon: <FaDownload className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+        },
+        { 
+          title: "Дивіться будь-де", 
+          subtitle: "Переглядайте на телефоні, планшеті, ноутбуку або телевізорі без обмежень.",
+          icon: <FaMobileAlt className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+        },
+        { 
+          title: "Створюйте профілі для дітей", 
+          subtitle: "Безпечний перегляд для малечі з власними профілями.",
+          icon: <FaChild className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+        },
+      ].map((f, i) => (
+        <div
+          key={i}
+          className="bg-gradient-to-tr from-lime-700/20 via-lime-600/10 to-lime-900/20 
+                     backdrop-blur-md rounded-sm p-8 hover:scale-110 transition-transform duration-700 
+                     shadow-2xl hover:shadow-3xl "
+        >
+          <div>{f.icon}</div>
+          <h3 className="font-bold text-xl md:text-2xl text-white mb-2 mt-2">{f.title}</h3>
+          <p className="text-gray-300 text-sm md:text-base leading-relaxed">{f.subtitle}</p>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
 
+
       {/* FAQ SECTION */}
-      <section className="bg-black py-12 px-6">
+      
+
+<section className="bg-black py-12 px-6">
   <div className="max-w-6xl mx-auto">
-    <h2 className="text-2xl font-bold mb-6">Поширені запитання</h2>
-    <div className="text-xl space-y-4">
+    <h2 className="text-3xl md:text-2xl font-bold text-white mb-8 tracking-wide">
+      Поширені запитання
+    </h2>
+    <div className="space-y-2">
       {[
         {
           q: "Що таке сервіс?",
@@ -261,15 +271,23 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
       ].map((item, i) => (
         <details
           key={i}
-          className="bg-gradient-to-b from-lime-500/70 to-lime-800/60 p-4 "
+          className="group bg-gradient-to-tr from-lime-700/20 via-lime-600/10 to-lime-900/20 
+                     backdrop-blur-md rounded-sm p-4 
+                     transition-all duration-300 hover:scale-105 shadow-lg"
         >
-          <summary className="cursor-pointer font-semibold">{item.q}</summary>
-          <p className="mt-2 text-sm text-gray-300">{item.a}</p>
+          <summary className="cursor-pointer font-bold text-lg text-white flex justify-between items-center">
+            {item.q}
+            <span className="transition-transform duration-300 group-open:rotate-45 text-lime-400 text-xl">+</span>
+          </summary>
+          <p className="mt-3 text-gray-300 text-sm md:text-base leading-relaxed">
+            {item.a}
+          </p>
         </details>
       ))}
     </div>
   </div>
 </section>
+
 
       {/* FOOTER */}
       <Footer/>

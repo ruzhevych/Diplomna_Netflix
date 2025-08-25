@@ -1,18 +1,22 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { jwtParse } from '../../utils/jwtParse';
 import type { RootState } from '../store';
-import type { IUser, IUserState } from '../../types/user';
+import type { IUser, IUserAuth, IUserState } from '../../types/user';
 import { APP_ENV } from '../../env';
 
 const getUserFromToken = (token: string | null): IUser | null =>
   token ? jwtParse(token) : null;
 
-const getUserAuth = (user: IUser | null) => ({
-  isAdmin: user?.roles.includes('Admin') || false,
-  isUser: user?.roles.includes('User') || false,
-  isAuth: !!user,
-  roles: user?.roles || [],
-});
+const getUserAuth = (user: IUser | null): IUserAuth => {
+    const roles = user?.roles || [];
+    return {
+        isAdmin: roles.includes('Admin'),
+        isUser: roles.includes('User'),
+        isAuth: roles.length > 0,
+        roles: roles
+    };
+}
+
 
 const userInit = (): IUserState => {
   const token = localStorage.getItem(APP_ENV.ACCESS_KEY);
@@ -41,6 +45,7 @@ const userSlice = createSlice({
     logOut: (state) => {
       state.token = null;
       state.user = null;
+      state.refreshToken = null;
       state.auth = getUserAuth(null);
       localStorage.removeItem(APP_ENV.ACCESS_KEY);
     },

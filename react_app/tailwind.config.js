@@ -1,11 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {animation: {
         fadeIn: 'fadeIn 1s ease-in-out',
+        fontFamily: {
+        unbounded: ["Unbounded", "sans-serif"], 
+      },
       },
       keyframes: {
         fadeIn: {
