@@ -9,6 +9,9 @@ import {
   useGetFavoritesQuery,
 } from "../services/favoritesApi";
 import { toast } from "react-toastify";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -70,8 +73,9 @@ const MovieDetailsPage = () => {
   const trailer = videos[0];
 
   return (
-    <div className="bg-black text-white min-h-screen p-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
+    <div className="bg-gradient-to-b from-black via-black/90 to-black text-white min-h-screen pt-10">
+      <Header />
+      <div className="max-w-6xl mt-20 mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
         {/* Poster */}
         <div className="relative w-full md:w-1/3">
           <img
@@ -91,15 +95,19 @@ const MovieDetailsPage = () => {
           </div>
 
           <button
-            onClick={handleFavorite}
-            className={`self-start px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 ${
-              inFavorites
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-2xl"
-            }`}
-          >
-            {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
-          </button>
+          onClick={handleFavorite}
+          className={`
+            flex self-start items-center gap-2 px-6 py-3 rounded-sm font-regular text-lg transition-all duration-300
+            
+            ${inFavorites 
+              ? "bg-gray-800 text-white border-gray-700 hover:bg-gray-700 hover:border-gray-600"
+              : "bg-lime-500 text-white border-lime-600 hover:bg-lime-600 hover:border-lime-700 shadow-lg hover:shadow-2xl"
+            }
+          `}
+        >
+          {inFavorites ? <AiFillHeart className="text-red-500 w-5 h-5" /> : <AiOutlineHeart className="w-5 h-5" />}
+          {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
+        </button>
         </div>
       </div>
 
@@ -117,7 +125,9 @@ const MovieDetailsPage = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
+    
   );
 };
 

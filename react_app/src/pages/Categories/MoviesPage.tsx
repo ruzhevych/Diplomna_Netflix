@@ -13,9 +13,9 @@ export default function MoviesPage() {
   return (
     <div className="bg-black text-white">
       <Header />
-
-      <MediaGrid title="Популярні фільми" fetchData={getPopularMovies}  genres={genres}/>;
-
+      <div className="mt-20">
+        <MediaGrid title="Популярні фільми" fetchData={getPopularMovies}  genres={genres}/>;
+      </div>
       <Footer />
     </div>
   );

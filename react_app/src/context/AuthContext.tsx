@@ -46,8 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setGoogleTempTokenState(storedGoogleTempToken)
     }
 
-    console.log('AuthProvider load tokens:', { accessToken, refreshToken, active, storedGoogleTempToken })
-
     if (accessToken || refreshToken) {
       dispatch(setTokens({
         accessToken: accessToken ?? null,

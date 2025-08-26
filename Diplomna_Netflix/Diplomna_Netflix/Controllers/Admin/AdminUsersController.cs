@@ -8,7 +8,7 @@ namespace Diplomna_Netflix.Controllers.Admin
 {
     [ApiController]
     [Route("api/admin/users")]
-    [Authorize(Policy = "RequireAdminRole")]
+    //[Authorize(Policy = "RequireAdminRole")]
     public class AdminUsersController : ControllerBase
     {
         private readonly IAdminUserService _service;

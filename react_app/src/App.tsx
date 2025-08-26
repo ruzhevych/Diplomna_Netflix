@@ -19,6 +19,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import PlanIntroPage from './pages/PlanIntroPage';
 import ProfileEditPage from './pages/ProfileEditPage';
 import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
+import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
 
 
 const App = () => {
@@ -29,7 +30,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-
+        <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
