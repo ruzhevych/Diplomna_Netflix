@@ -6,6 +6,9 @@ import Footer from "../components/Footer/Footer"
 import { FaTv, FaDownload, FaMobileAlt, FaChild } from "react-icons/fa";
 import { type Movie, type TMDBResponse } from "../types/movie";
 import { getPopularMovies } from "../services/movieApi";
+
+import { GiFilmProjector } from "react-icons/gi";
+import { MdOutlineScreenSearchDesktop } from "react-icons/md";
   
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
@@ -194,43 +197,46 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
       {/* FEATURES SECTION */}
       
-<section className="bg-black py-12 px-6">
+<section className="bg-black py-16 px-6">
   <div className="max-w-6xl mx-auto">
-    <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-12 text-center tracking-wide">
+    <h2 className="text-3xl md:text-2xl font-bold text-white mb-8  tracking-wide">
       Ще більше причин підписатися
     </h2>
     <div className="grid md:grid-cols-4 gap-8 text-center">
       {[
         { 
           title: "Дивіться на телевізорі", 
-          subtitle: "Смарт-ТВ, Playstation, Xbox, Chromecast, Apple TV та інші пристрої.",
-          icon: <FaTv className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+          subtitle: "Smart TV, Playstation, Xbox, Chromecast, Apple TV та інші пристрої.",
+          icon: <GiFilmProjector className="text-lime-500 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
           title: "Завантажуйте й дивіться офлайн", 
-          subtitle: "Легко зберігайте улюблені фільми та серіали на телефон чи планшет.",
-          icon: <FaDownload className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+          subtitle: "Зберігайте улюблені серіали та фільми на телефон чи планшет.",
+          icon: <FaDownload className="text-lime-500 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
           title: "Дивіться будь-де", 
           subtitle: "Переглядайте на телефоні, планшеті, ноутбуку або телевізорі без обмежень.",
-          icon: <FaMobileAlt className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+          icon: <MdOutlineScreenSearchDesktop className="text-lime-400 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
           title: "Створюйте профілі для дітей", 
           subtitle: "Безпечний перегляд для малечі з власними профілями.",
-          icon: <FaChild className="text-lime-400 text-6xl mx-auto mb-4 animate-bounce" /> 
+          icon: <FaChild className="text-lime-400 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
       ].map((f, i) => (
         <div
           key={i}
-          className="bg-gradient-to-tr from-lime-700/20 via-lime-600/10 to-lime-900/20 
-                     backdrop-blur-md rounded-sm p-8 hover:scale-110 transition-transform duration-700 
-                     shadow-2xl hover:shadow-3xl "
+          className="relative overflow-hidden rounded-2xl p-8 
+                     bg-gradient-to-br from-lime-900/30 via-lime-900/20 to-black-900/20
+                     shadow-2xl hover:shadow-3xl transition-transform duration-500 hover:scale-105
+                    backdrop-blur-md"
         >
-          <div>{f.icon}</div>
-          <h3 className="font-bold text-xl md:text-2xl text-white mb-2 mt-2">{f.title}</h3>
+          <div className="relative z-10">{f.icon}</div>
+          <h3 className="font-bold text-xl md:text-2xl text-white mb-2 mt-4">{f.title}</h3>
           <p className="text-gray-300 text-sm md:text-base leading-relaxed">{f.subtitle}</p>
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-lime-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-lime-500/20 rounded-full blur-3xl"></div>
         </div>
       ))}
     </div>
