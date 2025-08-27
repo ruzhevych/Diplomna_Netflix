@@ -16,7 +16,7 @@ export default function AdminDashboardPage() {
   const [deleteUser] = useDeleteUserMutation();
   const [sendMessage] = useSendMessageMutation();
 
-  // modal statex
+  // modal states
   const [isMsgOpen, setMsgOpen] = useState(false);
 
 type SelectedUser = {
