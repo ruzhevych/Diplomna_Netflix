@@ -1,10 +1,8 @@
-using System.Security.Claims;
 using Core.DTOs.AdminDTOs;
 using Core.Interfaces.Admin;
 using Core.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Diplomna_Netflix.Controllers.Admin
 {
@@ -27,19 +25,11 @@ namespace Diplomna_Netflix.Controllers.Admin
         }
 
         [HttpPatch("{id}/block")]
-        public async Task<IActionResult> BlockUser(long id, [FromBody] BlockUserDto dto)
+        public async Task<IActionResult> BlockUser(long id)
         {
-            long? adminId = null;
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                var adminIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-                if (long.TryParse(adminIdStr, out var parsed)) adminId = parsed;
-            }
-
-            await _service.BlockUserAsync(id, dto?.Reason, dto?.DurationDays, adminId);
+            await _service.BlockUserAsync(id);
             return NoContent();
         }
-
 
         [HttpPatch("{id}/unblock")]
         public async Task<IActionResult> UnblockUser(long id)
