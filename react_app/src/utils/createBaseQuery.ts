@@ -34,6 +34,7 @@ export const createBaseQueryWithReauth = (endpoint: string) => {
 
     if (result.error && result.error.status === 401) {
       console.warn('[AUTH] 401 — trying refresh...');
+      
       if (!mutex.isLocked()) {
         const release = await mutex.acquire();
         try {
@@ -52,6 +53,7 @@ export const createBaseQueryWithReauth = (endpoint: string) => {
           } else {
             api.dispatch(logOut());
           }
+          
         } finally {
           release();
         }

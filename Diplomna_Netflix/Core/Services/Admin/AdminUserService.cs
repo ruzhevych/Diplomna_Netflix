@@ -55,22 +55,47 @@ namespace Core.Services.Admin
             return new PagedResult<UserDto>(users, totalCount, page, pageSize);
         }
 
-        public async Task BlockUserAsync(long userId)
+        public async Task BlockUserAsync(long userId, string? reason = null, int? durationDays = null, long? adminId = null)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString())
-                ?? throw new Exception("User not found");
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new Exception("User not found");
 
-            user.LockoutEnd = DateTime.UtcNow.AddYears(100);
+            // Set lockout
+            user.LockoutEnd = durationDays.HasValue ? DateTime.UtcNow.AddDays(durationDays.Value) : DateTime.UtcNow.AddYears(100);
             await _userManager.UpdateAsync(user);
+
+            // Add ban record
+            var ban = new AdminBanEntity
+            {
+                UserId = userId,
+                AdminId = adminId,
+                Reason = reason ?? "No reason provided",
+                StartDate = DateTime.UtcNow,
+                EndDate = durationDays.HasValue ? DateTime.UtcNow.AddDays(durationDays.Value) : (DateTime?)null,
+                IsActive = true
+            };
+
+            _context.AdminBans.Add(ban);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task UnblockUserAsync(long userId)
+        public async Task UnblockUserAsync(long userId, long? adminId = null)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString())
-                ?? throw new Exception("User not found");
-
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new Exception("User not found");
             user.LockoutEnd = null;
             await _userManager.UpdateAsync(user);
+
+            var activeBan = await _context.AdminBans
+                .Where(b => b.UserId == userId && b.IsActive)
+                .OrderByDescending(b => b.StartDate)
+                .FirstOrDefaultAsync();
+
+            if (activeBan != null)
+            {
+                activeBan.IsActive = false;
+                activeBan.EndDate = DateTime.UtcNow;
+                // optionally track adminId who unblocked
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task ChangeUserRoleAsync(long userId, string role)

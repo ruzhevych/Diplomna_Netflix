@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Core.DTOs.UsersDTOs;
 using Core.Interfaces;
+using Data.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Diplomna_Netflix.Controllers.Users
 {
@@ -52,13 +54,29 @@ namespace Diplomna_Netflix.Controllers.Users
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                         User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (userId == null) return Unauthorized();
 
             var user = await _userService.GetByIdAsync(userId);
-            return Ok(user);
+            if (user == null) return NotFound();
 
+            // Get active ban
+            using (var scope = HttpContext.RequestServices.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<NetflixDbContext>();
+                var activeBan = await db.AdminBans.FirstOrDefaultAsync(b => b.UserId.ToString() == userId && b.IsActive);
+                if (activeBan != null)
+                {
+                    return StatusCode(403, new
+                    {
+                        message = "UserBlocked",
+                        reason = activeBan.Reason,
+                        unblockDate = activeBan.EndDate
+                    });
+                }
+            }
+
+            return Ok(user);
         }
     }
 }
