@@ -21,7 +21,7 @@ const LandingPage: React.FC = () => {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.offsetWidth / 4; // ширина одного видимого елемента
+      const scrollAmount = scrollRef.current.offsetWidth / 4; 
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -106,8 +106,17 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
       {/* CURVED DIVIDER */}
       <div className="relative">
-        <div className="absolute -top-10 left-0 w-full h-10 bg-black rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
-      </div>
+  <div
+    className="absolute -top-11 left-0 w-full h-10 
+               bg-gradient-to-r from-lime-500 via-lime-600 to-green-600 
+               rounded-t-[50%] 
+               shadow-[0_-20px_30px_rgba(0,0,0,0.6)]"
+  />
+</div>
+
+      <div className="relative">
+        <div className="absolute -top-10 left-0 w-full h-12 bg-black rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
+      </div> 
 
       {/* POPULAR SECTION */}
       <section className="bg-black py-12 px-6">
@@ -129,24 +138,30 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
         <div
   ref={scrollRef}
-  className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+  className="flex gap-4 overflow-x-auto overflow-y-visible scrollbar-hide scroll-smooth pt-2"
 >
   {movies.map((movie, index) => (
     <div
-      key={movie.id}
-      className="relative min-w-[20%] flex-shrink-0 cursor-pointer group"
-      onClick={() => setSelectedMovie(movie)}
+     key={movie.id}
+  className="relative min-w-[20%] flex-shrink-0 cursor-pointer group
+             rounded-lg transform transition-transform duration-500 hover:scale-105"
+  onClick={() => setSelectedMovie(movie)}
     >
       
-      <div className="absolute -left-3 top-2 z-10 text-white text-6xl font-extrabold drop-shadow-[2px_2px_4px_rgba(0,0,0,0.9)]">
+      <div  className="absolute -left-5 top-2 z-20 text-9xl font-bold text-lime-400
+               drop-shadow-[2px_2px_4px_rgba(0,0,0,0.9)]
+               [text-shadow:_0_0_2px_white,0_0_10px_black]
+               [-webkit-text-stroke:2px_white]">
         {index + 1}
       </div>
       
-      <img
-        src={`${IMG_BASE}${movie.poster_path}`}
-        alt={movie.title || movie.name}
-        className="rounded-lg w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
-      />
+       <div className="rounded-lg overflow-hidden">
+    <img
+      src={`${IMG_BASE}${movie.poster_path}`}
+      alt={movie.title || movie.name}
+      className="w-full h-80 object-cover"
+    />
+  </div>
       
       <p className="mt-2 text-sm text-gray-300 truncate">
         {movie.title || movie.name}

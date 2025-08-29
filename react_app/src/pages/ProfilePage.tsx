@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../utils/getInitials";
+import { useForgotPasswordMutation } from "../services/authApi";
+import { toast } from "react-toastify";
 import type { UserProfile } from "../types/user";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
@@ -14,6 +16,8 @@ import {
   Edit,
 } from "lucide-react";
 import { useGetProfileQuery } from "../services/userApi";
+import ChangePasswordRequest from "../components/ChangePasswordRequest";
+
 
 const tabs = [
   { id: "overview", label: "Огляд", icon: User },
@@ -175,15 +179,19 @@ const ProfilePage = () => {
           )}
 
           {activeTab === "security" && (
-            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
-              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
-                Безпека
-              </h3>
-              <p className="text-gray-400">
-                🔒 Тут будуть налаштування пароля, 2FA і т.д.
-              </p>
-            </section>
-          )}
+        <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg space-y-4">
+          <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 border-b border-gray-700">
+            Безпека
+          </h3>
+
+          <p className="text-gray-400 mb-4">
+            🔒 Керування паролем та безпекою вашого акаунту.
+          </p>
+
+          {/* Зміна пароля через email */}
+          <ChangePasswordRequest email={user?.email || ""} />
+        </section>
+      )}
 
           {activeTab === "devices" && (
             <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
