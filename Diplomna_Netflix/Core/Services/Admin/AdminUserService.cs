@@ -1,3 +1,4 @@
+using Core.DTOs.Admin;
 using Core.DTOs.AdminDTOs;
 using Core.Interfaces;
 using Core.Interfaces.Admin;
@@ -48,29 +49,59 @@ namespace Core.Services.Admin
                         .Where(r => r.UserId == u.Id)
                         .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
                         .FirstOrDefault() ?? "User",
-                    IsBlocked = u.LockoutEnd.HasValue && u.LockoutEnd > DateTime.UtcNow
+                    IsBlocked = u.IsBlocked
                 })
                 .ToListAsync();
 
             return new PagedResult<UserDto>(users, totalCount, page, pageSize);
         }
 
-        public async Task BlockUserAsync(long userId)
+        public async Task BlockUserAsync(BlockUserDto dto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString())
-                ?? throw new Exception("User not found");
+            var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
+            if (user == null) throw new Exception("User not found");
 
-            user.LockoutEnd = DateTime.UtcNow.AddYears(100);
+            user.IsBlocked = true;
+            user.BlockUntil = dto.DurationDays > 0
+                ? DateTime.UtcNow.AddDays(dto.DurationDays)
+                : null;
+
+            var blockHistory = new UserBlockHistoryEntity
+            {
+                UserId = user.Id,
+                AdminId = dto.AdminId,
+                BlockedAt = DateTime.UtcNow,
+                Duration = dto.DurationDays > 0 ? TimeSpan.FromDays(dto.DurationDays) : null,
+                Reason = dto.Reason,
+                IsActive = true
+            };
+
+            _context.UserBlockHistories.Add(blockHistory);
             await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task UnblockUserAsync(long userId)
+        public async Task UnblockUserAsync(long userId, long adminId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString())
-                ?? throw new Exception("User not found");
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new Exception("User not found");
 
-            user.LockoutEnd = null;
+            user.IsBlocked = false;
+            user.BlockUntil = null;
+
+            var lastBlock = await _context.UserBlockHistories
+                .Where(b => b.UserId == userId && b.IsActive)
+                .OrderByDescending(b => b.BlockedAt)
+                .FirstOrDefaultAsync();
+
+            if (lastBlock != null)
+            {
+                lastBlock.IsActive = false;
+                lastBlock.UnblockedAt = DateTime.UtcNow;
+            }
+
             await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ChangeUserRoleAsync(long userId, string role)

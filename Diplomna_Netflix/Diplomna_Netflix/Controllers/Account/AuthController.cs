@@ -53,6 +53,10 @@ namespace Diplomna_Netflix.Controllers.Account
                 var response = await authService.GoogleLoginAsync(dto);
                 var refreshToken = response.RefreshToken;
 
+                if (!string.IsNullOrEmpty(response.RefreshToken))
+                {
+                    _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
+                }
                 // Зберігаємо refresh токен у cookie
                 _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
                 return Ok(response);

@@ -11,6 +11,11 @@ namespace Data.Entities.Identity
         public DateTime? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? ProfilePictureUrl { get; set; }
+        public bool IsBlocked { get; set; } = false;
+        public DateTime? BlockUntil { get; set; }
+
+        public ICollection<UserBlockHistoryEntity> BlockHistory { get; set; } = new List<UserBlockHistoryEntity>();
+
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
         public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; } = new List<SubscriptionEntity>();
         public virtual ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = new List<RefreshTokenEntity>();
