@@ -13,7 +13,8 @@ email: string;
 fullName: string;
 firstName?: string;
 lastName?: string;
-avatarUrl?: string;
+// avatarUrl?: string;
+profilePictureUrl?: string;
 subscriptionType: string;
 }
 
@@ -28,6 +29,8 @@ export interface IUserState {
   user: IUser | null;
   token: string | null;
   auth: IUserAuth;
+  refreshToken?: string | null;
+  isLoggingOut?: boolean;
 }
 
 export interface IUserDTO {

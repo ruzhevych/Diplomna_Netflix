@@ -12,5 +12,6 @@ namespace Core.Interfaces.Admin
         Task ChangeUserRoleAsync(long userId, string role);
         Task DeleteUserAsync(long userId);
         Task<bool> SendMessageAsync(SendMessageDto dto);
+        
     }
 }

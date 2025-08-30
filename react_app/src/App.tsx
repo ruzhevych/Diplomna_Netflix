@@ -17,17 +17,24 @@ import CartoonsPage from './pages/Categories/CartoonsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PlanIntroPage from './pages/PlanIntroPage';
-
+import ProfileEditPage from './pages/ProfileEditPage';
+import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
+import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
+import AdminRoute from "./components/Admin/AdminRoute.tsx"
+import BlockedPage from "./pages/BlockedPage"
 
 const App = () => {
   return (
     
     <Routes>
-      
+        <Route path="/blocked" element={<BlockedPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-
+        <Route path="/admin" element={<AdminRoute>
+          <AdminDashboardPage />
+          </AdminRoute>} 
+          />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
@@ -38,7 +45,10 @@ const App = () => {
         <Route path="/anime" element={<AnimePage />} />
         <Route path="/tvseries" element={<SeriesPage />} /> 
         <Route path="/cartoons" element={<CartoonsPage />} />
-        <Route path="/newandpopular" element={<NewPage />} /> 
+        <Route path="/newandpopular" element={<NewPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+
+        <Route path="/profile/edit" element={<ProfileEditPage />} /> 
 
         <Route
           path="/home"

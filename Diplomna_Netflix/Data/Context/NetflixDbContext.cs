@@ -21,13 +21,14 @@ namespace Data.Context
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
         public DbSet<AdminMessageEntity> AdminMessages { get; set; }
-
+        public DbSet<FavoriteEntity> Favorites { get; set; }
         public DbSet<MediaItem> MediaItems { get; set; }
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }
         public DbSet<SeriesEntity> Series { get; set; }
         public DbSet<SeasonEntity> Seasons { get; set; }
         public DbSet<UserBlockHistoryEntity> UserBlockHistories { get; set; }
+        //public DbSet<AdminBanEntity> AdminBans { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

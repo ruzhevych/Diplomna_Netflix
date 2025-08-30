@@ -53,7 +53,7 @@ const HeroBanner = () => {
           </button>
           <button
             onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-gray-300/30 hover:bg-gray-400/40 text-white px-8 py-3 rounded-lg w-50 text-lg font-semibold transition"
+            className="bg-transparent border border-lime-600me hover:bg-gray-400/40 text-white px-8 py-3 rounded-sm w-50 text-lg font-semibold  transition"
           >
             About
           </button>

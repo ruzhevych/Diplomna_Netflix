@@ -10,6 +10,7 @@ export const createBaseQuery = (endpoint: string) => {
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).user.token;
+      console.log("[API] sending token:", {token});
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
@@ -33,16 +34,18 @@ export const createBaseQueryWithReauth = (endpoint: string) => {
 
     if (result.error && result.error.status === 401) {
       console.warn('[AUTH] 401 — trying refresh...');
+      
       if (!mutex.isLocked()) {
         const release = await mutex.acquire();
         try {
-          const refreshQuery = createBaseQuery('auth');
+          const refreshQuery = createBaseQuery('Auth');
           const refreshResult = await refreshQuery(
-            { url: 'refresh', method: 'POST' },
+            { url: 'refresh-token', method: 'POST' },
             api,
             extraOptions
           );
-
+          console.log("[AUTH] Refresh response:", refreshResult);
+          console.log("[AUTH] Refresh response ✅");
           if ((refreshResult.data as { accessToken?: string })?.accessToken) {
             const newToken = (refreshResult.data as { accessToken: string }).accessToken;
             api.dispatch(setCredentials({ token: newToken }));
@@ -50,6 +53,7 @@ export const createBaseQueryWithReauth = (endpoint: string) => {
           } else {
             api.dispatch(logOut());
           }
+          
         } finally {
           release();
         }

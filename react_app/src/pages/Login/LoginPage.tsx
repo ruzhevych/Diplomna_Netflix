@@ -84,7 +84,7 @@ const LoginPage = () => {
             <input
               type="email"
               placeholder="Email or mobile number"
-              className="w-full p-3 rounded bg-transparent border border-gray-500 text-white"
+              className="w-full p-3 rounded-sm bg-black/40 border border-gray-500 text-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -94,7 +94,7 @@ const LoginPage = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full p-3 rounded-sm bg-transparent border border-gray-500 text-white  "
+                className="w-full p-3 rounded-sm bg-black/40 border border-gray-500 text-white  "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
