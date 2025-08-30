@@ -27,6 +27,7 @@ namespace Data.Context
         public DbSet<MovieEntity> Movies { get; set; }
         public DbSet<SeriesEntity> Series { get; set; }
         public DbSet<SeasonEntity> Seasons { get; set; }
+        //public DbSet<AdminBanEntity> AdminBans { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

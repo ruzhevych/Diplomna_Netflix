@@ -91,6 +91,13 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    getMe: builder.query<IAuthResponse, void>({
+      query: () => ({
+        url: '/me',
+        method: 'GET',
+      }),
+      providesTags: ['AuthUser'],
+    }),
 
   }),
 });
@@ -102,5 +109,6 @@ export const {
   useGoogleLoginMutation, 
   useForgotPasswordMutation,
   useResetPasswordMutation,
-  useGoogleRegisterMutation
+  useGoogleRegisterMutation,
+  useGetMeQuery,
 } = authApi;

@@ -20,17 +20,21 @@ import PlanIntroPage from './pages/PlanIntroPage';
 import ProfileEditPage from './pages/ProfileEditPage';
 import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
 import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
-
+import AdminRoute from "./components/Admin/AdminRoute.tsx"
+import BlockedPage from "./pages/BlockedPage"
 
 const App = () => {
   return (
     
     <Routes>
-      
+        <Route path="/blocked" element={<BlockedPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminDashboardPage />} />
+        <Route path="/admin" element={<AdminRoute>
+          <AdminDashboardPage />
+          </AdminRoute>} 
+          />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
