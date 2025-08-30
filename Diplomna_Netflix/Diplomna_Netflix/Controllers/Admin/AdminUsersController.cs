@@ -1,4 +1,5 @@
 using Core.DTOs.Admin;
+using Core.DTOs.AdminDTOs;
 using Core.Interfaces.Admin;
 using Core.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -24,18 +25,18 @@ namespace Diplomna_Netflix.Controllers.Admin
             return Ok(await _service.GetUsersAsync(page, pageSize, search));
         }
 
-        [HttpPatch("{id}/block")]
-        public async Task<IActionResult> BlockUser(long id)
+        [HttpPatch("block")]
+        public async Task<IActionResult> BlockUser([FromBody] BlockUserDto dto)
         {
-            await _service.BlockUserAsync(id);
-            return NoContent();
+            await _service.BlockUserAsync(dto);
+            return Ok(new { message = "User blocked successfully" });
         }
 
-        [HttpPatch("{id}/unblock")]
-        public async Task<IActionResult> UnblockUser(long id)
+        [HttpPatch("unblock")]
+        public async Task<IActionResult> UnblockUser(long userId, [FromQuery] long adminId)
         {
-            await _service.UnblockUserAsync(id);
-            return NoContent();
+            await _service.UnblockUserAsync(userId, adminId);
+            return Ok(new { message = "User unblocked successfully" });
         }
 
         [HttpPatch("{id}/role")]

@@ -256,16 +256,16 @@ public class AuthService : IAuthService
     
     private async Task<string> CreateRefreshToken(long userId)
     {
-        var refeshToken = _jwtService.GenerateRefreshToken();
+        var refreshToken = _jwtService.GenerateRefreshToken();
         var refreshTokenEntity = new RefreshTokenEntity
         {
-            Token = refeshToken,
+            Token = refreshToken,
             UserId = userId,
             Expires = DateTime.UtcNow.AddDays(_jwtService.GetRefreshTokenLiveTime())
         };
         _dbContext.RefreshTokens.Add(refreshTokenEntity);
         await _dbContext.SaveChangesAsync();
-        return refeshToken;
+        return refreshToken;
     }
 
 }
