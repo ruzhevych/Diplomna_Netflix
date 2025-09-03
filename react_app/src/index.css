@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "@fontsource/unbounded";
 
 /* 
 BREND COLORS
@@ -9,6 +10,7 @@ GRAY - #191716
 LIGHT GRAY - #3D3B3A
 LIME - #C4FF00 
 */
+
 
 .overlay-movie:hover{
    opacity:100%;
@@ -26,7 +28,7 @@ body {
   margin: 0;
   background-color: #191716;
   color: white;
-  font-family: Arial, sans-serif;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .landing-page {

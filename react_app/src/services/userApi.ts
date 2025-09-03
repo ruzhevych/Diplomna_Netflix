@@ -1,12 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../utils/createBaseQuery';
-import type { IUserCreateDTO, IUserDTO } from '../types/user';
+import type { IUserCreateDTO, IUserDTO, UserProfile } from '../types/user';
 import type { IAuthResponse } from '../types/auth';
 import { handleAuthQueryStarted } from '../utils/handleAuthQueryStarted';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: createBaseQueryWithReauth('users'),
+  baseQuery: createBaseQueryWithReauth('Users'),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
 
@@ -40,15 +40,25 @@ export const userApi = createApi({
     }),
 
     // Оновити користувача (наприклад, фото профілю)
-    updateUser: builder.mutation<IAuthResponse, FormData>({
-      query: (formData) => ({
-        url: '',
-        method: 'PUT',
-        body: formData,
-      }),
-      onQueryStarted: handleAuthQueryStarted,
-      invalidatesTags: ['Users'],
+    updateUser: builder.mutation<void, FormData>({
+      query: (formData) => {
+        const id = formData.get("Id");
+        return {
+          url: `/${id}`,   // ✅ обов’язково з ID
+          method: "PUT",
+          body: formData,
+        };
+      },
     }),
+          
+    getProfile: builder.query<UserProfile, void>({
+      query: () => ({
+        url: '/profile',
+        method: 'GET',
+      }),
+      providesTags: ['Users'],
+    }),
+
 
     // Видалити користувача за ID
     deleteUser: builder.mutation<void, number>({
@@ -67,4 +77,5 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useGetProfileQuery,
 } = userApi;

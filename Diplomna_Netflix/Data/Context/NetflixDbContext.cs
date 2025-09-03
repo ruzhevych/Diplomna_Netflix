@@ -20,11 +20,15 @@ namespace Data.Context
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<SubscriptionEntity> Subscriptions { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+        public DbSet<AdminMessageEntity> AdminMessages { get; set; }
+        public DbSet<FavoriteEntity> Favorites { get; set; }
         public DbSet<MediaItem> MediaItems { get; set; }
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }
         public DbSet<SeriesEntity> Series { get; set; }
         public DbSet<SeasonEntity> Seasons { get; set; }
+        public DbSet<UserBlockHistoryEntity> UserBlockHistories { get; set; }
+        //public DbSet<AdminBanEntity> AdminBans { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -72,6 +76,19 @@ namespace Data.Context
                     .WithMany(u => u.AdminMessages)
                     .HasForeignKey(m => m.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+            
+            builder.Entity<UserBlockHistoryEntity>(entity =>
+            {
+                entity.HasOne(b => b.User)
+                    .WithMany(u => u.BlockHistory)
+                    .HasForeignKey(b => b.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(b => b.Admin)
+                    .WithMany()
+                    .HasForeignKey(b => b.AdminId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

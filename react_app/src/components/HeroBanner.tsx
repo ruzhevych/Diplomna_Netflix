@@ -34,8 +34,8 @@ const HeroBanner = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent " />
 
       
-      <div className="absolute bottom-48 left-14 max-w-2xl text-white ">
-        <h1 className="text-5xl font-bold leading-tight drop-shadow-lg">
+      <div className="absolute bottom-36 left-14 max-w-[600px] text-white ">
+        <h1 className="text-4xl font-bold leading-tight drop-shadow-lg">
           {movie.title || movie.name}
         </h1>
 
@@ -53,7 +53,7 @@ const HeroBanner = () => {
           </button>
           <button
             onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-gray-300/30 hover:bg-gray-400/40 text-white px-8 py-3 rounded-lg w-50 text-lg font-semibold transition"
+            className="bg-transparent border border-lime-600me hover:bg-gray-400/40 text-white px-8 py-3 rounded-sm w-50 text-lg font-semibold  transition"
           >
             About
           </button>

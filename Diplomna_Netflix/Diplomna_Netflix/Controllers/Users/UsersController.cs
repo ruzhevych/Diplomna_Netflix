@@ -19,10 +19,6 @@ namespace Diplomna_Netflix.Controllers.Users
             _userService = userService;
         }
 
-        // [HttpGet]
-        // public async Task<ActionResult<List<UserDto>>> GetAll() =>
-        //     Ok(await _userService.GetAllAsync());
-
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(string id)
         {
@@ -30,21 +26,15 @@ namespace Diplomna_Netflix.Controllers.Users
             return user == null ? NotFound() : Ok(user);
         }
 
-        // [HttpPost]
-        // public async Task<IActionResult> Create(UserCreateDto dto)
-        // {
-        //     await _userService.CreateUserAsync(dto);
-        //     return Ok();
-        // }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromForm] UserUpdateDto dto)
+        public async Task<IActionResult> Update(string id, [FromForm] UserUpdateDto dto)
         {
+            dto.Id = id; // ïðîáðîñèìî id ç ðîóòà â DTO
             await _userService.UpdateUserAsync(dto);
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             await _userService.DeleteUserAsync(id);

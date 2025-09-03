@@ -1,23 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import type { Movie } from '../types/movie';
-import type { Video, VideosResponse } from '../services/movieApi';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import type { Movie } from "../types/movie";
+import { type Video } from "../services/movieApi";
+import { getMovieDetails, getMovieVideos } from "../services/movieApi";
 import {
-  getMovieDetails,
-  getMovieVideos
-} from '../services/movieApi';
-import {
-  addToWatchlist,
-  removeFromWatchlist,
-  isInWatchlist
-} from '../utils/watchlist';
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+  useGetFavoritesQuery,
+} from "../services/favoritesApi";
+import { toast } from "react-toastify";
+import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const movieId = Number(id);
+
   const [movie, setMovie] = useState<Movie | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [inList, setInList] = useState(false);
+
+  const { data: favorites } = useGetFavoritesQuery();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
+  const [inFavorites, setInFavorites] = useState(false);
 
   useEffect(() => {
     if (!movieId) return;
@@ -26,60 +32,102 @@ const MovieDetailsPage = () => {
         const details = await getMovieDetails(movieId);
         setMovie(details);
         const vids = await getMovieVideos(movieId);
-        setVideos(vids.results.filter(v => v.site === 'YouTube' && v.type === 'Trailer'));
-        setInList(isInWatchlist(movieId));
+        setVideos(
+          vids.results.filter(
+            (v) => v.site === "YouTube" && v.type === "Trailer"
+          )
+        );
       } catch (e) {
         console.error(e);
       }
     })();
   }, [movieId]);
 
-  const handleWatchlist = () => {
-    if (inList) {
-      removeFromWatchlist(movieId);
-      setInList(false);
-    } else {
-      addToWatchlist(movieId);
-      setInList(true);
+  useEffect(() => {
+    if (favorites) {
+      const found = favorites.some((f) => f.contentId === movieId);
+      setInFavorites(found);
+    }
+  }, [favorites, movieId]);
+
+  const handleFavorite = async () => {
+    try {
+      if (inFavorites) {
+        await removeFavorite(movieId).unwrap();
+        setInFavorites(false);
+        toast.info("Видалено з улюбленого ❌");
+      } else {
+        await addFavorite(movieId).unwrap();
+        setInFavorites(true);
+        toast.success("Додано в улюблене ❤️");
+      }
+    } catch (err) {
+      toast.error("Помилка з улюбленим 😢");
     }
   };
 
-  if (!movie) return <p className="text-white text-center mt-10">Завантаження...</p>;
+  if (!movie)
+    return <p className="text-white text-center mt-10 animate-fadeIn">Завантаження...</p>;
 
   const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
   const trailer = videos[0];
 
   return (
-    <div className="bg-black text-white min-h-screen p-6">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-6">
-        <img src={posterUrl} alt={movie.title || movie.name} className="rounded-lg w-full md:w-1/3" />
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold mb-2">{movie.title || movie.name}</h1>
-          <p className="text-gray-400 mb-4">{movie.release_date || movie.first_air_date}</p>
-          <p className="mb-6">{movie.overview}</p>
+    <div className="bg-gradient-to-b from-black via-black/90 to-black text-white min-h-screen pt-10">
+      <Header />
+      <div className="max-w-6xl mt-20 mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
+        {/* Poster */}
+        <div className="relative w-full md:w-1/3">
+          <img
+            src={posterUrl}
+            alt={movie.title || movie.name}
+            className="rounded-2xl shadow-2xl w-full transform hover:scale-105 transition duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-2xl"></div>
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <h1 className="text-5xl font-extrabold mb-4 tracking-wide">{movie.title || movie.name}</h1>
+            <p className="text-gray-400 mb-6">{movie.release_date || movie.first_air_date}</p>
+            <p className="text-gray-300 mb-8 leading-relaxed">{movie.overview}</p>
+          </div>
+
           <button
-            onClick={handleWatchlist}
-            className={`px-4 py-2 rounded ${inList ? 'bg-gray-700' : 'bg-red-600 hover:bg-red-700'}`}
-          >
-            {inList ? 'Видалити з переглянуто' : 'Додати в список на потім'}
-          </button>
+          onClick={handleFavorite}
+          className={`
+            flex self-start items-center gap-2 px-6 py-3 rounded-sm font-regular text-lg transition-all duration-300
+            
+            ${inFavorites 
+              ? "bg-gray-800 text-white border-gray-700 hover:bg-gray-700 hover:border-gray-600"
+              : "bg-lime-500 text-white border-lime-600 hover:bg-lime-600 hover:border-lime-700 shadow-lg hover:shadow-2xl"
+            }
+          `}
+        >
+          {inFavorites ? <AiFillHeart className="text-red-500 w-5 h-5" /> : <AiOutlineHeart className="w-5 h-5" />}
+          {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
+        </button>
         </div>
       </div>
 
+      {/* Trailer */}
       {trailer && (
-        <div className="mt-10 max-w-5xl mx-auto">
-          <h2 className="text-2xl mb-4">Трейлер</h2>
-          <div className="aspect-video">
+        <div className="mt-16 max-w-6xl mx-auto animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Трейлер</h2>
+          <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
               title={trailer.name}
               allowFullScreen
-              className="w-full h-full rounded-lg"
+              className="w-full h-full"
             />
           </div>
         </div>
       )}
+      <Footer />
     </div>
+    
   );
 };
 

@@ -20,13 +20,13 @@ const Header = () => {
     }
   };
 
-  // Хедер ховається при прокрутці вниз, з'являється при прокрутці вгору
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > lastScrollY.current) {
-        setShowHeader(false); // скрол вниз — ховати
+        setShowHeader(false); 
       } else {
-        setShowHeader(true); // скрол вгору — показати
+        setShowHeader(true); 
       }
       lastScrollY.current = window.scrollY;
     };
@@ -42,11 +42,12 @@ const Header = () => {
     { path: "/anime", label: "Anime" },
     { path: "/cartoons", label: "Cartoons" },
     { path: "/newandpopular", label: "New & Popular" },
+    { path: "/favorites", label: "Favorites" },
   ];
 
   return (
     <header
-      className={`fixed top-0 w-full bg-black/90 backdrop-blur-md z-20 transition-transform duration-300 ${
+      className={`fixed top-0 w-full bg-black/95 backdrop-blur-md z-20 transition-transform duration-300 ${
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >

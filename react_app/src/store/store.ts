@@ -4,16 +4,20 @@ import { userApi } from '../services/userApi'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import authReducer from './slices/authSlice'
 import userReducer from './slices/userSlice';
+import {favoritesApi} from "../services/favoritesApi.ts";
+import { adminApi } from "../services/adminApi";
 
 export const store = configureStore({
   reducer: {
+    [adminApi.reducerPath]: adminApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     auth: authReducer,
     [userApi.reducerPath]: userApi.reducer,
     user: userReducer,
+    [favoritesApi.reducerPath]: favoritesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, userApi.middleware),
+    getDefaultMiddleware().concat(authApi.middleware, userApi.middleware, adminApi.middleware, favoritesApi.middleware),
 })
 
 setupListeners(store.dispatch)

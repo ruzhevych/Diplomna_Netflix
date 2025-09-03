@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { Movie, TMDBResponse } from '../types/movie';
+import Header from '../components/Header/Header';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -33,6 +34,7 @@ const SearchPage = () => {
 
   return (
     <div className="pt-20 bg-black min-h-screen text-white">
+      <Header />
       <div className="container mx-auto px-6">
         <h2 className="text-2xl font-semibold mb-4">Результати пошуку: “{query}”</h2>
         {loading && <p>Завантаження...</p>}
