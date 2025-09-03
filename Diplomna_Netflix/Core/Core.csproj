@@ -21,15 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Interfaces\ICommentService.cs" />
-    <Compile Remove="Services\CommentService.cs" />
     <Compile Remove="Mappers\CategoryProfile.cs" />
-    <Compile Remove="DTOs\CommentDTOs\CommentUpdateDto.cs" />
-    <Compile Remove="DTOs\CommentDTOs\CommentCreateDto.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTOs\CommentDTOs\" />
   </ItemGroup>
 
 </Project>

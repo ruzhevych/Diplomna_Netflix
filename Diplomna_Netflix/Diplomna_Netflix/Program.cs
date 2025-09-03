@@ -2,11 +2,13 @@ using System.Text;
 using Core.Interfaces;
 using Core.Interfaces.Admin;
 using Core.Interfaces.Core.Interfaces;
+using Core.Interfaces.History;
 using Core.Mappers;
 using Core.Options;
 using Core.Repositories;
 using Core.Services;
 using Core.Services.Admin;
+using Core.Services.History;
 using Core.Validators.Authorization;
 using Core.Validators.Subscriptions;
 using Data.Context;
@@ -47,6 +49,8 @@ builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IMovieHistoryService, MovieHistoryService>();
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
