@@ -50,13 +50,13 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
           <img src={logo} alt="Logo" className="w-32 md:w-40" />
           <div className="flex items-center gap-4">
-            <select className="bg-black/70  px-3 py-1 rounded text-sm">
+            {/* <select className="bg-black/70  px-3 py-1 rounded text-sm">
               <option value="ua">Українська</option>
               <option value="en">English</option>
-            </select>
+            </select> */}
             <Link to="/login">
-              <button className="bg-lime-500 px-4 py-2 rounded text-white font-semibold hover:bg-lime-400">
-                Увійти
+              <button className="bg-lime-500/80 px-4 py-2 rounded-sm text-white font-semibold hover:bg-lime-400">
+                Log In
               </button>
             </Link>
           </div>
@@ -86,7 +86,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
             Готові до перегляду? Введіть адресу електронної пошти, щоб оформити
             або поновити підписку.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
             <input
               type="email"
               placeholder="Адреса електронної пошти"
@@ -96,7 +96,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
             />
             <button
               onClick={() => navigate("/register")}
-              className="bg-lime-500 px-6 py-3  font-bold text-lg hover:bg-lime-400 transition"
+              className="bg-lime-500/80 px-6 py-3 rounded-sm font-bold text-lg hover:bg-lime-400 transition"
             >
               Почати
             </button>
