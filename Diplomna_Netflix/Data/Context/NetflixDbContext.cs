@@ -29,6 +29,8 @@ namespace Data.Context
         public DbSet<SeasonEntity> Seasons { get; set; }
         public DbSet<UserBlockHistoryEntity> UserBlockHistories { get; set; }
         //public DbSet<AdminBanEntity> AdminBans { get; set; }
+        public DbSet<CommentEntity> Comments { get; set; }
+        public DbSet<HistoryEntity> History { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
