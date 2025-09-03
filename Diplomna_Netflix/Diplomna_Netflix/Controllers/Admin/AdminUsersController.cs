@@ -1,4 +1,4 @@
-using Core.DTOs.Admin;
+using Core.DTOs.AdminDTOs;
 using Core.Interfaces.Admin;
 using Core.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ namespace Diplomna_Netflix.Controllers.Admin
 {
     [ApiController]
     [Route("api/admin/users")]
-    [Authorize(Policy = "RequireAdminRole")]
+    //[Authorize(Policy = "RequireAdminRole")]
     public class AdminUsersController : ControllerBase
     {
         private readonly IAdminUserService _service;
