@@ -1,4 +1,4 @@
-using Core.Interfaces;
+using Core.Interfaces.Cookies;
 
 namespace Diplomna_Netflix.ServiceExtensions;
 

@@ -1,15 +1,14 @@
 using Core.DTOs.AuthorizationDTOs;
 using FluentValidation;
 
-namespace Core.Validators.Authorization
+namespace Core.Validators.Authorization;
+
+public class ResetPasswordDtoValidator : AbstractValidator<ResetPasswordDto>
 {
-    public class ResetPasswordDtoValidator : AbstractValidator<ResetPasswordDto>
+    public ResetPasswordDtoValidator()
     {
-        public ResetPasswordDtoValidator()
-        {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Token).NotEmpty();
-            RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6);
-        }
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Token).NotEmpty();
+        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6);
     }
 }

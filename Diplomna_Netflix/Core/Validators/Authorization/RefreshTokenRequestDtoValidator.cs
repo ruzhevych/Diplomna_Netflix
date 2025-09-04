@@ -1,13 +1,12 @@
 using Core.Models.Authentication;
 using FluentValidation;
 
-namespace Core.Validators.Authorization
+namespace Core.Validators.Authorization;
+
+public class RefreshTokenRequestDtoValidator : AbstractValidator<RefreshTokenRequest>
 {
-    public class RefreshTokenRequestDtoValidator : AbstractValidator<RefreshTokenRequest>
+    public RefreshTokenRequestDtoValidator()
     {
-        public RefreshTokenRequestDtoValidator()
-        {
-            RuleFor(x => x.RefreshToken).NotEmpty();
-        }
+        RuleFor(x => x.RefreshToken).NotEmpty();
     }
 }
