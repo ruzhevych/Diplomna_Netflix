@@ -1,14 +1,12 @@
 using System.Security.Claims;
 using Core.DTOs.ContentDTOs;
-using Core.Interfaces;
 using Core.Interfaces.History;
-using Data.Context;
-using Data.Entities;
+using Core.Interfaces.Repository;
+using Data.Entities.History;
 using Data.Entities.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace Core.Services.History;
 
@@ -16,22 +14,19 @@ public class MovieHistoryService : IMovieHistoryService
 {
     private readonly UserManager<UserEntity> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IRepository<HistoryEntity> _historyRepository;
-    private readonly NetflixDbContext _context;
+    private readonly IRepository<HistoryEntity> _historyRepo;
 
     public MovieHistoryService(
         UserManager<UserEntity> userManager,
         IHttpContextAccessor httpContextAccessor,
-        IRepository<HistoryEntity> historyRepository,
-        NetflixDbContext context
+        IRepository<HistoryEntity> historyRepo
     )
     {
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
-        _historyRepository = historyRepository;
-        _context = context;
+        _historyRepo = historyRepo;
     }
-    
+
     private async Task<UserEntity> GetCurrentUserAsync()
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -42,7 +37,7 @@ public class MovieHistoryService : IMovieHistoryService
 
         return user;
     }
-    
+
     public async Task AddToHistoryAsync(int movieId, string mediaType)
     {
         var user = await GetCurrentUserAsync();
@@ -52,13 +47,15 @@ public class MovieHistoryService : IMovieHistoryService
             MovieId = movieId,
             MediaType = mediaType
         };
-        _context.History.Add(entry);
-        await _context.SaveChangesAsync();
+
+        await _historyRepo.AddAsync(entry);
+        await _historyRepo.SaveChangesAsync();
     }
 
     public async Task<List<MediaItemDto>> GetUserHistoryAsync(string userId)
     {
-        return await _context.History
+        // Використовуємо Query() із репозиторію, щоб уникнути проблем з контекстом
+        return await _historyRepo.Query()
             .Where(h => h.UserId.ToString() == userId)
             .OrderByDescending(h => h.ViewedAt)
             .Select(h => new MediaItemDto
@@ -68,30 +65,29 @@ public class MovieHistoryService : IMovieHistoryService
             })
             .ToListAsync();
     }
-    
+
     public async Task<bool> DeleteFromHistoryAsync(int movieId)
     {
         var user = await GetCurrentUserAsync();
-        var history = await _context.History
+        var history = await _historyRepo.Query()
             .FirstOrDefaultAsync(h => h.MovieId == movieId && h.UserId == user.Id);
 
         if (history == null)
             return false;
 
-        _context.History.Remove(history);
-        await _context.SaveChangesAsync();
+        _historyRepo.Delete(history);
+        await _historyRepo.SaveChangesAsync();
         return true;
     }
 
     public async Task<int> ClearHistoryAsync()
     {
         var user = await GetCurrentUserAsync();
-        var items = _context.History.Where(h => h.UserId == user.Id);
+        var items = await _historyRepo.Query()
+            .Where(h => h.UserId == user.Id)
+            .ToListAsync();
 
-        _context.History.RemoveRange(items);
-        var deleted = await _context.SaveChangesAsync();
-        return deleted;
+        _historyRepo.RemoveRange(items);
+        return await _historyRepo.SaveChangesAsync();
     }
-
-
 }

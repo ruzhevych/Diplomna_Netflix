@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc.Formatters;
-
 namespace Core.DTOs.ContentDTOs;
 
 public class MediaItemDto

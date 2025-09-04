@@ -1,10 +1,9 @@
-namespace Core.DTOs.SubscriptionsDTOs
+namespace Core.DTOs.SubscriptionsDTOs;
+
+public class SubscriptionUpdateDto
 {
-    public class SubscriptionUpdateDto
-    {
-        public string Type { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public bool IsActive { get; set; }
-    }
+    public string Type { get; set; } = string.Empty;
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsActive { get; set; }
 }

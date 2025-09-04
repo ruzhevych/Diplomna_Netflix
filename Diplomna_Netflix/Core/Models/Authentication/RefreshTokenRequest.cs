@@ -1,7 +1,6 @@
-namespace Core.Models.Authentication
+namespace Core.Models.Authentication;
+
+public class RefreshTokenRequest
 {
-    public class RefreshTokenRequest
-    {
-        public string RefreshToken { get; set; } = null!;
-    }
+    public string RefreshToken { get; set; } = null!;
 }

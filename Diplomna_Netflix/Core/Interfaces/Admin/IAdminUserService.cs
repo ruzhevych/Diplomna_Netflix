@@ -1,16 +1,15 @@
 using Core.DTOs.AdminDTOs;
 using Core.Models;
 
-namespace Core.Interfaces.Admin
+namespace Core.Interfaces.Admin;
+
+public interface IAdminUserService
 {
-    public interface IAdminUserService
-    {
-        Task<PagedResult<UserDto>> GetUsersAsync(int page, int pageSize, string? search);
-        Task BlockUserAsync(BlockUserDto dto);
-        Task UnblockUserAsync(long userId, long adminId);
-        Task ChangeUserRoleAsync(long userId, string role);
-        Task DeleteUserAsync(long userId);
-        Task<bool> SendMessageAsync(SendMessageDto dto);
+    Task<PagedResult<UserDto>> GetUsersAsync(int page, int pageSize, string? search);
+    Task BlockUserAsync(BlockUserDto dto);
+    Task UnblockUserAsync(long userId, long adminId);
+    Task ChangeUserRoleAsync(long userId, string role);
+    Task DeleteUserAsync(long userId);
+    Task<bool> SendMessageAsync(SendMessageDto dto);
         
-    }
 }
