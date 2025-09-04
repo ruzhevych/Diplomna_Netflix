@@ -10,6 +10,7 @@ import {
   Users,
   CreditCard,
   LogOut,
+  Settings,
   Edit,
   History,
   Book,
@@ -26,7 +27,8 @@ const tabs = [
   { id: "subscription", label: "Підписка", icon: CreditCard },
   { id: "security", label: "Безпека", icon: Shield },
   { id: "devices", label: "Пристрої", icon: MonitorSmartphone },
-  // { id: "profiles", label: "Профілі", icon: Users },
+  
+   { id: "admin", label: "Admin Panel", icon: Users },
 ];
 
 const ProfilePage = () => {
@@ -39,41 +41,13 @@ const ProfilePage = () => {
   const [userAuth] = useState<IUserAuth | null>(null);
   
 
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     const token = localStorage.getItem("accessToken");
-  //     if (!token) {
-  //       navigate("/login");
-  //       return;
-  //     }
-
-  //     try {
-  //       const res = await fetch("http://localhost:5170/api/Users/profile", {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-        
-
-  //       if (!res.ok) throw new Error("Помилка при завантаженні профілю");
-
-  //       const data = await res.json();
-  //       setUser({
-  //         ...data,
-  //         avatarUrl: data.profilePictureUrl,
-  //       });
-  //     } catch (err: any) {
-  //       setError(err.message);
-  //     }
-  //   };
-
-  //   fetchProfile();
-  // }, []);
 
   if (error)
     return <p className="text-red-500 text-center mt-10">{(error as any).data?.message || "Помилка"}</p>;
   if (isLoading)
     return <p className="text-center mt-10 bg-gradient-to-b ">Downloading...</p>;
+
+    const isAdmin = userAuth?.roles?.includes("Admin");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white flex flex-col">
@@ -101,6 +75,7 @@ const ProfilePage = () => {
                 </li>
               );
             })}
+            
           </ul>
         </aside>
 
@@ -124,8 +99,7 @@ const ProfilePage = () => {
               ) : (
                 <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl">
                   {getInitials(user?.fullName || "")}
-                </div>
-                
+                </div>   
       )}
 
       {/* Основна інформація */}
@@ -178,23 +152,66 @@ const ProfilePage = () => {
   
     )}
           {activeTab === "subscription" && (
-            <section className="backdrop-blur-md rounded-sm p-6 shadow-lg ">
-              <h3 className="text-3xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
-                Subscription
-              </h3>
-              <div className="space-y-3 w-full bg-lime-400/30 rounded-sm p-3 text-white">
-                <div>
-                  <span className="font-medium text-xl">
-                    {user?.subscriptionType || "Не вказано"}
-                  </span>
-                  </div>
-                <button className="px-0 py-1 w-full text-white hover:text-black/10 transition font-medium">
-                  <hr />
-                  Change plan
-                </button>
-              </div>
-            </section>
-          )}
+  <section className="rounded-sm p-6 shadow-lg">
+    <h3 className="text-3xl font-semibold text-white pb-6">
+      Subscription plan
+    </h3>
+
+    {/* Поточний план */}
+    <div className="bg-lime-600/80  rounded-md mb-6 shadow-lg">
+      <div className="p-4 space-y-2 text-white">
+        <h4 className="text-lg font-semibold">
+          {user?.subscriptionType || "Standart"}
+        </h4>
+        <p className="text-sm text-gray-200">2 devices, 1080p</p>
+        <p className="text-sm text-gray-300">
+          Subscription from this date: September 15, 2025
+        </p>
+        <p className="text-sm text-gray-300">
+          Next payment: October 15, 2025
+        </p>
+        <div className="flex items-center gap-2 mt-2">
+          <img
+            src="/visa-icon.svg"
+            alt="Visa"
+            className="h-6"
+          />
+          <span className="tracking-widest">•••• •••• •••• 4444</span>
+        </div>
+      </div>
+      <button className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition">
+        Change plan
+      </button>
+    </div>
+
+    {/* Наступний платіж */}
+    <div className="bg-lime-600/80  rounded-md mb-6 shadow-lg">
+      <div className="p-4 space-y-2 text-white">
+        <h4 className="text-lg font-semibold">Next payment</h4>
+        <p className="text-sm text-gray-200">October 15, 2025</p>
+        <p className="text-sm text-gray-300">
+          Subscription from this date: September 15, 2025
+        </p>
+        <div className="flex items-center gap-2 mt-2">
+          <img
+            src="/visa-icon.svg"
+            alt="Visa"
+            className="h-6"
+          />
+          <span className="tracking-widest">•••• •••• •••• 4444</span>
+        </div>
+      </div>
+      <button className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition">
+        Change payment method
+      </button>
+    </div>
+
+    {/* Скасування */}
+    <button className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-sm transition">
+      Cancel subscription
+    </button>
+  </section>
+)}
 
           {activeTab === "security" && (
         <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg space-y-4">
@@ -219,32 +236,23 @@ const ProfilePage = () => {
               <p className="text-gray-400">📱 Тут список активних пристроїв.</p>
             </section>
           )}
-          {userAuth?.isUser && (
-            
+          {!userAuth?.isUser && activeTab === "admin" && (
+            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
               <button
                 className={`text-left text-lg font-medium transition ${
                   activeTab === "admin"
                     ? "text-lime-400"
                     : "text-gray-400 hover:text-white"
                 }`}
-                onClick={() => setActiveTab("admin")}
+                onClick={() => navigate("/admin")}
               >
                 Admin Panel
               </button>
-            )}
-
-          {/* {activeTab === "profiles" && (
-            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
-              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
-                Профілі
-              </h3>
-              <p className="text-gray-400">
-                👥 Тут можна буде керувати профілями користувачів.
-              </p>
             </section>
-          )} */}
+          )}
+          
 
-          {/* Кнопки */}
+          
           
         </main>
       </div>

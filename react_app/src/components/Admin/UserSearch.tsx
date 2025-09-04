@@ -20,7 +20,7 @@ export default function UserSearch({ onSearch }: UserSearchProps) {
       value={value}
       onChange={(e) => setValue(e.target.value)}
       placeholder="Пошук за email чи ім'ям..."
-      className="w-full md:w-80 px-4 py-2 rounded-xl bg-[#1f1f1f] text-white border border-white/10 focus:outline-none focus:ring focus:ring-red-500/50"
+      className="w-full  px-4 py-2 rounded-sm bg-gray-700/30 text-white focus:outline-none focus:ring focus:ring-red-500/50"
     />
   );
 }

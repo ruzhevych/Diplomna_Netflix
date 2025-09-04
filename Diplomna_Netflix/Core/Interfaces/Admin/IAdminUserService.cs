@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 using Core.DTOs.AdminDTOs;
 using Core.Models;
 
