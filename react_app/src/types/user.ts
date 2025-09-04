@@ -37,7 +37,7 @@ export interface IUserDTO {
   id: number;
   email: string;
   fullName: string;
-  imageUrl?: string;
+  profilePictureUrl?: string;
   roles: string[];
 }
 

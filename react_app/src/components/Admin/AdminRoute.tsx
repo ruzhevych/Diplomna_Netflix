@@ -16,7 +16,7 @@ function decodeToken(token: string): any | null {
     if (parts.length < 2) return null;
     let payload = parts[1];
     // base64url -> base64
-    payload = payload.replace(/-/g, "+").replace(/_/g, "/home");
+    payload = payload.replace(/-/g, "+").replace(/_/g, "/");
     // padding
     while (payload.length % 4 !== 0) payload += "=";
     const decoded = atob(payload);
