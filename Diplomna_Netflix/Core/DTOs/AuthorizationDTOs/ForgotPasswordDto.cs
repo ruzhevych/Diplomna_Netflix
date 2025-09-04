@@ -1,7 +1,6 @@
-namespace Core.DTOs.AuthorizationDTOs
+namespace Core.DTOs.AuthorizationDTOs;
+
+public class ForgotPasswordDto
 {
-    public class ForgotPasswordDto
-    {
-        public string Email { get; set; } = null!;
-    }
+    public string Email { get; set; } = null!;
 }

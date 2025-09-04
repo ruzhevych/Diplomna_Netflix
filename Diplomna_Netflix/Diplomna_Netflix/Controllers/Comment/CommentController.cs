@@ -1,13 +1,14 @@
 using System.Security.Claims;
 using Core.DTOs.CommentDTOs;
-using Core.Interfaces;
+using Core.Interfaces.Comments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Diplomna_Netflix.Controllers.Comment;
+
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize]
+[Authorize]
 public class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;

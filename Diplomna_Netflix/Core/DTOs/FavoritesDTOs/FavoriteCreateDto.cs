@@ -1,8 +1,7 @@
-namespace Core.DTOs.FavoritesDTOs
+namespace Core.DTOs.FavoritesDTOs;
+
+public class FavoriteCreateDto
 {
-    public class FavoriteCreateDto
-    {
-        public string ContentId { get; set; } = null!;
-        public string ContentType { get; set; } = null!;
-    }
+    public string ContentId { get; set; } = null!;
+    public string ContentType { get; set; } = null!;
 }

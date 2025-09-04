@@ -1,4 +1,4 @@
-using Diplomna_Netflix.Core.Interfaces;
+using Core.Interfaces.Category;
 using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Route("api/[controller]")]
