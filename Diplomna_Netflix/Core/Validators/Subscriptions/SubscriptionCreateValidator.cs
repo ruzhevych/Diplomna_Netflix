@@ -7,10 +7,6 @@ public class SubscriptionCreateValidator : AbstractValidator<SubscriptionCreateD
 {
     public SubscriptionCreateValidator()
     {
-        RuleFor(x => x.UserId)
-            .GreaterThan(0)
-            .WithMessage("UserId має бути додатнім.");
-
         RuleFor(x => x.Type)
             .NotEmpty()
             .MaximumLength(20)

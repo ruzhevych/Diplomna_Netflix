@@ -1,4 +1,4 @@
-using Core.DTOs.AdminDTOs;
+using Core.DTOs.AdminDTOs.Users;
 using Core.Interfaces.Admin;
 using Core.Interfaces.Email;
 using Core.Interfaces.Repository;

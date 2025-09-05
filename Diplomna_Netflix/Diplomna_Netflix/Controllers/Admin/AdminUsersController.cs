@@ -1,4 +1,4 @@
-using Core.DTOs.AdminDTOs;
+using Core.DTOs.AdminDTOs.Users;
 using Core.Interfaces.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

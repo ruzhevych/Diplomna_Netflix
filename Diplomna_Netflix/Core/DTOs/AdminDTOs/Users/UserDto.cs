@@ -1,4 +1,4 @@
-namespace Core.DTOs.AdminDTOs;
+namespace Core.DTOs.AdminDTOs.Users;
 
 public class UserDto
 {
