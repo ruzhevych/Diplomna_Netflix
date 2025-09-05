@@ -30,7 +30,7 @@ public class SubscriptionService : ISubscriptionService
             .ToListAsync();
     }
 
-    public async Task<SubscriptionDto?> GetByIdAsync(Guid id)
+    public async Task<SubscriptionDto?> GetByIdAsync(string id)
     {
         var s = await _subscriptionRepo.GetByIdAsync(id);
         if (s == null) return null;
@@ -72,7 +72,7 @@ public class SubscriptionService : ISubscriptionService
         };
     }
 
-    public async Task<bool> UpdateAsync(Guid id, SubscriptionUpdateDto dto)
+    public async Task<bool> UpdateAsync(int id, SubscriptionUpdateDto dto)
     {
         var entity = await _subscriptionRepo.GetByIdAsync(id);
         if (entity == null) return false;
@@ -87,7 +87,7 @@ public class SubscriptionService : ISubscriptionService
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(string id)
     {
         var entity = await _subscriptionRepo.GetByIdAsync(id);
         if (entity == null) return false;

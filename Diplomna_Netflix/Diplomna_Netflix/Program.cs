@@ -62,6 +62,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICookieService, CookieService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IMovieHistoryService, MovieHistoryService>();
+builder.Services.AddScoped<IAdminSubscriptionService, AdminSubscriptionService>();
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()

@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Core.DTOs.SubscriptionsDTOs;
 using Core.Interfaces.Subscription;
 using Microsoft.AspNetCore.Authorization;
@@ -17,39 +19,29 @@ public class SubscriptionController : ControllerBase
         _service = service;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("my")]
+    public async Task<IActionResult> Get()
     {
-        var result = await _service.GetAllAsync();
-        return Ok(result);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
-    {
-        var result = await _service.GetByIdAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var result = await _service.GetByIdAsync(userId);
         if (result == null) return NotFound();
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] SubscriptionCreateDto dto)
-    {
-        var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-    }
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] SubscriptionUpdateDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] SubscriptionUpdateDto dto)
     {
         var success = await _service.UpdateAsync(id, dto);
         return success ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete()
     {
-        var success = await _service.DeleteAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var success = await _service.DeleteAsync(userId);
         return success ? NoContent() : NotFound();
     }
 }
