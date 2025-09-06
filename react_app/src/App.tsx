@@ -22,6 +22,7 @@ import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
 import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
 import AdminRoute from "./components/Admin/AdminRoute.tsx"
 import BlockedPage from "./pages/BlockedPage"
+import SerisesDetailsPage from './pages/SeriesDetailPage.tsx';
 
 const App = () => {
   return (
@@ -71,6 +72,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <MovieDetailsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tv/:id"
+        element={
+          <ProtectedRoute>
+            <SerisesDetailsPage />
           </ProtectedRoute>
         }
       />

@@ -118,8 +118,7 @@ const ProfilePage = () => {
             </button>
             <button
               onClick={() => {
-                localStorage.removeItem("accessToken");
-                navigate("/login");
+                navigate("/favorites");
               }}
               className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition"
             >

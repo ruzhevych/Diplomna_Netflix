@@ -14,7 +14,6 @@ import {
   //getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
-import MovieCard from "../components/MovieCard";
 
 
 // Топ-10 рядок

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { Movie } from "../types/movie";
+import type { Series } from "../types/movie";
 import { type Video } from "../services/movieApi";
-import { getMovieDetails, getMovieVideos } from "../services/movieApi";
+import { getSeriesDetails, getSeriesVideos } from "../services/movieApi";
 import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
@@ -13,11 +13,11 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
-const MovieDetailsPage = () => {
+const SerisesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const movieId = Number(id);
+  const seriesId = Number(id);
 
-  const [movie, setMovie] = useState<Movie | null>(null);
+  const [series, setSeries] = useState<Series | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
 
   const { data: favorites } = useGetFavoritesQuery();
@@ -26,12 +26,12 @@ const MovieDetailsPage = () => {
   const [inFavorites, setInFavorites] = useState(false);
 
   useEffect(() => {
-    if (!movieId) return;
+    if (!seriesId) return;
     (async () => {
       try {
-        const details = await getMovieDetails(movieId);
-        setMovie(details);
-        const vids = await getMovieVideos(movieId);
+        const details = await getSeriesDetails(seriesId);
+        setSeries(details);
+        const vids = await getSeriesVideos(seriesId);
         setVideos(
           vids.results.filter(
             (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -41,20 +41,20 @@ const MovieDetailsPage = () => {
         console.error(e);
       }
     })();
-  }, [movieId]);
+  }, [seriesId]);
 
   useEffect(() => {
     if (favorites) {
-      const found = favorites.some((f) => f.contentId === movieId);
+      const found = favorites.some((f) => f.contentId === seriesId);
       setInFavorites(found);
     }
-  }, [favorites, movieId]);
+  }, [favorites, seriesId]);
 
   const handleFavorite = async () => {
     try {
-      const payload = { contentId: movieId, contentType: "movie" }; 
+      const payload = { contentId: seriesId, contentType: "tv" }; 
       if (inFavorites) {
-        const favorite = favorites?.find((f) => f.contentId === movieId);
+        const favorite = favorites?.find((f) => f.contentId === seriesId);
         if (!favorite) return;
 
         await removeFavorite(favorite.id).unwrap();
@@ -69,10 +69,10 @@ const MovieDetailsPage = () => {
     }
   };
 
-  if (!movie)
+  if (!series)
     return <p className="text-white text-center mt-10 animate-fadeIn">Завантаження...</p>;
 
-  const posterUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+  const posterUrl = `https://image.tmdb.org/t/p/w500${series.poster_path}`;
   const trailer = videos[0];
 
   return (
@@ -83,7 +83,7 @@ const MovieDetailsPage = () => {
         <div className="relative w-full md:w-1/3">
           <img
             src={posterUrl}
-            alt={movie.title || movie.name}
+            alt={series.title || series.name}
             className="rounded-2xl shadow-2xl w-full transform hover:scale-105 transition duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-2xl"></div>
@@ -92,9 +92,9 @@ const MovieDetailsPage = () => {
         {/* Info */}
         <div className="flex-1 flex flex-col justify-between">
           <div>
-            <h1 className="text-5xl font-extrabold mb-4 tracking-wide">{movie.title || movie.name}</h1>
-            <p className="text-gray-400 mb-6">{movie.release_date || movie.first_air_date}</p>
-            <p className="text-gray-300 mb-8 leading-relaxed">{movie.overview}</p>
+            <h1 className="text-5xl font-extrabold mb-4 tracking-wide">{series.title || series.name}</h1>
+            <p className="text-gray-400 mb-6">{series.release_date || series.first_air_date}</p>
+            <p className="text-gray-300 mb-8 leading-relaxed">{series.overview}</p>
           </div>
 
           <button
@@ -134,4 +134,5 @@ const MovieDetailsPage = () => {
   );
 };
 
-export default MovieDetailsPage;
+export default SerisesDetailsPage;
+

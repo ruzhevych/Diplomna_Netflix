@@ -1,4 +1,5 @@
 using Core.DTOs.FavoritesDTOs;
+using Core.Interfaces.Favorites;
 using Core.Services.Favorites;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace Diplomna_Netflix.Controllers;
 [Authorize]
 public class FavoritesController : ControllerBase
 {
-    private readonly FavoriteService _favoriteService;
+    private readonly IFavoriteService _favoriteService;
 
-    public FavoritesController(FavoriteService favoriteService)
+    public FavoritesController(IFavoriteService favoriteService)
     {
         _favoriteService = favoriteService;
     }
