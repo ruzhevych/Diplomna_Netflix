@@ -1,7 +1,7 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MediaGrid from "../../components/MediaGrid";
-import { getPopularMovies, getMovieGenres, getAnime, getMovieDetails, getPopularTV, getTopRatedMovies, getUpcomingMovies } from "../../services/movieApi";
+import { getMovieGenres, getCartoons } from "../../services/movieApi";
 import { useEffect, useState } from "react";
 
 export default function MoviesPage() {
@@ -14,7 +14,7 @@ export default function MoviesPage() {
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaGrid title="Популярні фільми" fetchData={getUpcomingMovies}  genres={genres}/>;
+        <MediaGrid title="Популярні фільми" fetchData={getCartoons}  genres={genres}/>;
       </div>
       <Footer />
     </div>

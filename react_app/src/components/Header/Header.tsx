@@ -42,7 +42,6 @@ const Header = () => {
     { path: "/anime", label: "Anime" },
     { path: "/cartoons", label: "Cartoons" },
     { path: "/newandpopular", label: "New & Popular" },
-    { path: "/favorites", label: "Favorites" },
   ];
 
   return (

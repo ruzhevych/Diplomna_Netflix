@@ -3,12 +3,13 @@ using Data.Entities.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Core.Interfaces.Favorites;
 using Core.Interfaces.Repository;
 using Data.Entities.Favorites;
 
 namespace Core.Services.Favorites;
 
-public class FavoriteService
+public class FavoriteService : IFavoriteService
 {
     private readonly IRepository<FavoriteEntity> _favoriteRepo;
     private readonly UserManager<UserEntity> _userManager;
@@ -75,14 +76,14 @@ public class FavoriteService
     }
 
     public async Task RemoveAsync(long id)
-        {
+    {
         var user = await GetCurrentUserAsync();
 
         var favorite = await _favoriteRepo.GetByIdAsync(id);
         if (favorite == null || favorite.UserId != user.Id)
             throw new UnauthorizedAccessException("Not your favorite");
 
-        _favoriteRepo.DeleteAsync(favorite);
+        _favoriteRepo.DeleteAsync(id);
         await _favoriteRepo.SaveChangesAsync();
     }
 }

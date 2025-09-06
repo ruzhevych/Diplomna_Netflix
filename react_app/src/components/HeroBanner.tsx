@@ -34,7 +34,7 @@ const HeroBanner = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent " />
 
       
-      <div className="absolute bottom-36 left-14 max-w-[600px] text-white ">
+      <div className="absolute bottom-36 left-14 w-[600px] text-white ">
         <h1 className="text-4xl font-bold leading-tight drop-shadow-lg">
           {movie.title || movie.name}
         </h1>

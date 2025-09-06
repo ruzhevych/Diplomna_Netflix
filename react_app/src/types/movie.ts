@@ -8,6 +8,18 @@ export interface Movie {
   release_date?: string;
   first_air_date?: string;
 }
+
+export interface Series {
+  id: number;
+  title?: string;
+  name?: string;
+  overview: string;
+  poster_path: string;
+  backdrop_path: string;
+  release_date?: string;
+  first_air_date?: string;
+}
+
 export interface TMDBResponse<T> {
   page: number;
   results: T[];
@@ -20,4 +32,9 @@ export interface Favorite {
   contentId: number;
   contentType: string;
   createdAt: Date;
+}
+
+export interface FavoriteCreate {
+  contentId: number;
+  contentType: string;
 }

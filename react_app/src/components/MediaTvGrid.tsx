@@ -8,11 +8,12 @@ interface MediaGridProps {
   title: string;
   fetchData: (page?: number) => Promise<any>;
   genres: { id: number; name: string }[]; // передаємо список жанрів
+  //last_episode_to_air: { id: number, still_path: string }
 }
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
+const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,12 +48,12 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   };
 
   const handlePlay = (id: number) => {
-    navigate(`/movie/${id}`);
+    navigate(`/tv/${id}`);
   };
 
   const handleAdd = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "movie" }; 
+      const payload = { contentId: id, contentType: "tv" }; 
       await addFavorite(payload).unwrap();
       toast.success("Додано в улюблене ❤️");
       console.log("➕ Added to list:", id);
@@ -159,4 +160,5 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   );
 };
 
-export default MediaGrid;
+export default MediaTvGrid;
+

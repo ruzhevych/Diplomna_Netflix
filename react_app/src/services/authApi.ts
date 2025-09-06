@@ -8,7 +8,6 @@ import type {
   IGoogleRegisterRequest, 
   IResetPasswordRequest, 
   LoginPayload, 
-  RefreshPayload, 
   RegisterPayload 
 } from '../types/auth';
 

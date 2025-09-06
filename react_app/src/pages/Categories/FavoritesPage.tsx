@@ -21,6 +21,8 @@ interface FavoriteItem {
   name?: string;
   genres?: { id: number; name: string }[];
   contentType: "movie" | "tv";
+  contentId: number;
+  favoriteId: number;
 }
 
 export default function FavoritesPage() {
@@ -44,10 +46,20 @@ export default function FavoritesPage() {
         const detailsPromises = favorites.map(async (fav) => {
           if (fav.contentType === "movie") {
             const data = await getMovieDetails(fav.contentId);
-            return { ...data, contentType: "movie" as const };
+            return { 
+              ...data,
+              contentType: "movie" as const,
+              contentId: Number(fav.contentId),
+              favoriteId: fav.id
+            };
           } else {
             const data = await getSeriesDetails(fav.contentId);
-            return { ...data, contentType: "tv" as const };
+            return { 
+              ...data, 
+              contentType: "tv" as const,
+              contentId: Number(fav.contentId),
+              favoriteId: fav.id
+            };
           }
         });
 
@@ -63,18 +75,19 @@ export default function FavoritesPage() {
     loadDetails();
   }, [favorites]);
 
-  const handleAdd = async (id: number) => {
+  const handleAdd = async (id: number, type: string) => {
     try {
-      await addFavorite(id).unwrap();
+      const payload = { contentId: id, contentType: type }; 
+      await addFavorite(payload).unwrap();
       toast.success("Додано в улюблене ❤️");
     } catch {
       toast.error("Не вдалося додати в улюблене 😢");
     }
   };
 
-  const handleRemove = async (id: number) => {
+  const handleRemove = async (favoriteId: number) => {
     try {
-      await removeFavorite(id).unwrap();
+      await removeFavorite(favoriteId).unwrap();
       toast.info("Видалено з улюбленого ❌");
     } catch {
       toast.error("Не вдалося видалити 😢");
@@ -123,7 +136,7 @@ export default function FavoritesPage() {
                   </button>
 
                   <button
-                    onClick={() => handleAdd(movie.id)}
+                    onClick={() => handleAdd(movie.id, movie.contentType)}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <Plus size={18} />
@@ -137,7 +150,7 @@ export default function FavoritesPage() {
                   </button>
 
                   <button
-                    onClick={() => handleRemove(movie.id)}
+                    onClick={() => handleRemove(movie.favoriteId)}
                     className="ml-auto border border-red-400 text-red-400 rounded-full p-2 hover:bg-red-700 transition"
                   >
                     <X size={18} />

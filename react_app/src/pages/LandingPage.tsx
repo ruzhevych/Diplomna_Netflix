@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "/logo-green.png"; // <-- шлях до твого лого
 import Footer from "../components/Footer/Footer"
-import { FaTv, FaDownload, FaMobileAlt, FaChild } from "react-icons/fa";
+import { FaDownload, FaChild } from "react-icons/fa";
 import { type Movie, type TMDBResponse } from "../types/movie";
 import { getPopularMovies } from "../services/movieApi";
 

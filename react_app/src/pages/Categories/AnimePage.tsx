@@ -1,7 +1,7 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import MediaGrid from "../../components/MediaGrid";
-import { getPopularMovies, getMovieGenres, getAnime, getMovieDetails, getPopularTV, getTopRatedMovies, getUpcomingMovies } from "../../services/movieApi";
+import MediaTvGrid from "../../components/MediaTvGrid";
+import { getAnime, getTvGenres } from "../../services/movieApi";
 import { useEffect, useState } from "react";
 
 
@@ -9,7 +9,7 @@ export default function MoviesPage() {
 const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
-    getMovieGenres().then((data) => setGenres(data.genres));
+    getTvGenres().then((data) => setGenres(data.genres));
   }, []);
 
 
@@ -17,7 +17,7 @@ const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaGrid title="Популярні фільми" fetchData={getPopularMovies} genres={genres} />
+        <MediaTvGrid title="Популярні фільми" fetchData={getAnime} genres={genres}/>
       </div>
       <Footer />
     </div>

@@ -7,13 +7,22 @@ const fetchFromTMDB = async (endpoint: string) => {
   return await res.json();
 };
 
+const fetchCAFromTMDB = async (endpoint: string) => {
+  const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&with_genres=16&language=uk-UA`);
+  if (!res.ok) throw new Error('Не вдалося отримати дані з TMDB');
+  return await res.json();
+};
+
+
 export const getPopularMovies = () => fetchFromTMDB('/movie/popular');
 export const getTopRatedMovies = () => fetchFromTMDB('/movie/top_rated');
 export const getUpcomingMovies = () => fetchFromTMDB('/movie/upcoming');
 export const getPopularTV = () => fetchFromTMDB('/tv/popular');
 export const getMovieGenres = () => fetchFromTMDB("/genre/movie/list");
 export const getTvGenres = () => fetchFromTMDB("/genre/tv/list");
-export const getAnime = () => fetchFromTMDB('/discover/tv&with_genres=16');
+export const getAnime = () => fetchCAFromTMDB('/discover/tv');
+export const getCartoons = () => fetchCAFromTMDB('/discover/movie');
+
 export const getMovieDetails = (id: number) =>
   fetchFromTMDB(`/movie/${id}`);
 export const getSeriesDetails = (id: number) =>
@@ -35,3 +44,5 @@ export interface VideosResponse {
 
 export const getMovieVideos = (id: number): Promise<VideosResponse> =>
   fetchFromTMDB(`/movie/${id}/videos`);
+export const getSeriesVideos = (id: number): Promise<VideosResponse> =>
+  fetchFromTMDB(`/tv/${id}/videos`);
