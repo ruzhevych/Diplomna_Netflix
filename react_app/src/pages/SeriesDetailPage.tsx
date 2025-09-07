@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import CommentsSection from "../components/CommentsSection";
 
 const SerisesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -128,6 +129,7 @@ const SerisesDetailsPage = () => {
           </div>
         </div>
       )}
+      <CommentsSection movieId={movie.id} />
       <Footer />
     </div>
     
