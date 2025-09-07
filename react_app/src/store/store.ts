@@ -6,6 +6,7 @@ import authReducer from './slices/authSlice'
 import userReducer from './slices/userSlice';
 import {favoritesApi} from "../services/favoritesApi.ts";
 import { adminApi } from "../services/adminApi";
+import { forLaterApi } from '../services/forLaterApi.ts'
 
 export const store = configureStore({
   reducer: {
@@ -15,9 +16,10 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     user: userReducer,
     [favoritesApi.reducerPath]: favoritesApi.reducer,
+    [forLaterApi.reducerPath]: forLaterApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, userApi.middleware, adminApi.middleware, favoritesApi.middleware),
+    getDefaultMiddleware().concat(authApi.middleware, userApi.middleware, adminApi.middleware, favoritesApi.middleware, forLaterApi.middleware),
 })
 
 setupListeners(store.dispatch)

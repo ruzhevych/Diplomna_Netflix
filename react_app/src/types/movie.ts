@@ -38,3 +38,15 @@ export interface FavoriteCreate {
   contentId: number;
   contentType: string;
 }
+
+export interface ForLater {
+  id: number;
+  contentId: number;
+  contentType: string;
+  createdAt: Date;
+}
+
+export interface ForLaterCreate {
+  contentId: number;
+  contentType: string;
+}

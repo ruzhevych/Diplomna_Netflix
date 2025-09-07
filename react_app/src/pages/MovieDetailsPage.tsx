@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import CommentsSection from "../components/CommentsSection";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -113,7 +114,7 @@ const MovieDetailsPage = () => {
         </button>
         </div>
       </div>
-
+    <CommentsSection movieId={movie.id} />
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto animate-fadeIn">
@@ -128,6 +129,8 @@ const MovieDetailsPage = () => {
           </div>
         </div>
       )}
+      
+
       <Footer />
     </div>
     

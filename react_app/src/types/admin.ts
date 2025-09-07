@@ -9,7 +9,7 @@ export interface AdminUser {
   isBlocked: boolean;
 }
 
-// Очікуваний формат з беку: new PagedResult(items, totalCount, page, pageSize)
+
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
@@ -26,3 +26,5 @@ export interface SendMessageDto {
 export interface SendMessageResponse {
   message: string;
 }
+
+
