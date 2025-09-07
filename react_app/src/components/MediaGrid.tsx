@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Play, Plus, ThumbsUp, ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAddFavoriteMutation } from "../services/favoritesApi";
+import { useAddForLaterMutation } from "../services/forLaterApi";
 
 interface MediaGridProps {
   title: string;
@@ -18,7 +19,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [addFavorite] = useAddFavoriteMutation();
-  
+  const [AddForLater] = useAddForLaterMutation();
 
   const navigate = useNavigate();
 
@@ -53,18 +54,26 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const handleAdd = async (id: number) => {
     try {
       const payload = { contentId: id, contentType: "movie" }; 
+      await AddForLater(payload).unwrap();
+      toast.success("Додано у список на потім");
+      console.log("➕ Added to list:", id);
+    }
+    catch {
+      toast.error("Не вдалося додати у список на потім 😢");
+    }
+    
+  };
+  
+  const handleLike = async (id: number) => {
+    try {
+      const payload = { contentId: id, contentType: "movie" }; 
       await addFavorite(payload).unwrap();
-      toast.success("Додано в улюблене ❤️");
+      toast.success("Додано в улюблене 👍");
       console.log("➕ Added to list:", id);
     }
     catch {
       toast.error("Не вдалося додати в улюблене 😢");
     }
-    
-  };
-
-  const handleLike = (id: number) => {
-    console.log("👍 Liked movie:", id);
   };
 
   const handleExpand = (id: number) => {

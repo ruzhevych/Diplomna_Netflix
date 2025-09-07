@@ -1,19 +1,19 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import {
-  useGetFavoritesQuery,
-  useRemoveFavoriteMutation,
-} from "../../services/favoritesApi";
+  useGetForLatersQuery,
+  useRemoveForLaterMutation,
+} from "../../services/forLaterApi";
 import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Play, Plus, ThumbsUp, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAddForLaterMutation } from "../../services/forLaterApi";
+import { useAddFavoriteMutation } from "../../services/favoritesApi";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-interface FavoriteItem {
+interface ForLaterItem {
   id: number;
   title: string;
   poster_path: string | null;
@@ -22,49 +22,49 @@ interface FavoriteItem {
   genres?: { id: number; name: string }[];
   contentType: "movie" | "tv";
   contentId: number;
-  favoriteId: number;
+  forLaterId: number;
 }
 
-export default function FavoritesPage() {
-  const { data: favorites, isLoading, isError } = useGetFavoritesQuery();
-  const [addForLater] = useAddForLaterMutation();
-  const [removeFavorite] = useRemoveFavoriteMutation();
+export default function ForLaterPage() {
+  const { data: forLaters, isLoading, isError } = useGetForLatersQuery();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeForLater] = useRemoveForLaterMutation();
 
-  const [items, setItems] = useState<FavoriteItem[]>([]);
+  const [forLaterItems, setForLaterIItems] = useState<ForLaterItem[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!favorites || favorites.length === 0) {
-      setItems([]);
+    if (!forLaters || forLaters.length === 0) {
+      setForLaterIItems([]);
       return;
     }
 
     const loadDetails = async () => {
       setLoadingDetails(true);
       try {
-        const detailsPromises = favorites.map(async (fav) => {
-          if (fav.contentType === "movie") {
-            const data = await getMovieDetails(fav.contentId);
+        const detailsPromises = forLaters.map(async (fl) => {
+          if (fl.contentType === "movie") {
+            const data = await getMovieDetails(fl.contentId);
             return { 
               ...data,
               contentType: "movie" as const,
-              contentId: Number(fav.contentId),
-              favoriteId: fav.id
+              contentId: Number(fl.contentId),
+              forLaterId: fl.id
             };
           } else {
-            const data = await getSeriesDetails(fav.contentId);
+            const data = await getSeriesDetails(fl.contentId);
             return { 
               ...data, 
               contentType: "tv" as const,
-              contentId: Number(fav.contentId),
-              favoriteId: fav.id
+              contentId: Number(fl.contentId),
+              forLaterId: fl.id
             };
           }
         });
 
         const results = await Promise.all(detailsPromises);
-        setItems(results);
+        setForLaterIItems(results);
       } catch (err: any) {
         toast.error("Помилка завантаження деталей улюбленого 😢");
       } finally {
@@ -73,21 +73,21 @@ export default function FavoritesPage() {
     };
 
     loadDetails();
-  }, [favorites]);
+  }, [forLaters]);
 
   const handleAdd = async (id: number, type: string) => {
     try {
       const payload = { contentId: id, contentType: type }; 
-      await addForLater(payload).unwrap();
+      await addFavorite(payload).unwrap();
       toast.success("Додано в улюблене ❤️");
     } catch {
       toast.error("Не вдалося додати в улюблене 😢");
     }
   };
 
-  const handleRemove = async (favoriteId: number) => {
+  const handleRemove = async (forLaterId: number) => {
     try {
-      await removeFavorite(favoriteId).unwrap();
+      await removeForLater(forLaterId).unwrap();
       toast.info("Видалено з улюбленого ❌");
     } catch {
       toast.error("Не вдалося видалити 😢");
@@ -106,12 +106,12 @@ export default function FavoritesPage() {
         {isError && (
           <p className="text-red-500">Помилка завантаження улюбленого</p>
         )}
-        {!isLoading && items.length === 0 && (
+        {!isLoading && forLaterItems.length === 0 && (
           <p className="text-gray-400">Улюблених ще немає 😢</p>
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {items.map((content) => (
+          {forLaterItems.map((content) => (
             <div
               key={content.id}
               className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
@@ -135,22 +135,22 @@ export default function FavoritesPage() {
                     <Play size={18} />
                   </button>
 
-                  <button
-                    onClick={() => handleAdd(content.id, content.contentType)}
-                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
-                  >
-                    <Plus size={18} />
-                  </button>
-
                   {/* <button
                     onClick={() => handleAdd(content.id, content.contentType)}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
-                    <ThumbsUp size={18} />
+                    <Plus size={18} />
                   </button> */}
 
                   <button
-                    onClick={() => handleRemove(content.favoriteId)}
+                    onClick={() => handleAdd(content.id, content.contentType)}
+                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  >
+                    <ThumbsUp size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => handleRemove(content.forLaterId)}
                     className="ml-auto border border-red-400 text-red-400 rounded-full p-2 hover:bg-red-700 transition"
                   >
                     <X size={18} />

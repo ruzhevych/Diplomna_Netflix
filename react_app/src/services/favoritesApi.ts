@@ -21,8 +21,8 @@ export const favoritesApi = createApi({
             invalidatesTags: ["Favorites"],
         }),
         removeFavorite: builder.mutation<void, number>({
-            query: (movieId) => ({
-                url: `/${movieId}`,
+            query: (contentId) => ({
+                url: `/${contentId}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Favorites"],
