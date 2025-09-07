@@ -19,17 +19,11 @@ import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
 import type { IUserAuth } from "../types/user";
 import ProfileEditModal from "./ProfileEditModal";
+import type { AdminUser } from "../types/admin";
 
 
 
-const tabs = [
-  { id: "overview", label: "Огляд", icon: User },
-  { id: "subscription", label: "Підписка", icon: CreditCard },
-  { id: "security", label: "Безпека", icon: Shield },
-  { id: "devices", label: "Пристрої", icon: MonitorSmartphone },
-  
-   { id: "admin", label: "Admin Panel", icon: Users },
-];
+
 
 const ProfilePage = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -38,16 +32,23 @@ const ProfilePage = () => {
   // const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
-  const [userAuth] = useState<IUserAuth | null>(null);
   
-
+const tabs = [
+  { id: "overview", label: "Огляд", icon: User },
+  { id: "subscription", label: "Підписка", icon: CreditCard },
+  { id: "security", label: "Безпека", icon: Shield },
+  { id: "devices", label: "Пристрої", icon: MonitorSmartphone },
+  ...(user?.role === "Admin" 
+      ? [{ id: "admin", label: "Admin Panel", icon: Users }] 
+      : []),
+];
 
   if (error)
     return <p className="text-red-500 text-center mt-10">{(error as any).data?.message || "Помилка"}</p>;
   if (isLoading)
     return <p className="text-center mt-10 bg-gradient-to-b ">Downloading...</p>;
 
-    const isAdmin = userAuth?.roles?.includes("Admin");
+    
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white flex flex-col">
@@ -235,20 +236,20 @@ const ProfilePage = () => {
               <p className="text-gray-400">📱 Тут список активних пристроїв.</p>
             </section>
           )}
-          {!userAuth?.isUser && activeTab === "admin" && (
-            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
-              <button
-                className={`text-left text-lg font-medium transition ${
-                  activeTab === "admin"
-                    ? "text-lime-400"
-                    : "text-gray-400 hover:text-white"
-                }`}
-                onClick={() => navigate("/admin")}
-              >
-                Admin Panel
-              </button>
-            </section>
-          )}
+          {user?.role === "Admin" && activeTab === "admin" && (
+              <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg">
+                <button
+                  className={`text-left text-lg font-medium transition ${
+                    activeTab === "admin"
+                      ? "text-lime-400"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                  onClick={() => navigate("/admin")}
+                >
+                  Admin Panel
+                </button>
+              </section>
+            )}
           
 
           

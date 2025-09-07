@@ -13,9 +13,10 @@ email: string;
 fullName: string;
 firstName?: string;
 lastName?: string;
-// avatarUrl?: string;
 profilePictureUrl?: string;
 subscriptionType: string;
+role: string;
+isBlocked: boolean;
 }
 
 export interface IUserAuth {
@@ -39,6 +40,7 @@ export interface IUserDTO {
   fullName: string;
   profilePictureUrl?: string;
   roles: string[];
+  isBlocked?: boolean;
 }
 
 export interface IUserCreateDTO {
