@@ -66,7 +66,11 @@ public class UserService : IUserService
             dto.SubscriptionEnd = activeSub.EndDate;
             dto.SubscriptionIsActive = activeSub.IsActive;
         }
+        
+        var roles = await _userManager.GetRolesAsync(user);
+        dto.Role = roles.FirstOrDefault() ?? "User";
 
+        dto.IsBlocked = user.IsBlocked;
         return dto;
     }
 

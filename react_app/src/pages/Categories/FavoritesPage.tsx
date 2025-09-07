@@ -136,14 +136,14 @@ export default function FavoritesPage() {
                   </button>
 
                   <button
-                    onClick={() => handleAdd(movie.id, movie.contentType)}
+                    onClick={() => toast.success("Додано до списку на потім")}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <Plus size={18} />
                   </button>
 
                   <button
-                    onClick={() => toast.success("Вподобали 👍")}
+                    onClick={() => handleAdd(movie.id, movie.contentType)}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <ThumbsUp size={18} />

@@ -10,5 +10,6 @@ public class UserDto
     public DateTime? SubscriptionStart { get; set; }
     public DateTime? SubscriptionEnd { get; set; }
     public bool? SubscriptionIsActive { get; set; }
-        
+    public string Role { get; set; } = null!;
+    public bool IsBlocked { get; set; }
 }
