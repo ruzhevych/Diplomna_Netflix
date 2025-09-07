@@ -2,6 +2,7 @@ using Data.Entities.Admin;
 using Data.Entities.Auth;
 using Data.Entities.Comments;
 using Data.Entities.Favorites;
+using Data.Entities.ForLater;
 using Data.Entities.History;
 using Data.Entities.Identity;
 using Data.Entities.Subscription;
@@ -26,6 +27,7 @@ public class NetflixDbContext : IdentityDbContext<UserEntity, RoleEntity, long, 
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<AdminMessageEntity> AdminMessages { get; set; }
     public DbSet<FavoriteEntity> Favorites { get; set; }
+    public DbSet<ForLaterEntity> ForLaters { get; set; }
     public DbSet<MediaItem> MediaItems { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<MovieEntity> Movies { get; set; }

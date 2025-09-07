@@ -14,6 +14,7 @@ import {
   Edit,
   History,
   Book,
+  Pin
 } from "lucide-react";
 import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
@@ -125,6 +126,15 @@ const tabs = [
             >
               <Book size={18} />
               Favorites
+            </button>
+            <button
+              onClick={() => {
+                navigate("/for-later");
+              }}
+              className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition"
+            >
+              <Pin size={18} />
+              For later
             </button>
           </div>
             <div className="flex gap-4 mt-3">

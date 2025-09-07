@@ -23,6 +23,7 @@ import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
 import AdminRoute from "./components/Admin/AdminRoute.tsx"
 import BlockedPage from "./pages/BlockedPage"
 import SerisesDetailsPage from './pages/SeriesDetailPage.tsx';
+import ForLaterPage from './pages/Categories/ForLaterPage.tsx';
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/cartoons" element={<CartoonsPage />} />
         <Route path="/newandpopular" element={<NewPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/for-later" element={<ForLaterPage />} />
 
         {/* <Route path="/profile/edit" element={<ProfileEditPage />} />  */}
 
