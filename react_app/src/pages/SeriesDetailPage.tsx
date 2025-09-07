@@ -128,6 +128,7 @@ const SerisesDetailsPage = () => {
           </div>
         </div>
       )}
+      <CommentsSection movieId={series.id} />
       <Footer />
     </div>
     
