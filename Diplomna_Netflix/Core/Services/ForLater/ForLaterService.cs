@@ -47,6 +47,11 @@ public class ForLaterService : IForLaterService
             ContentType = dto.ContentType,
             CreatedAt = DateTime.UtcNow
         };
+        
+        var isNew = _forLaterRepo.GetAllQueryable()
+            .Where(f => f.ContentId == dto.ContentId && f.ContentType == dto.ContentType);
+        if (isNew.Any())
+            throw new UnauthorizedAccessException("Alredy exist");
 
         await _forLaterRepo.AddAsync(forLater);
         await _forLaterRepo.SaveChangesAsync();

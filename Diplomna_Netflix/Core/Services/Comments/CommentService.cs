@@ -45,7 +45,8 @@ public class CommentService : ICommentService
         {
             Content = dto.Content,
             UserId = user.Id,
-            MovieId = dto.MovieId
+            MovieId = dto.MovieId,
+            ContentType = dto.MovieType,
         };
 
         await _commentRepo.AddAsync(comment);
@@ -61,10 +62,10 @@ public class CommentService : ICommentService
         };
     }
 
-    public async Task<List<CommentDto>> GetCommentsForMovieAsync(int movieId)
+    public async Task<List<CommentDto>> GetCommentsForMovieAsync(int movieId, string movieType)
     {
         return await _commentRepo.GetAllQueryable()
-            .Where(c => c.MovieId == movieId)
+            .Where(c => c.MovieId == movieId && c.ContentType == movieType)
             .OrderByDescending(c => c.CreatedAt)
             .Select(c => new CommentDto
             {

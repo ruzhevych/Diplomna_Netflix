@@ -27,9 +27,9 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("movie/{movieId}")]
-    public async Task<IActionResult> GetComments(int movieId)
+    public async Task<IActionResult> GetComments(int movieId, string movieType)
     {
-        var comments = await _commentService.GetCommentsForMovieAsync(movieId);
+        var comments = await _commentService.GetCommentsForMovieAsync(movieId, movieType);
         return Ok(comments);
     }
     
