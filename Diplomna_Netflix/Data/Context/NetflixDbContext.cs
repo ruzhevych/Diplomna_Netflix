@@ -37,6 +37,7 @@ public class NetflixDbContext : IdentityDbContext<UserEntity, RoleEntity, long, 
     //public DbSet<AdminBanEntity> AdminBans { get; set; }
     public DbSet<CommentEntity> Comments { get; set; }
     public DbSet<HistoryEntity> History { get; set; }
+    public DbSet<RatingEntity> Rating { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

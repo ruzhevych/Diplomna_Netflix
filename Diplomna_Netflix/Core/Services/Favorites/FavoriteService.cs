@@ -47,7 +47,12 @@ public class FavoriteService : IFavoriteService
             ContentType = dto.ContentType,
             CreatedAt = DateTime.UtcNow
         };
-
+        
+        var isNew = _favoriteRepo.GetAllQueryable()
+            .Where(f => f.ContentId == dto.ContentId && f.ContentType == dto.ContentType);
+        if (isNew.Any())
+            throw new UnauthorizedAccessException("Alredy added favorite");
+        
         await _favoriteRepo.AddAsync(favorite);
         await _favoriteRepo.SaveChangesAsync();
 
