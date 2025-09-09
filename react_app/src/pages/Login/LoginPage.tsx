@@ -116,6 +116,14 @@ const LoginPage = () => {
               {isLoading ? 'Зачекайте...' : 'Sign In'}
             </button>
           </form>
+          <button
+            type="button"
+            className="flex items-center justify-center w-full bg-gray-100 hover:bg-gray-200 transition text-black font-semibold px-4 py-3 rounded-sm mt-4"
+            onClick={() => googleLoginFunc()}
+          >
+            <GoogleIcon className="w-5 h-5 mr-2" />
+            Sign in with Google
+          </button>
 
           <div className="flex justify-between items-center text-sm text-gray-400 mt-3">
             <label className="flex items-center space-x-2">
@@ -136,15 +144,6 @@ const LoginPage = () => {
               Sign Up now.
             </button>
           </p>
-
-          <button
-            type="button"
-            className="flex items-center justify-center w-full bg-gray-800 hover:bg-gray-700 transition text-white font-semibold px-4 py-3 rounded-sm mt-4"
-            onClick={() => googleLoginFunc()}
-          >
-            <GoogleIcon className="w-5 h-5 mr-2" />
-            Sign in with Google
-          </button>
         </div>
       </div>
     </div>

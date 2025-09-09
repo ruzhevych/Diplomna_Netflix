@@ -61,11 +61,11 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
           >
             <img
               src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-              alt={item.title || item.name}
+              alt={item.title || item.original_title}
               className="rounded-lg w-full"
             />
             <p className="text-sm text-white mt-1 truncate">
-              {item.title || item.name}
+              {item.title || item.original_title}
             </p>
           </div>
         ))}

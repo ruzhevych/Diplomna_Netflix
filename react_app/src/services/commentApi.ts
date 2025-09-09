@@ -1,26 +1,50 @@
-import axios from "axios";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { Comment, CommentCreateDto } from "../types/comment";
+import { createBaseQueryWithReauth } from "../utils/createBaseQuery.ts";
 
-const API_URL = "http://localhost:5170/api/comment"; 
+export const commentsApi = createApi({
+    reducerPath: "commentsApi",
+    tagTypes: ["Comments"],
+    baseQuery: createBaseQueryWithReauth("Comment"),
+    endpoints: (builder) => ({
 
-export async function getComments(movieId: number): Promise<Comment[]> {
-  const res = await axios.get(`${API_URL}/movie/${movieId}`, { withCredentials: true });
-  return res.data;
-}
+        getComments: builder.query<Comment[], {movieId: number, movieType: string}>({
+            query: ({movieId, movieType}) => `/movie/${movieId}?movieType=${movieType}`,
+            providesTags: ["Comments"],
+        }),
 
-export async function addComment(dto: CommentCreateDto): Promise<Comment> {
-  const res = await axios.post(`${API_URL}/add`, dto, { withCredentials: true });
-  return res.data;
-}
+        addComment: builder.mutation<Comment, CommentCreateDto>({
+            query: (dto) => ({
+                url: `/add`,
+                method: "POST",
+                body: dto,
+            }),
+            invalidatesTags: ["Comments"],
+        }),
 
-export async function updateComment(commentId: string, newContent: string): Promise<Comment> {
-  const res = await axios.put(`${API_URL}/update/${commentId}`, newContent, {
-    headers: { "Content-Type": "application/json" },
-    withCredentials: true,
-  });
-  return res.data;
-}
+        updateComment: builder.mutation<Comment, { commentId: string; newContent: string }>({
+            query: ({ commentId, newContent }) => ({
+                url: `/update/${commentId}`,
+                method: "PUT",
+                body: JSON.stringify(newContent),
+                headers: { "Content-Type": "application/json" },
+            }),
+            invalidatesTags: ["Comments"],
+        }),
 
-export async function deleteComment(commentId: string): Promise<void> {
-  await axios.delete(`${API_URL}/delete/${commentId}`, { withCredentials: true });
-}
+        deleteComment: builder.mutation<void, string>({
+            query: (commentId) => ({
+                url: `/delete/${commentId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Comments"],
+        }),
+    }),
+});
+
+export const {
+    useGetCommentsQuery,
+    useAddCommentMutation,
+    useUpdateCommentMutation,
+    useDeleteCommentMutation,
+} = commentsApi;

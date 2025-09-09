@@ -13,8 +13,9 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import CommentsSection from "../components/CommentsSection";
+import RatingSection from "../components/RatingSection";
 
-const SerisesDetailsPage = () => {
+const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const seriesId = Number(id);
 
@@ -53,7 +54,7 @@ const SerisesDetailsPage = () => {
 
   const handleFavorite = async () => {
     try {
-      const payload = { contentId: seriesId, contentType: "tv" }; 
+      const payload = { contentId: seriesId, contentType: "tv" };
       if (inFavorites) {
         const favorite = favorites?.find((f) => f.contentId === seriesId);
         if (!favorite) return;
@@ -71,53 +72,136 @@ const SerisesDetailsPage = () => {
   };
 
   if (!series)
-    return <p className="text-white text-center mt-10 animate-fadeIn">Завантаження...</p>;
+    return (
+      <p className="text-white text-center mt-10 animate-fadeIn">
+        Завантаження...
+      </p>
+    );
 
   const posterUrl = `https://image.tmdb.org/t/p/w500${series.poster_path}`;
+  const backdropUrl = `https://image.tmdb.org/t/p/original${series.backdrop_path}`;
   const trailer = videos[0];
 
   return (
-    <div className="bg-gradient-to-b from-black via-black/90 to-black text-white min-h-screen pt-10">
+    <div className="bg-black text-white min-h-screen">
       <Header />
-      <div className="max-w-6xl mt-20 mx-auto flex flex-col md:flex-row gap-8 animate-fadeIn">
-        {/* Poster */}
-        <div className="relative w-full md:w-1/3">
-          <img
-            src={posterUrl}
-            alt={series.title || series.name}
-            className="rounded-2xl shadow-2xl w-full transform hover:scale-105 transition duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-2xl"></div>
-        </div>
 
-        {/* Info */}
-        <div className="flex-1 flex flex-col justify-between">
-          <div>
-            <h1 className="text-5xl font-extrabold mb-4 tracking-wide">{series.title || series.name}</h1>
-            <p className="text-gray-400 mb-6">{series.release_date || series.first_air_date}</p>
-            <p className="text-gray-300 mb-8 leading-relaxed">{series.overview}</p>
+      {/* backdrop */}
+      <div
+        className="relative h-[70vh] w-full bg-cover bg-center"
+        style={{ backgroundImage: `url(${backdropUrl})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 md:px-0 -mt-40 relative z-10">
+        <div className="flex flex-col md:flex-row gap-10 animate-fadeIn">
+          {/* Poster */}
+          <div className="w-full md:w-1/3">
+            <img
+              src={posterUrl}
+              alt={series.name}
+              className="rounded-2xl shadow-2xl w-full"
+            />
           </div>
 
-          <button
-          onClick={handleFavorite}
-          className={`
-            flex self-start items-center gap-2 px-6 py-3 rounded-sm font-regular text-lg transition-all duration-300
-            
-            ${inFavorites 
-              ? "bg-gray-800 text-white border-gray-700 hover:bg-gray-700 hover:border-gray-600"
-              : "bg-lime-500 text-white border-lime-600 hover:bg-lime-600 hover:border-lime-700 shadow-lg hover:shadow-2xl"
-            }
-          `}
-        >
-          {inFavorites ? <AiFillHeart className="text-red-500 w-5 h-5" /> : <AiOutlineHeart className="w-5 h-5" />}
-          {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
-        </button>
+          {/* Info */}
+          <div className="flex-1">
+            <h1 className="text-5xl font-extrabold mb-4">{series.name}</h1>
+            {series.tagline && (
+              <p className="italic text-gray-400 text-xl mb-6">
+                "{series.tagline}"
+              </p>
+            )}
+
+            <p className="text-gray-400 mb-6 text-lg">
+              {series.first_air_date} – {series.status} • ⭐{" "}
+              {series.vote_average.toFixed(1)} ({series.vote_count} голосів)
+            </p>
+
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              {series.overview}
+            </p>
+
+            {/* Additional info */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
+              { series.genres && (
+                <p>
+                    <span className="text-white font-semibold">Жанри:</span>{" "}
+                    {series.genres.map((g) => g.name).join(", ")}
+                </p>
+              )}
+              <p>
+                <span className="text-white font-semibold">Сезонів:</span>{" "}
+                {series.number_of_seasons}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Епізодів:</span>{" "}
+                {series.number_of_episodes}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Мова:</span>{" "}
+                {series.original_language.toUpperCase()}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Популярність:</span>{" "}
+                {series.popularity}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Статус:</span>{" "}
+                {series.status}
+              </p>
+            </div>
+
+            {/* Favorites button */}
+            <button
+              onClick={handleFavorite}
+              className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
+                ${
+                  inFavorites
+                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-lime-500 text-white hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                }`}
+            >
+              {inFavorites ? (
+                <AiFillHeart className="text-red-500 w-6 h-6" />
+              ) : (
+                <AiOutlineHeart className="w-6 h-6" />
+              )}
+              {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Last Episode */}
+      {series.last_episode_to_air && (
+        <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0">
+          <h2 className="text-3xl font-bold mb-6">Останній епізод</h2>
+          <div className="flex gap-6 bg-gray-900 p-4 rounded-lg shadow-lg">
+            <img
+              src={`https://image.tmdb.org/t/p/w300${series.last_episode_to_air.still_path}`}
+              alt={series.last_episode_to_air.name}
+              className="w-52 rounded-md shadow-md"
+            />
+            <div>
+              <h3 className="text-xl font-semibold">
+                {series.last_episode_to_air.name}
+              </h3>
+              <p className="text-gray-400 text-sm mb-2">
+                {series.last_episode_to_air.air_date} • Епізод{" "}
+                {series.last_episode_to_air.episode_number} (Сезон{" "}
+                {series.last_episode_to_air.season_number})
+              </p>
+              <p className="text-gray-300">{series.last_episode_to_air.overview}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Trailer */}
       {trailer && (
-        <div className="mt-16 max-w-6xl mx-auto animate-fadeIn">
+        <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
           <h2 className="text-3xl font-bold mb-6">Трейлер</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
@@ -129,12 +213,16 @@ const SerisesDetailsPage = () => {
           </div>
         </div>
       )}
-      <CommentsSection movieId={series.id} />
+
+      {/* Rating & Comments */}
+      <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
+        <RatingSection contentId={series.id} contentType="tv" />
+        <CommentsSection movieId={series.id} movieType="tv" />
+      </div>
+
       <Footer />
     </div>
-    
   );
 };
 
-export default SerisesDetailsPage;
-
+export default SeriesDetailsPage;

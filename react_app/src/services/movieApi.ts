@@ -26,7 +26,8 @@ export const getCartoons = () => fetchCAFromTMDB('/discover/movie');
 export const getMovieDetails = (id: number) =>
   fetchFromTMDB(`/movie/${id}`);
 export const getSeriesDetails = (id: number) =>
-    fetchFromTMDB(`/tv/${id}`);
+  fetchFromTMDB(`/tv/${id}`);
+export const getCollections = (id: number) => fetchFromTMDB(`/collection/${id}`)
 
 export interface Video {
   id: string;
