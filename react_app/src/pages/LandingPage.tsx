@@ -158,13 +158,13 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
        <div className="rounded-lg overflow-hidden">
     <img
       src={`${IMG_BASE}${movie.poster_path}`}
-      alt={movie.title || movie.name}
+      alt={movie.title || movie.original_title}
       className="w-full h-80 object-cover"
     />
   </div>
       
       <p className="mt-2 text-sm text-gray-300 truncate">
-        {movie.title || movie.name}
+        {movie.title || movie.original_title}
       </p>
     </div>
   ))}
@@ -185,12 +185,12 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
             
             <img
               src={`${IMG_BASE}${selectedMovie.poster_path}`}
-              alt={selectedMovie.title || selectedMovie.name}
+              alt={selectedMovie.title || selectedMovie.original_title}
               className="rounded-lg w-full mb-4 h-96 object-cover"
             />
             
             <h3 className="text-xl font-bold text-white mb-2">
-              {selectedMovie.title || selectedMovie.name}
+              {selectedMovie.title || selectedMovie.original_title}
             </h3>
             
             <p className="text-gray-300 mb-4">

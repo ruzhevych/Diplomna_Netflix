@@ -24,6 +24,7 @@ import AdminRoute from "./components/Admin/AdminRoute.tsx"
 import BlockedPage from "./pages/BlockedPage"
 import SerisesDetailsPage from './pages/SeriesDetailPage.tsx';
 import ForLaterPage from './pages/Categories/ForLaterPage.tsx';
+import MovieCollection from './pages/MovieCollection.tsx';
 
 const App = () => {
   return (
@@ -82,6 +83,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <SerisesDetailsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/collection/:id"
+        element={
+          <ProtectedRoute>
+            <MovieCollection />
           </ProtectedRoute>
         }
       />

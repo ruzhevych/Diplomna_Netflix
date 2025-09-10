@@ -7,6 +7,7 @@ import userReducer from './slices/userSlice';
 import {favoritesApi} from "../services/favoritesApi.ts";
 import { adminApi } from "../services/adminApi";
 import { forLaterApi } from '../services/forLaterApi.ts'
+import { commentsApi } from '../services/commentApi.ts'
 
 export const store = configureStore({
   reducer: {
@@ -17,9 +18,17 @@ export const store = configureStore({
     user: userReducer,
     [favoritesApi.reducerPath]: favoritesApi.reducer,
     [forLaterApi.reducerPath]: forLaterApi.reducer,
+    [commentsApi.reducerPath]: commentsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, userApi.middleware, adminApi.middleware, favoritesApi.middleware, forLaterApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      userApi.middleware,
+      adminApi.middleware,
+      favoritesApi.middleware, 
+      forLaterApi.middleware,
+      commentsApi.middleware
+    ),
 })
 
 setupListeners(store.dispatch)

@@ -46,7 +46,7 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
             </span>
             <img
               src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-              alt={item.title || item.name}
+              alt={item.title || item.original_title}
               className=" w-40 rounded-md"
             />
           </div>

@@ -47,10 +47,10 @@ const SearchPage = () => {
             <div key={item.id} className="bg-zinc-800 p-2 rounded">
               <img
                 src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-                alt={item.title || item.name}
+                alt={item.title || item.original_title}
                 className="rounded"
               />
-              <p className="mt-2 text-sm">{item.title || item.name}</p>
+              <p className="mt-2 text-sm">{item.title || item.original_title}</p>
             </div>
           ))}
         </div>

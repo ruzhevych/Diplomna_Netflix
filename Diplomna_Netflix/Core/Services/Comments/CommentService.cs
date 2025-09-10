@@ -57,7 +57,7 @@ public class CommentService : ICommentService
             Id = comment.Id,
             Content = comment.Content,
             CreatedAt = comment.CreatedAt,
-            UserName = user.UserName,
+            UserName = user.FullName,
             UserProfilePictureUrl = user?.ProfilePictureUrl
         };
     }
@@ -72,7 +72,7 @@ public class CommentService : ICommentService
                 Id = c.Id,
                 Content = c.Content,
                 CreatedAt = c.CreatedAt,
-                UserName = c.User.UserName,
+                UserName = c.User.FullName,
                 UserProfilePictureUrl = c.User.ProfilePictureUrl
             })
             .ToListAsync();
@@ -99,7 +99,7 @@ public class CommentService : ICommentService
             Id = comment.Id,
             Content = comment.Content,
             CreatedAt = comment.CreatedAt,
-            UserName = user.UserName,
+            UserName = user.FullName,
             UserProfilePictureUrl = user.ProfilePictureUrl
         };
     }
