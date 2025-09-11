@@ -3,6 +3,14 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithReauth } from "../utils/createBaseQuery";
 import type { AdminUser, PagedResult, SendMessageDto, SendMessageResponse, Role } from "../types/admin";
 
+
+export interface BlockUserDto {
+  userId: number;
+  adminId: number;
+  durationDays?: number;
+  reason?: string;
+}
+
 export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: createBaseQueryWithReauth("admin/users"),
@@ -28,19 +36,21 @@ export const adminApi = createApi({
     }),
 
     // PATCH /api/admin/users/{id}/block
-    blockUser: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/${id}/block`,
+    blockUser: builder.mutation<void, BlockUserDto>({
+      query: (dto) => ({
+        url: `/block`,
         method: "PATCH",
+        body: dto,
       }),
       invalidatesTags: [{ type: "AdminUsers", id: "LIST" }],
     }),
 
     // PATCH /api/admin/users/{id}/unblock
-    unblockUser: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/${id}/unblock`,
+    unblockUser: builder.mutation<void, { userId: number; adminId: number }>({
+      query: ({ userId, adminId }) => ({
+        url: `/unblock`,
         method: "PATCH",
+        params: { userId, adminId }
       }),
       invalidatesTags: [{ type: "AdminUsers", id: "LIST" }],
     }),

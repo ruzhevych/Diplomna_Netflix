@@ -5,13 +5,16 @@ import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setTokens, clearTokens } from '../store/slices/authSlice'
 
+
 interface AuthContextType {
   isAuthenticated: boolean
   login: (accessToken: string, refreshToken?: string, isActive?: boolean) => void
   logout: () => void
   isAuthReady: boolean
   isActive: boolean | null
+  isBlocked: boolean | null
   googleTempToken: string | null
+  //user: UserProfile | null
   setGoogleTempToken: (token: string | null) => void
 }
 
@@ -20,7 +23,7 @@ export const useAuth = () => useContext(AuthContext)!
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch<AppDispatch>()
-
+  const [isBlocked, setIsBlocked] = useState<boolean | null>()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthReady, setIsAuthReady] = useState(false)
   const [isActive, setIsActive] = useState<boolean | null>(null)
@@ -63,22 +66,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthReady(true)
   }, [dispatch])
 
-  const login = (accessToken: string, refreshToken?: string, isActive?: boolean) => {
+  const login = (accessToken: string, refreshToken?: string, isActive?: boolean, isBlockedServer?: boolean) => {
     localStorage.setItem('accessToken', accessToken)
-    if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
-    if (typeof isActive !== 'undefined') {
-      localStorage.setItem('isActive', String(isActive))
-      setIsActive(isActive)
-    }
-    dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null, isActive: isActive ?? null }))
-    setIsAuthenticated(true)
+      if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+      if (typeof isActive !== 'undefined') {
+        localStorage.setItem('isActive', String(isActive))
+        setIsActive(isActive)
+      }
+      if (typeof isBlockedServer == 'undefined') {
+        setIsBlocked(isBlockedServer)
+      }
+      dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null, isActive: isActive ?? null }))
+      setIsAuthenticated(true)
   }
 
   const logout = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('isActive')
-    localStorage.removeItem('googleTempToken') // + почистити temp токен
+    localStorage.removeItem('googleTempToken') 
     dispatch(clearTokens())
     setIsAuthenticated(false)
     setIsActive(null)
@@ -93,8 +99,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         isAuthReady,
         isActive,
+        isBlocked,
         googleTempToken: googleTempTokenState,
-        setGoogleTempToken, // віддаємо саме обгортку
+        setGoogleTempToken, 
       }}
     >
       {children}
