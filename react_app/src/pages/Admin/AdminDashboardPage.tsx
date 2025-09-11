@@ -1,11 +1,22 @@
 import Footer from "../../components/Footer/Footer";
 import { useState, useMemo } from "react";
-import { useGetUsersQuery, useBlockUserMutation, useSendMessageMutation, useDeleteUserMutation, useChangeUserRoleMutation, useUnblockUserMutation } from "../../services/adminApi";
+import {
+  useGetUsersQuery,
+  useBlockUserMutation,
+  useSendMessageMutation,
+  useDeleteUserMutation,
+  useChangeUserRoleMutation,
+  useUnblockUserMutation
+} from "../../services/adminApi";
+import {
+  useGetProfileQuery
+} from "../../services/userApi";
 import UserSearch from "../../components/Admin/UserSearch";
 import Pagination from "../../components/Admin/Pagination";
 import SendMessageModal from "../../components/Admin/SendMessageModal";
-import type { AdminUser } from "../../types/admin";
+import BlockUserModal from "../../components/Admin/BlockUserModal";
 import HeaderAdmin from "./../../components/Admin/HeaderAdmin";
+
 
 type SortField = "id" | "email" | "fullName" | "role";
 type SortOrder = "asc" | "desc";
@@ -13,8 +24,6 @@ type SortOrder = "asc" | "desc";
 export default function AdminDashboardPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  
-  // новий стан для сортування
   const [sortField, setSortField] = useState<SortField>("id");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
@@ -23,9 +32,13 @@ export default function AdminDashboardPage() {
   const [changeUserRole] = useChangeUserRoleMutation();
   const [deleteUser] = useDeleteUserMutation();
   const [sendMessage] = useSendMessageMutation();
+  const { data: profile } = useGetProfileQuery();
+  
+  const adminId = profile?.id;
 
-  // modal states
+  
   const [isMsgOpen, setMsgOpen] = useState(false);
+  const [isBlockOpen, setBlockOpen] = useState(false);
   type SelectedUser = { id: number; email: string };
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
 
@@ -34,6 +47,11 @@ export default function AdminDashboardPage() {
   const openMsgModal = (id: number, email: string) => {
     setSelectedUser({ id, email });
     setMsgOpen(true);
+  };
+
+  const openBlockModal = (id: number, email: string) => {
+    setSelectedUser({ id, email });
+    setBlockOpen(true);
   };
 
   const handleSend = async (subject: string, message: string) => {
@@ -45,17 +63,25 @@ export default function AdminDashboardPage() {
     }).unwrap();
   };
 
-  // локальне сортування (тільки на фронті)
+  const handleBlockConfirm = async (reason?: string, durationDays?: number) => {
+    if (!selectedUser || !adminId) return;
+    await blockUser({
+      userId: selectedUser.id,
+      adminId,
+      reason,
+      durationDays,
+    }).unwrap();
+    setBlockOpen(false);
+  };
+
   const sortedData = useMemo(() => {
     if (!data) return null;
     const items = [...data.items];
     items.sort((a, b) => {
       let valA: string | number = a[sortField] ?? "";
       let valB: string | number = b[sortField] ?? "";
-
       if (typeof valA === "string") valA = valA.toLowerCase();
       if (typeof valB === "string") valB = valB.toLowerCase();
-
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
       return 0;
@@ -104,8 +130,8 @@ export default function AdminDashboardPage() {
                   </th>
                   <th className="px-4 py-3">Статус</th>
                   <th className="px-4 py-3">Роль</th>
-                  <th className="px-4 py-3">Дії</th>
-                  <th className="px-4 py-3">Дії</th>
+                  <th className="px-4 py-3">Блокування</th>
+                  <th className="px-4 py-3">Видалити</th>
                   <th className="px-4 py-3">Написати</th>
                 </tr>
               </thead>
@@ -133,11 +159,19 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       {u.isBlocked ? (
-                        <button onClick={() => unblockUser(u.id)} className="rounded-sm bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700">
-                          Розблокувати
+                        <button
+                          onClick={() => {
+                          if (adminId === undefined) return; 
+                          unblockUser({ userId: u.id, adminId });
+                        }}
+                        className="rounded-sm bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700"
+                      >
+                        Розблокувати
                         </button>
                       ) : (
-                        <button onClick={() => blockUser(u.id)} className="px-3 py-1 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs">
+                        <button
+                          onClick={() => openBlockModal(u.id, u.email)}
+                          className="px-3 py-1 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs">
                           Заблокувати
                         </button>
                       )}
@@ -183,6 +217,21 @@ export default function AdminDashboardPage() {
         open={isMsgOpen}
         onClose={() => setMsgOpen(false)}
         onSend={handleSend}
+        userEmail={selectedUser?.email}
+      />
+
+      <BlockUserModal
+        open={isBlockOpen}
+        onClose={() => setBlockOpen(false)}
+        onConfirm={(reason, days) => {
+          if (!selectedUser || !adminId) return;
+          blockUser({
+            userId: selectedUser.id,
+            adminId,
+            durationDays: days ?? 0,
+            reason: reason ?? '',
+          });
+        }}
         userEmail={selectedUser?.email}
       />
 

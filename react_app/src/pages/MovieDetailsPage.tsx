@@ -102,7 +102,8 @@ const MovieDetailsPage = () => {
             <img
               src={posterUrl}
               alt={movie.title || movie.original_title}
-              className="rounded-2xl shadow-2xl w-full"
+              className="rounded-sm+
+               shadow-2xl w-full"
             />
           </div>
 
