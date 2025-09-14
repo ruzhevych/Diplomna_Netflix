@@ -47,6 +47,34 @@ public class UserService : IUserService
         var users = await _userManager.Users.ToListAsync();
         return _mapper.Map<List<UserDto>>(users);
     }
+    
+    public async Task<BlockedUserDto?> GetActiveBlockInfoAsync(string userId)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.BlockHistory)
+            .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+
+        if (user == null)
+            return null;
+
+        var activeBlock = user.BlockHistory
+            .OrderByDescending(b => b.BlockedAt)
+            .FirstOrDefault(b => b.IsActive);
+
+        if (activeBlock == null)
+            return null;
+
+        return new BlockedUserDto
+        {
+            UserId = activeBlock.UserId,
+            UserEmail = GetByIdAsync(activeBlock.UserId.ToString()).Result.Email,
+            AdminId = activeBlock.AdminId,
+            AdminEmail = GetByIdAsync(activeBlock.AdminId.ToString()).Result.Email,
+            BlockedAt = activeBlock.BlockedAt,
+            DurationDays = activeBlock.Duration.HasValue ? (int)activeBlock.Duration.Value.TotalDays : 0,
+            Reason = activeBlock.Reason
+        };
+    }
 
     public async Task<UserDto> GetByIdAsync(string id)
     {

@@ -25,9 +25,13 @@ const LoginPage = () => {
     setError('');
     try {
       const res = await login({ email, password }).unwrap();
-      loginContext(res.accessToken);
-      toast.success("Успішний вхід");
-      navigate('/home');
+      if(res.isBlocked){
+        navigate('/blocked');
+      } else{
+        loginContext(res.accessToken);
+        toast.success("Успішний вхід");
+        navigate('/home');
+      }
     } catch (err: any) {
       setError(err?.data?.message || 'Сталася помилка під час входу');
     }

@@ -18,6 +18,7 @@ export interface IAuthResponse {
   token(token: any): unknown;
   accessToken: string;
   isActive: boolean;
+  isBlocked : boolean;
 }
 
 export interface IGoogleLoginRequest {

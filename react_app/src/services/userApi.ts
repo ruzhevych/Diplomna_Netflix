@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { createBaseQueryWithReauth } from '../utils/createBaseQuery';
-import type { IUserCreateDTO, IUserDTO, UserProfile } from '../types/user';
+import type { BlockedUser, IUserCreateDTO, IUserDTO, UserProfile } from '../types/user';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -66,6 +66,20 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+
+    getBlockInfo: builder.query<BlockedUser | null, void>({
+      query: () => ({
+        url: `/blocked`,
+        method: 'GET',
+      }),
+      transformResponse: (response, meta) => {
+        if (meta?.response?.status === 423) {
+          return response as BlockedUser;
+        }
+        return null;
+      },
+      
+    }),
   }),
 });
 
@@ -76,4 +90,5 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useGetProfileQuery,
+  useGetBlockInfoQuery,
 } = userApi;

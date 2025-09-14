@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../utils/getInitials";
 import Header from "../components/Header/Header";
@@ -10,7 +10,6 @@ import {
   Users,
   CreditCard,
   LogOut,
-  Settings,
   Edit,
   History,
   Book,
@@ -18,12 +17,7 @@ import {
 } from "lucide-react";
 import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
-import type { IUserAuth } from "../types/user";
 import ProfileEditModal from "./ProfileEditModal";
-import type { AdminUser } from "../types/admin";
-
-
-
 
 
 const ProfilePage = () => {

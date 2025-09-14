@@ -7,7 +7,7 @@ import {
 import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Play, Plus, ThumbsUp, ChevronDown, X } from "lucide-react";
+import { Play, Plus, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddForLaterMutation } from "../../services/forLaterApi";
 
