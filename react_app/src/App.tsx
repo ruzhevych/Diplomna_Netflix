@@ -17,7 +17,6 @@ import CartoonsPage from './pages/Categories/CartoonsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PlanIntroPage from './pages/PlanIntroPage';
-import ProfileEditPage from './pages/ProfileEditModal.tsx';
 import FavoritesPage from "./pages/Categories/FavoritesPage.tsx";
 import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.tsx"
 import AdminRoute from "./components/Admin/AdminRoute.tsx"

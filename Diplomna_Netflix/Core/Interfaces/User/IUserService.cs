@@ -9,5 +9,6 @@ public interface IUserService
     Task DeleteUserAsync(string id);
     Task<UserDto?> GetByEmailAsync(string email);
     Task<UserDto> GetByIdAsync(string id);
+    Task<BlockedUserDto?> GetActiveBlockInfoAsync(string userId);
     //Task<List<UserDto>> GetAllAsync();
 }

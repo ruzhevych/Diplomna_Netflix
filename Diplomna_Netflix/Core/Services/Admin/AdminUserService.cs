@@ -1,3 +1,4 @@
+using AutoMapper;
 using Core.DTOs.AdminDTOs.Users;
 using Core.Interfaces.Admin;
 using Core.Interfaces.Email;
@@ -17,17 +18,20 @@ public class AdminUserService : IAdminUserService
 
     private readonly IRepository<UserBlockHistoryEntity> _blockHistoryRepo;
     private readonly IRepository<AdminMessageEntity> _adminMessageRepo;
+    private readonly IMapper _mapper;
 
     public AdminUserService(
         UserManager<UserEntity> userManager,
         IEmailService emailService,
         IRepository<UserBlockHistoryEntity> blockHistoryRepo,
-        IRepository<AdminMessageEntity> adminMessageRepo)
+        IRepository<AdminMessageEntity> adminMessageRepo,
+        IMapper mapper)
     {
         _userManager = userManager;
         _emailService = emailService;
         _blockHistoryRepo = blockHistoryRepo;
         _adminMessageRepo = adminMessageRepo;
+        _mapper = mapper;
     }
 
     public async Task<PagedResult<UserDto>> GetUsersAsync(int page, int pageSize, string? search)
@@ -66,9 +70,87 @@ public class AdminUserService : IAdminUserService
 
         return new PagedResult<UserDto>(userDtos, totalCount, page, pageSize);
     }
+    
+    public async Task<UserDto> GetByIdAsync(string id)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id.ToString() == id);
 
+        if (user == null) return null;
 
-    public async Task BlockUserAsync(BlockUserDto dto)
+        return _mapper.Map<UserDto>(user);
+    }
+    
+    public async Task<PagedResult<BlockedUserDto>> GetBlockedUsersAsync(int page, int pageSize, string? search)
+    {
+        var query = _userManager.Users
+            .Include(u => u.BlockHistory)
+            .ThenInclude(b => b.Admin)
+            .Where(u => u.IsBlocked)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(u => u.Email.Contains(search) ||
+                                     u.FirstName.Contains(search) ||
+                                     u.LastName.Contains(search));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var users = await query
+            .OrderByDescending(u => u.BlockHistory
+                .OrderByDescending(b => b.BlockedAt)
+                .Select(b => b.BlockedAt)
+                .FirstOrDefault()) // сортуємо по даті останнього блокування
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var result = new List<BlockedUserDto>();
+
+        foreach (var user in users)
+        {
+            var activeBlock = user.BlockHistory
+                .OrderByDescending(b => b.BlockedAt)
+                .FirstOrDefault(b => b.IsActive);
+
+            if (activeBlock == null)
+                continue; // без активного блокування пропускаємо
+
+            result.Add(new BlockedUserDto
+            {
+                UserId = user.Id,
+                UserEmail = user.Email!,
+                AdminId = activeBlock.AdminId,
+                AdminEmail = activeBlock.Admin?.Email ?? "Unknown",
+                BlockedAt = activeBlock.BlockedAt,
+                DurationDays = activeBlock.Duration.HasValue ? (int)activeBlock.Duration.Value.TotalDays : 0,
+                Reason = activeBlock.Reason
+            });
+        }
+
+        return new PagedResult<BlockedUserDto>(result, totalCount, page, pageSize);
+    }
+
+    public async Task<BlockedUserDto> GetBlockedUserAsync(long id)
+    {
+        // Дістаємо останній запис блокування (якщо є)
+        var block = await _blockHistoryRepo
+            .GetAllQueryable()
+            .Where(b => b.UserId == id && b.IsActive)
+            .OrderByDescending(b => b.BlockedAt)
+            .Include(b => b.Admin)
+            .FirstOrDefaultAsync();
+
+        if (block == null) return null;
+
+        return _mapper.Map<BlockedUserDto>(block);
+    }
+
+    public async Task BlockUserAsync(BlockUserDto dto, long adminId)
     {
         var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
         if (user == null) throw new Exception("User not found");
@@ -81,7 +163,7 @@ public class AdminUserService : IAdminUserService
         var blockHistory = new UserBlockHistoryEntity
         {
             UserId = user.Id,
-            AdminId = dto.AdminId,
+            AdminId = adminId,
             BlockedAt = DateTime.UtcNow,
             Duration = dto.DurationDays > 0 ? TimeSpan.FromDays(dto.DurationDays) : null,
             Reason = dto.Reason,

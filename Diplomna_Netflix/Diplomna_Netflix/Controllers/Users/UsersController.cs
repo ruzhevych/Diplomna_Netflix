@@ -26,6 +26,20 @@ public class UsersController : ControllerBase
         var user = await _userService.GetByIdAsync(id);
         return user == null ? NotFound() : Ok(user);
     }
+    
+    [HttpGet("blocked")]
+    public async Task<IActionResult> GetBlockInfo()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (userId == null) return Unauthorized();
+        var blockInfo = await _userService.GetActiveBlockInfoAsync(userId);
+
+        if (blockInfo == null)
+            return Ok(null);
+
+        return StatusCode(StatusCodes.Status423Locked, blockInfo);
+    }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromForm] UserUpdateDto dto)

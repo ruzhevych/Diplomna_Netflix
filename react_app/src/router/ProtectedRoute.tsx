@@ -12,12 +12,14 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
   if (!isAuthReady) return null
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
-
-  console.log(isAuthenticated, isAuthReady, isBlocked)
- 
   if (isBlocked) return <Navigate to="/blocked" replace />
   
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+
+  console.log('isAuthenticated: ',isAuthenticated);
+  console.log('isAuthReady: ', isAuthReady);
+  console.log('isBlocked: ', isBlocked);
+
   return children
 }
 

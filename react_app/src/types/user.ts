@@ -48,3 +48,14 @@ export interface IUserCreateDTO {
   password: string;
   fullName: string;
 }
+
+export interface BlockedUser {
+  userId: number;
+  userEmail: string;
+  adminId: number;
+  adminEmail: string;
+  blockedAt: string;
+  durationDays: number;
+  reason: string;
+}
+

@@ -23,7 +23,7 @@ export const useAuth = () => useContext(AuthContext)!
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch<AppDispatch>()
-  const [isBlocked, setIsBlocked] = useState<boolean | null>()
+  const [isBlocked, setIsBlocked] = useState<boolean | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthReady, setIsAuthReady] = useState(false)
   const [isActive, setIsActive] = useState<boolean | null>(null)
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const accessToken = localStorage.getItem('accessToken')
     const refreshToken = localStorage.getItem('refreshToken')
     const active = localStorage.getItem('isActive')
-
+    const storedIsBlocked = localStorage.getItem('isBlocked')
     const storedGoogleTempToken = localStorage.getItem('googleTempToken')
     if (storedGoogleTempToken) {
       setGoogleTempTokenState(storedGoogleTempToken)
@@ -54,9 +54,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         accessToken: accessToken ?? null,
         refreshToken: refreshToken ?? null,
         isActive: active ? active === 'true' : null,
+        isBlocked: storedIsBlocked ? storedIsBlocked ==='true' : null
       }))
       setIsAuthenticated(!!accessToken)
       setIsActive(active ? active === 'true' : null)
+      setIsBlocked(storedIsBlocked ? storedIsBlocked === 'true' : null)
     } else {
       dispatch(clearTokens())
       setIsAuthenticated(false)
@@ -66,17 +68,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthReady(true)
   }, [dispatch])
 
-  const login = (accessToken: string, refreshToken?: string, isActive?: boolean, isBlockedServer?: boolean) => {
+  const login = (accessToken: string, refreshToken?: string, isActive?: boolean, isBlocked?: boolean) => {
     localStorage.setItem('accessToken', accessToken)
       if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
       if (typeof isActive !== 'undefined') {
         localStorage.setItem('isActive', String(isActive))
         setIsActive(isActive)
       }
-      if (typeof isBlockedServer == 'undefined') {
-        setIsBlocked(isBlockedServer)
+      if (typeof isBlocked !== 'undefined') {
+        localStorage.setItem('storedIsBlocked', String(isBlocked))
+        setIsBlocked(isBlocked)
+      } else {
+        localStorage.removeItem('isBlocked')
+        setIsBlocked(null)
       }
-      dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null, isActive: isActive ?? null }))
+      dispatch(setTokens({ accessToken, refreshToken: refreshToken ?? null, isActive: isActive ?? null, isBlocked: isBlocked ?? null}))
       setIsAuthenticated(true)
   }
 
@@ -85,9 +91,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('isActive')
     localStorage.removeItem('googleTempToken') 
+    localStorage.removeItem('storedIsBlocked')
     dispatch(clearTokens())
     setIsAuthenticated(false)
     setIsActive(null)
+    setIsBlocked(null)
     setGoogleTempTokenState(null)
   }
 

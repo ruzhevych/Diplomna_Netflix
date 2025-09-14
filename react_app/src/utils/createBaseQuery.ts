@@ -16,6 +16,7 @@ export const createBaseQuery = (endpoint: string) => {
       }
       return headers;
     },
+    validateStatus: (response) => response.status < 400 || response.status === 423,
   });
 };
 
