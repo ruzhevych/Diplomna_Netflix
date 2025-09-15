@@ -3,7 +3,6 @@ import {
   useGetCommentsQuery,
   useAddCommentMutation,
   useDeleteCommentMutation,
-  useUpdateCommentMutation,
 } from "../services/commentApi";
 import type { CommentCreateDto } from "../types/comment";
 import CommentEditModal from "../pages/CommentEditModal";
@@ -30,7 +29,6 @@ export default function CommentsSection({ movieId, movieType }: Props) {
 
   const [addComment] = useAddCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
-  const [updateComment] = useUpdateCommentMutation();
 
   async function handleAdd() {
     if (!newComment.trim()) return;
@@ -52,14 +50,6 @@ export default function CommentsSection({ movieId, movieType }: Props) {
       await deleteComment(id).unwrap();
     } catch (err) {
       console.error("Помилка при видаленні коментаря:", err);
-    }
-  }
-
-  async function handleUpdate(id: string, newContent: string) {
-    try {
-      await updateComment({ commentId: id, newContent }).unwrap();
-    } catch (err) {
-      console.error("Помилка при редагуванні коментаря:", err);
     }
   }
 
@@ -107,6 +97,7 @@ export default function CommentsSection({ movieId, movieType }: Props) {
               {c.userName === currentUser?.fullName && (
                 <div className="flex gap-2">
                   <button
+                  //onClick={() => handleUpdate(c.id, c.content)}
                     onClick={() => {
                       setSelectedComment({ id: c.id, content: c.content });
                       setIsEditing(true);

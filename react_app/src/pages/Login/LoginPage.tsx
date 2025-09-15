@@ -56,6 +56,7 @@ const LoginPage = () => {
 
   const googleLoginFunc = useGoogleLogin({
     scope: 'openid email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+    prompt: "select_account",
     onSuccess: async (tokenResponse) => {
       await onLoginGoogleResult(tokenResponse.access_token);
     },

@@ -53,6 +53,7 @@ const RegisterPage = () => {
 
   const googleRegisterFunc = useGoogleLogin({
     scope: 'openid email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+    prompt: "select_account",
     onSuccess: async (tokenResponse) => {
       await onRegisterGoogleResult(tokenResponse.access_token);
     },

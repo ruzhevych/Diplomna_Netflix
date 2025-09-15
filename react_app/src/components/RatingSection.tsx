@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../store/hooks";
 import { useAddRatingMutation, useGetUserRatingQuery } from "../services/ratingApi";
 
 interface Props {
@@ -13,18 +12,24 @@ export default function RatingSection({ contentId, contentType }: Props) {
   const [hover, setHover] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const currentUser = useAppSelector((state) => state.user.user);
+  const { data: userRating, isLoading } = useGetUserRatingQuery({ contentId, contentType });
   const [addRating] = useAddRatingMutation();
+
+  useEffect(() => {
+    if (userRating) setSelected(userRating.stars);
+  }, [userRating]);
 
   async function handleRatingClick(stars: number) {
     setSelected(stars);
     try {
       await addRating({ contentId, contentType, stars }).unwrap();
       toast.success(`Ви поставили оцінку ${stars} ⭐`);
-    } catch (err) {
-      toast.error("Помилка при збереженні оцінки");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Помилка при збереженні оцінки");
     }
   }
+
+  if (isLoading) return <p>Завантаження вашої оцінки...</p>;
 
   return (
     <div className="max-w-6xl mx-auto gap-8 mt-20 my-6">
@@ -43,11 +48,7 @@ export default function RatingSection({ contentId, contentType }: Props) {
           />
         ))}
       </div>
-      {selected && (
-        <p className="mt-2 text-sm text-gray-400">
-          Ваша оцінка: {selected} / 5
-        </p>
-      )}
+      {selected && <p className="mt-2 text-sm text-gray-400">Ваша оцінка: {selected} / 5</p>}
     </div>
   );
 }

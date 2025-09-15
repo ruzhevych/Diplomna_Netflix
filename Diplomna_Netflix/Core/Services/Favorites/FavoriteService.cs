@@ -48,10 +48,13 @@ public class FavoriteService : IFavoriteService
             CreatedAt = DateTime.UtcNow
         };
         
-        var isNew = _favoriteRepo.GetAllQueryable()
-            .Where(f => f.ContentId == dto.ContentId && f.ContentType == dto.ContentType);
-        if (isNew.Any())
-            throw new UnauthorizedAccessException("Alredy added favorite");
+        var exists = _favoriteRepo.GetAllQueryable()
+            .Any(f => f.UserId == user.Id
+                      && f.ContentId == dto.ContentId
+                      && f.ContentType == dto.ContentType);
+
+        if (exists)
+            throw new InvalidOperationException("Цей контент уже доданий в обране.");
         
         await _favoriteRepo.AddAsync(favorite);
         await _favoriteRepo.SaveChangesAsync();
