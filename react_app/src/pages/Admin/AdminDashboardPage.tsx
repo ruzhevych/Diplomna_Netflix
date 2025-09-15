@@ -16,7 +16,12 @@ import Pagination from "../../components/Admin/Pagination";
 import SendMessageModal from "../../components/Admin/SendMessageModal";
 import BlockUserModal from "../../components/Admin/BlockUserModal";
 import HeaderAdmin from "./../../components/Admin/HeaderAdmin";
-
+import {
+  useGetAllSubscriptionsQuery,
+  useCreateSubscriptionMutation,
+  useUpdateSubscriptionMutation,
+  useDeleteSubscriptionMutation,
+} from "../../services/adminSubscriptionsApi";
 
 type SortField = "id" | "email" | "fullName" | "role";
 type SortOrder = "asc" | "desc";
@@ -33,6 +38,11 @@ export default function AdminDashboardPage() {
   const [deleteUser] = useDeleteUserMutation();
   const [sendMessage] = useSendMessageMutation();
   const { data: profile } = useGetProfileQuery();
+  const { data: subs, isLoading: isSubsLoading } = useGetAllSubscriptionsQuery();
+
+  const [createSubscription] = useCreateSubscriptionMutation();
+  const [updateSubscription] = useUpdateSubscriptionMutation();
+  const [deleteSubscription] = useDeleteSubscriptionMutation();
   
   const adminId = profile?.id;
 
@@ -195,6 +205,15 @@ export default function AdminDashboardPage() {
                       >
                         Написати
                       </button>
+                      <div>
+                        {isSubsLoading && "Завантаження…"}
+                        {subs?.map((s) => (
+                          <div key={s.id}>
+                            {s.userEmail} – {s.type} – активна: {String(s.isActive)}
+                            <button onClick={() => deleteSubscription(s.id)}>Видалити</button>
+                          </div>
+                        ))}
+                      </div>
                     </td>
                   </tr>
                 ))}
