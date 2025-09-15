@@ -16,9 +16,10 @@ export const ratingApi = createApi({
       }),
       invalidatesTags: ["Ratings"],
     }),
-    getUserRating: builder.query<number, { contentId: number; contentType: string }>({
+    getUserRating: builder.query<{ stars: number } | null, { contentId: number; contentType: string }>({
       query: ({ contentId, contentType }) =>
-        `/Rating/movie/${contentId}?movieType=${contentType}`,
+        `/movie/${contentId}?movieType=${contentType}`,
+      transformResponse: (response: any[]) => response[0] || null,
       providesTags: ["Ratings"],
     }),
   }),

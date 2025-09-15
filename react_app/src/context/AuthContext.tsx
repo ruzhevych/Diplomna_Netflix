@@ -87,16 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const logout = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('isActive')
-    localStorage.removeItem('googleTempToken') 
-    localStorage.removeItem('storedIsBlocked')
-    dispatch(clearTokens())
-    setIsAuthenticated(false)
-    setIsActive(null)
-    setIsBlocked(null)
-    setGoogleTempTokenState(null)
+    localStorage.clear
   }
 
   return (
