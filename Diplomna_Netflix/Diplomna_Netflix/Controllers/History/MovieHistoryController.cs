@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Core.DTOs.ContentDTOs;
 using Core.Interfaces.History;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,11 @@ public class MovieHistoryController : ControllerBase
         _historyService = historyService;
     }
     
-    [HttpPost("add/{movieId}")]
-    public async Task<IActionResult> AddToHistory(int movieId, string mediaType)
+    [HttpPost("add")]
+    public async Task<IActionResult> AddToHistory(MediaItemDto mediaItemDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        await _historyService.AddToHistoryAsync(movieId, mediaType);
+        await _historyService.AddToHistoryAsync(mediaItemDto);
         return Ok();
     }
 

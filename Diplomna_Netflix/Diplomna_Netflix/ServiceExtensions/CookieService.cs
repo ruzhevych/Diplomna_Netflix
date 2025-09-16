@@ -41,6 +41,8 @@ public class CookieService : ICookieService
 
     public void AppendRefreshTokenCookie(HttpResponse response, string refreshToken)
     {
+        if (string.IsNullOrEmpty(refreshToken))
+            throw new ArgumentException("Cannot set empty refresh token cookie");
         response.Cookies.Append("refreshToken", refreshToken, GetRefreshTokenCookieOptions());
     }
 
