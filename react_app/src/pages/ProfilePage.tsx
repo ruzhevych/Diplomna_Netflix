@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../utils/getInitials";
 import Header from "../components/Header/Header";
@@ -10,7 +10,6 @@ import {
   Users,
   CreditCard,
   LogOut,
-  Settings,
   Edit,
   History,
   Book,
@@ -18,12 +17,7 @@ import {
 } from "lucide-react";
 import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
-import type { IUserAuth } from "../types/user";
 import ProfileEditModal from "./ProfileEditModal";
-import type { AdminUser } from "../types/admin";
-
-
-
 
 
 const ProfilePage = () => {
@@ -106,8 +100,8 @@ const tabs = [
 
       {/* Основна інформація */}
       <div className="flex-1 flex flex-col gap-0">
-        <p className="text-l font-regular text-white-400">Name: <p className="text-2xl font-semibold text-lime-400">{user?.fullName}</p></p>
-         <p className="text-l font-regular text-white-400">E-mail: <p className="text-gray-400">{user?.email}</p></p>
+        <p className="text-l font-regular text-white-400">Name: <span className="text-2xl font-semibold text-lime-400">{user?.fullName}</span></p>
+        <p className="text-l font-regular text-white-400">E-mail: <span className="text-gray-400">{user?.email}</span></p>
       </div>
     </div>
     <div className="flex gap-4 mt-10">

@@ -1,5 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Core.DTOs.AdminDTOs.Users;
 using Core.Interfaces.Admin;
+using Core.Interfaces.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,18 +25,49 @@ public class AdminUsersController : ControllerBase
     {
         return Ok(await _service.GetUsersAsync(page, pageSize, search));
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(string id)
+    {
+        var user = await _service.GetByIdAsync(id);
+        return Ok(user);
+    }
+    
+    [HttpGet("blocked")]
+    public async Task<ActionResult> GetBlockedUsers(int page = 1, int pageSize = 10, string? search = null)
+    {
+        var result = await _service.GetBlockedUsersAsync(page, pageSize, search);
+        return Ok(result);
+    }
+    
+    [HttpGet("{id}/blocked")]
+    public async Task<IActionResult> GetBlockUser(long id)
+    {
+        var blockUser = await _service.GetBlockedUserAsync(id);
+        return Ok(blockUser);
+    }
 
     [HttpPatch("block")]
     public async Task<IActionResult> BlockUser([FromBody] BlockUserDto dto)
     {
-        await _service.BlockUserAsync(dto);
+        var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (adminId == null) return Unauthorized();
+
+        var admin = await _service.GetByIdAsync(adminId);
+        await _service.BlockUserAsync(dto, admin.Id);
         return Ok(new { message = "User blocked successfully" });
     }
 
     [HttpPatch("unblock")]
-    public async Task<IActionResult> UnblockUser(long userId, [FromQuery] long adminId)
+    public async Task<IActionResult> UnblockUser(long userId)
     {
-        await _service.UnblockUserAsync(userId, adminId);
+        var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                      User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (adminId == null) return Unauthorized();
+
+        var admin = await _service.GetByIdAsync(adminId);
+        await _service.UnblockUserAsync(userId, admin.Id);
         return Ok(new { message = "User unblocked successfully" });
     }
 

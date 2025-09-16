@@ -83,6 +83,22 @@ export const adminApi = createApi({
       }),
       
     }),
+
+    getUserById: builder.query<AdminUser, string>({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "GET",
+      }),
+      providesTags: (_res, _err, id) => [{ type: "AdminUsers", id }],
+    }),
+
+    getBlockedUser: builder.query<AdminUser, number>({
+      query: (id) => ({
+        url: `/${id}/blocked`,
+        method: "GET",
+      }),
+      providesTags: (_res, _err, id) => [{ type: "AdminUsers", id }],
+    }),
   }),
 });
 
@@ -93,4 +109,6 @@ export const {
   useChangeUserRoleMutation,
   useDeleteUserMutation,
   useSendMessageMutation,
+  useGetBlockedUserQuery,
+  useGetUserByIdQuery
 } = adminApi;

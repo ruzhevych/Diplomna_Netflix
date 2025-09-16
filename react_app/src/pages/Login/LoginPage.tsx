@@ -25,9 +25,13 @@ const LoginPage = () => {
     setError('');
     try {
       const res = await login({ email, password }).unwrap();
-      loginContext(res.accessToken);
-      toast.success("Успішний вхід");
-      navigate('/home');
+      if(res.isBlocked){
+        navigate('/blocked');
+      } else{
+        loginContext(res.accessToken);
+        toast.success("Успішний вхід");
+        navigate('/home');
+      }
     } catch (err: any) {
       setError(err?.data?.message || 'Сталася помилка під час входу');
     }
@@ -52,6 +56,7 @@ const LoginPage = () => {
 
   const googleLoginFunc = useGoogleLogin({
     scope: 'openid email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+    prompt: "select_account",
     onSuccess: async (tokenResponse) => {
       await onLoginGoogleResult(tokenResponse.access_token);
     },

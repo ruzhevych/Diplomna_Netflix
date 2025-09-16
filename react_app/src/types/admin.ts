@@ -27,4 +27,11 @@ export interface SendMessageResponse {
   message: string;
 }
 
+export interface BlockedUser{
+  userId: number;
+  adminId: number;
+  blockedAt: Date;
+  durationDays: number;
+  reason: string;
+}
 

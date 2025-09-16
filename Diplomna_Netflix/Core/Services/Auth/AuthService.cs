@@ -1,4 +1,5 @@
 using AutoMapper;
+using Core.DTOs.AdminDTOs.Users;
 using Core.DTOs.AuthorizationDTOs;
 using Core.Interfaces.Auth;
 using Core.Interfaces.Email;
@@ -7,6 +8,7 @@ using Core.Models.Authentication;
 using Data.Entities.Auth;
 using Data.Entities.Identity;
 using Data.Entities.Subscription;
+using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -126,7 +128,8 @@ public class AuthService : IAuthService
         return new AuthResponse
         {
             AccessToken = accessToken,
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
+            IsBlocked = user.IsBlocked
         };
     }
     
