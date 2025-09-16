@@ -24,6 +24,7 @@ import BlockedPage from "./pages/BlockedPage"
 import SerisesDetailsPage from './pages/SeriesDetailPage.tsx';
 import ForLaterPage from './pages/Categories/ForLaterPage.tsx';
 import MovieCollection from './pages/MovieCollection.tsx';
+import MovieHistoryPage from './pages/Categories/MovieHistoryPage.tsx';
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/newandpopular" element={<NewPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/for-later" element={<ForLaterPage />} />
+        <Route path="/movie/history" element={<MovieHistoryPage />} />
 
         {/* <Route path="/profile/edit" element={<ProfileEditPage />} />  */}
 

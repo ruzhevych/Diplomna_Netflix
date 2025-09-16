@@ -13,6 +13,7 @@ import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
+import { useAddToHistoryMutation } from "../services/historyApi";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ const MovieDetailsPage = () => {
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [inFavorites, setInFavorites] = useState(false);
+  const [addToHistory] = useAddToHistoryMutation();
 
   useEffect(() => {
     if (!movieId) return;
@@ -38,11 +40,16 @@ const MovieDetailsPage = () => {
         setVideos(
           vids.results.filter((v) => v.site === "YouTube" && v.type === "Trailer")
         );
+        await addToHistory({
+          id: details.id,
+          mediaType: "movie",
+          name: details.title,
+        }).unwrap();
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [movieId]);
+  }, [movieId, addToHistory]);
 
   useEffect(() => {
     if (favorites) {
