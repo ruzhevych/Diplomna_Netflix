@@ -38,14 +38,15 @@ public class MovieHistoryService : IMovieHistoryService
         return user;
     }
 
-    public async Task AddToHistoryAsync(int movieId, string mediaType)
+    public async Task AddToHistoryAsync(MediaItemDto mediaItemDto)
     {
         var user = await GetCurrentUserAsync();
         var entry = new HistoryEntity
         {
             UserId = user.Id,
-            MovieId = movieId,
-            MediaType = mediaType
+            MovieId = mediaItemDto.Id,
+            MediaType = mediaItemDto.MediaType,
+            ViewedAt = DateTime.UtcNow
         };
 
         await _historyRepo.AddAsync(entry);
@@ -61,7 +62,8 @@ public class MovieHistoryService : IMovieHistoryService
             .Select(h => new MediaItemDto
             {
                 Id = h.MovieId,
-                MediaType = h.MediaType
+                MediaType = h.MediaType,
+                ViewedAt = h.ViewedAt
             })
             .ToListAsync();
     }

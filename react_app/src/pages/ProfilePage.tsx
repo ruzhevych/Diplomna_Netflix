@@ -106,7 +106,7 @@ const tabs = [
     </div>
     <div className="flex gap-4 mt-10">
             <button
-              onClick={() => navigate("/profile/edit", { state: { user } })}
+              onClick={() => navigate("/movie/history", { state: { user } })}
               className="flex items-center justify-center gap-2 flex-1 px-4 py-2  bg-lime-500 hover:bg-lime-600 text-black rounded-sm transition font-medium"
             >
               <History size={18} />

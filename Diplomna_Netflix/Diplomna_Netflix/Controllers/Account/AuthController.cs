@@ -55,8 +55,6 @@ public class AuthController : ControllerBase
             {
                 _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
             }
-            // Зберігаємо refresh токен у cookie
-            _cookieService.AppendRefreshTokenCookie(Response, refreshToken);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)

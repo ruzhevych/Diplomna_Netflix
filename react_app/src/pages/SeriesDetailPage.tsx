@@ -14,6 +14,7 @@ import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
+import { useAddToHistoryMutation } from "../services/historyApi";
 
 const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ const SeriesDetailsPage = () => {
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [inFavorites, setInFavorites] = useState(false);
+  const [addToHistory] = useAddToHistoryMutation();
 
   useEffect(() => {
     if (!seriesId) return;
@@ -39,11 +41,17 @@ const SeriesDetailsPage = () => {
             (v) => v.site === "YouTube" && v.type === "Trailer"
           )
         );
+         await addToHistory({
+            id: details.id,
+            mediaType: "tv",
+            name: details.name,
+        }).unwrap();
+        
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [seriesId]);
+  }, [seriesId, addToHistory]);
 
   useEffect(() => {
     if (favorites) {

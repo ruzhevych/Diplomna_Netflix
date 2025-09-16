@@ -10,6 +10,7 @@ import { forLaterApi } from '../services/forLaterApi.ts'
 import { commentsApi } from '../services/commentApi.ts'
 import { adminSubscriptionsApi } from '../services/adminSubscriptionsApi.ts'
 import { ratingApi } from '../services/ratingApi.ts'
+import { historyApi } from '../services/historyApi.ts'
 
 
 export const store = configureStore({
@@ -24,6 +25,7 @@ export const store = configureStore({
     [commentsApi.reducerPath]: commentsApi.reducer,
     [adminSubscriptionsApi.reducerPath]: adminSubscriptionsApi.reducer,
     [ratingApi.reducerPath]: ratingApi.reducer,
+    [historyApi.reducerPath]: historyApi.reducer,
 
   },
   middleware: (getDefaultMiddleware) =>
@@ -36,6 +38,7 @@ export const store = configureStore({
       commentsApi.middleware,
       adminSubscriptionsApi.middleware,
       ratingApi.middleware,
+      historyApi.middleware,
     ),
 })
 
