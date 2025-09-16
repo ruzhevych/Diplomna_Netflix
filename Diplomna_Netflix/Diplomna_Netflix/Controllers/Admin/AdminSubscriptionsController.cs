@@ -48,7 +48,7 @@ public class AdminSubscriptionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _service.DeleteAsync(id);
         if (!deleted) return NotFound();

@@ -8,11 +8,11 @@ import { useAddForLaterMutation } from "../services/forLaterApi";
 interface MediaGridProps {
   title: string;
   fetchData: (page?: number) => Promise<any>;
-  genres: { id: number; name: string }[]; // передаємо список жанрів
-  //last_episode_to_air: { id: number, still_path: string }
+  genres: { id: number; name: string }[];
 }
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+
 
 const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [items, setItems] = useState<any[]>([]);
@@ -35,7 +35,7 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       setItems((prev) => (reset ? data.results : [...prev, ...data.results]));
       setPage(pageNum);
     } catch (err: any) {
-      setError("Помилка завантаження");
+      setError("Error loading data");
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
     return genreIds
       ?.map((id) => genres.find((g) => g.id === id)?.name)
       .filter(Boolean)
-      .slice(0, 3); // максимум 3 жанри для компактності
+      .slice(0, 3);
   };
 
   const handlePlay = (id: number) => {
@@ -54,26 +54,23 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
 
   const handleAdd = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "tv" }; 
+      const payload = { contentId: id, contentType: "tv" };
       await AddForLater(payload).unwrap();
-      toast.success("Додано у список на потім");
+      toast.success("Added to 'Watch Later' list");
       console.log("➕ Added to list:", id);
+    } catch {
+      toast.error("Failed to add to 'Watch Later' list 😢");
     }
-    catch {
-      toast.error("Не вдалося додати у список на потім 😢");
-    }
-    
   };
-  
+
   const handleLike = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "tv" }; 
+      const payload = { contentId: id, contentType: "tv" };
       await addFavorite(payload).unwrap();
-      toast.success("Додано в улюблене 👍");
-      console.log("➕ Added to list:", id);
-    }
-    catch {
-      toast.error("Не вдалося додати в улюблене 😢");
+      toast.success("Added to favorites 👍");
+      console.log("➕ Added to favorites:", id);
+    } catch {
+      toast.error("Failed to add to favorites 😢");
     }
   };
 
@@ -86,15 +83,12 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   return (
     <div className="px-8 py-10 max-w-[1600px] mx-auto">
       <h2 className="text-2xl font-bold text-white mb-6">{title}</h2>
-
-      {/* Сітка */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {items.map((item) => (
           <div
             key={item.id}
             className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
           >
-            {/* Poster */}
             <img
               src={
                 item.poster_path
@@ -104,10 +98,7 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
               alt={item.title || item.name}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
-
-            {/* Overlay */}
             <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
-              {/* Кнопки */}
               <div className="flex items-center gap-3 mb-3">
                 <button
                   onClick={() => handlePlay(item.id)}
@@ -135,14 +126,9 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
                 </button>
               </div>
 
-              {/* Інфо */}
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
-                <span className="px-2 py-0.5 border border-gray-500 rounded">
-                  HD
-                </span>
-                <span className="px-2 py-0.5 border border-gray-500 rounded">
-                  6+
-                </span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
                 {getGenres(item.genre_ids)?.map((g, idx) => (
                   <span key={idx}>{g}</span>
                 ))}
@@ -152,10 +138,9 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
         ))}
       </div>
 
-      {/* Load More */}
       <div className="flex justify-center mt-8">
         {loading ? (
-          <p className="text-gray-400">Завантаження...</p>
+          <p className="text-gray-400">Loading...</p>
         ) : (
           <button
             onClick={() => loadData(page + 1)}
@@ -170,4 +155,3 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
 };
 
 export default MediaTvGrid;
-

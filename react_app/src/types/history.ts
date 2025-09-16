@@ -1,13 +1,13 @@
 export interface HistoryItem {
-  id: number;         // MovieId або SeriesId
+  id: number;     
   name: string
-  mediaType: "movie" | "tv";  // Тип контенту
+  mediaType: "movie" | "tv"; 
 }
 
 export interface GetHistoryItem {
-  id: number;         // MovieId або SeriesId
+  id: number;       
   name: string
-  mediaType: "movie" | "tv";  // Тип контенту
+  mediaType: "movie" | "tv";  
   viewedAt: string;
 }
 

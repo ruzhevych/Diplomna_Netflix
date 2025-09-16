@@ -4,12 +4,11 @@ import { Navigate } from "react-router-dom";
 
 type AdminCheckStatus = "loading" | "allowed" | "forbidden" | "login";
 
-const ADMIN_CHECK_URL =
-  import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api/admin/users`
-    : "http://localhost:5170/api/admin/users";
+const ADMIN_CHECK_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api/admin/users`
+  : "http://localhost:5170/api/admin/users";
 
-
+// Decodes a JWT token.
 function decodeToken(token: string): any | null {
   try {
     const parts = token.split(".");
@@ -25,7 +24,7 @@ function decodeToken(token: string): any | null {
   }
 }
 
-
+// Gets the user's role from JWT claims.
 function getRoleFromClaims(decoded: any): string | null {
   if (!decoded) return null;
 
@@ -37,7 +36,6 @@ function getRoleFromClaims(decoded: any): string | null {
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role",
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/roles",
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/roles",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role",
   ];
 
   for (const key of candidates) {
@@ -48,11 +46,12 @@ function getRoleFromClaims(decoded: any): string | null {
     if (typeof val === "number") return String(val);
   }
 
-  
+  // Fallback: search for 'admin' keyword.
   for (const k of Object.keys(decoded)) {
     const v = decoded[k];
     if (typeof v === "string" && /admin/i.test(v)) return v;
-    if (Array.isArray(v) && v.some((x) => /admin/i.test(String(x)))) return v.find((x) => /admin/i.test(String(x)));
+    if (Array.isArray(v) && v.some((x) => /admin/i.test(String(x))))
+      return v.find((x) => /admin/i.test(String(x)));
   }
 
   return null;
@@ -62,13 +61,14 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AdminCheckStatus>("loading");
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
+    const token =
+      localStorage.getItem("accessToken") || localStorage.getItem("token");
     if (!token) {
       setStatus("login");
       return;
     }
 
-    // 1) 
+    // 1) Check role from token claims first.
     const decoded = decodeToken(token);
     const role = getRoleFromClaims(decoded);
     if (role && /admin/i.test(role)) {
@@ -76,7 +76,7 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
       return;
     }
 
-    // 2) 
+    // 2) Verify admin status with a backend request.
     (async () => {
       try {
         const res = await fetch(ADMIN_CHECK_URL, {
@@ -92,13 +92,13 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
           return;
         }
         if (res.status === 401) {
-          // 
+          // Token is invalid, remove it.
           localStorage.removeItem("accessToken");
           localStorage.removeItem("token");
           setStatus("login");
           return;
         }
-        // 403 
+        // No permission, redirect.
         setStatus("forbidden");
       } catch (err) {
         console.error("Admin check failed:", err);
@@ -110,7 +110,7 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
   if (status === "loading") {
     return (
       <div className="flex h-screen items-center justify-center bg-black text-white">
-        Перевірка прав доступу...
+        Checking access rights...
       </div>
     );
   }
@@ -120,10 +120,10 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
   }
 
   if (status === "forbidden") {
-    // redirect 
+    // Redirect non-admins to a different page.
     return <Navigate to="/home" replace />;
   }
 
-  // allowed
+  // Render content if allowed.
   return <>{children}</>;
 }

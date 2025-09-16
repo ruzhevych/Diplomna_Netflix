@@ -45,15 +45,11 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   return (
     <div className="bg-black text-white min-h-screen">
-      {/* HEADER */}
       <header className="absolute top-0 left-0 w-full z-20">
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
           <img src={logo} alt="Logo" className="w-32 md:w-40" />
           <div className="flex items-center gap-4">
-            {/* <select className="bg-black/70  px-3 py-1 rounded text-sm">
-              <option value="ua">Українська</option>
-              <option value="en">English</option>
-            </select> */}
+            
             <Link to="/login">
               <button className="bg-lime-500/80 px-4 py-2 rounded-sm text-white font-semibold hover:bg-lime-400">
                 Log In
@@ -63,7 +59,6 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
         </div>
       </header>
 
-      {/* HERO SECTION */}
       <section className="relative h-[90vh] flex items-center justify-center">
         <div className="absolute inset-0">
           <img
@@ -75,21 +70,20 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
         </div>
 
         <div className="relative z-10 text-center px-6 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
-            Фільми, серіали й інший контент <br /> без обмежень
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Movies, series and lots of other content <br /> without limits
           </h1>
           <h2 className="text-lg md:text-2xl mb-4">
-            За ціною від <span className="text-lime-400">4,99 EUR</span>.
-            Скасувати підписку можна будь-коли.
+           From <span className="text-lime-400">4,99 EUR</span>.
+            You can cancel subscription anytime
           </h2>
           <p className="mb-6">
-            Готові до перегляду? Введіть адресу електронної пошти, щоб оформити
-            або поновити підписку.
+            Ready to watch? Enter your e-mail to subscribe or update it!
           </p>
           <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
             <input
               type="email"
-              placeholder="Адреса електронної пошти"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="px-4 py-3  w-full sm:w-112 bg-black/70 border border-gray-500"
@@ -98,31 +92,30 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
               onClick={() => navigate("/register")}
               className="bg-lime-500/80 px-6 py-3 rounded-sm font-bold text-lg hover:bg-lime-400 transition"
             >
-              Почати
+              Start
             </button>
           </div>
         </div>
       </section>
 
-      {/* CURVED DIVIDER */}
+
       <div className="relative">
-  <div
-    className="absolute -top-11 left-0 w-full h-10 
-               bg-gradient-to-r from-lime-500 via-lime-600 to-green-600 
-               rounded-t-[50%] 
-               shadow-[0_-20px_30px_rgba(0,0,0,0.6)]"
-  />
-</div>
+        <div
+          className="absolute -top-11 left-0 w-full h-10 
+                    bg-gradient-to-r from-lime-500 via-lime-600 to-green-600 
+                    rounded-t-[50%] 
+                    shadow-[0_-20px_30px_rgba(0,0,0,0.6)]"/>
+      </div>
 
       <div className="relative">
         <div className="absolute -top-10 left-0 w-full h-12 bg-black rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
       </div> 
 
-      {/* POPULAR SECTION */}
+
       <section className="bg-black py-12 px-6">
       <div className="max-w-6xl mx-auto relative">
-        <h2 className="text-2xl font-bold mb-6 text-white">Популярне зараз</h2>
-    {/* Кнопки */}
+        <h2 className="text-2xl font-bold mb-6 text-white">Popular Now</h2>
+
       <button
         onClick={() => scroll("left")}
         className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
@@ -170,7 +163,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   ))}
 </div>
 
-        {/* Модальне вікно */}
+
         {selectedMovie && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black/90 rounded-lg p-6 max-w-xl w-full max-h-[80vh] overflow-y-auto relative">
@@ -210,33 +203,32 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     </section>
   
 
-      {/* FEATURES SECTION */}
       
 <section className="bg-black py-16 px-6">
   <div className="max-w-6xl mx-auto">
     <h2 className="text-3xl md:text-2xl font-bold text-white mb-8  tracking-wide">
-      Ще більше причин підписатися
+      More reasons to subscribe
     </h2>
     <div className="grid md:grid-cols-4 gap-8 text-center">
       {[
         { 
-          title: "Дивіться на телевізорі", 
+          title: "Watch on TV", 
           subtitle: "Smart TV, Playstation, Xbox, Chromecast, Apple TV та інші пристрої.",
           icon: <GiFilmProjector className="text-lime-500 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
-          title: "Завантажуйте й дивіться офлайн", 
-          subtitle: "Зберігайте улюблені серіали та фільми на телефон чи планшет.",
+          title: "Download and watch offline", 
+          subtitle: "Save your favorite TV shows and movies to your phone or tablet.",
           icon: <FaDownload className="text-lime-500 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
-          title: "Дивіться будь-де", 
-          subtitle: "Переглядайте на телефоні, планшеті, ноутбуку або телевізорі без обмежень.",
+          title: "Watch anywhere", 
+          subtitle: "Watch on your phone, tablet, laptop or TV without restrictions.",
           icon: <MdOutlineScreenSearchDesktop className="text-lime-400 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
         { 
-          title: "Створюйте профілі для дітей", 
-          subtitle: "Безпечний перегляд для малечі з власними профілями.",
+          title: "Create profiles for kids", 
+          subtitle: "Safe browsing for kids with their own profiles.Безпечний перегляд для малечі з власними профілями.",
           icon: <FaChild className="text-lime-400 text-6xl mx-auto mb-4 animate-pulse" /> 
         },
       ].map((f, i) => (
@@ -269,26 +261,26 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     </h2>
     <div className="space-y-2">
       {[
-        {
-          q: "Що таке сервіс?",
-          a: "Це онлайн-платформа для перегляду фільмів і серіалів у будь-який час і на будь-якому пристрої."
-        },
-        {
-          q: "Скільки коштує підписка?",
-          a: "Підписка починається від 4,99 EUR на місяць. Ви можете обрати тариф, який підходить саме вам."
-        },
-        {
-          q: "Де можна дивитися?",
-          a: "Дивіться на телевізорах, смартфонах, планшетах та комп’ютерах. Достатньо мати інтернет-з’єднання."
-        },
-        {
-          q: "Як скасувати підписку?",
-          a: "Ви можете скасувати підписку у будь-який момент в налаштуваннях акаунта без жодних додаткових зборів."
-        },
-        {
-          q: "Чи є контент для дітей?",
-          a: "Так! Ви можете створити дитячий профіль із безпечним переглядом та обмеженим доступом до контенту."
-        }
+          {
+          "q": "What is the service?",
+          "a": "It's an online platform for watching movies and TV series anytime and on any device."
+          },
+          {
+            "q": "How much does a subscription cost?",
+            "a": "Subscriptions start from 4.99 EUR per month. You can choose the plan that's right for you."
+          },
+          {
+            "q": "Where can I watch?",
+            "a": "Watch on TVs, smartphones, tablets, and computers. All you need is an internet connection."
+          },
+          {
+            "q": "How do I cancel my subscription?",
+            "a": "You can cancel your subscription at any time in your account settings without any additional fees."
+          },
+          {
+            "q": "Is there content for children?",
+            "a": "Yes! You can create a children's profile with safe viewing and limited access to content."
+          }
       ].map((item, i) => (
         <details
           key={i}
@@ -309,8 +301,6 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   </div>
 </section>
 
-
-      {/* FOOTER */}
       <Footer/>
     </div>
   );

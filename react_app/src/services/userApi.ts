@@ -8,7 +8,6 @@ export const userApi = createApi({
   tagTypes: ['Users'],
   endpoints: (builder) => ({
 
-    // Отримати користувача за ID
     getUserById: builder.query<IUserDTO, number>({
       query: (id) => ({
         url: `/${id}`,
@@ -17,7 +16,6 @@ export const userApi = createApi({
       providesTags: (_, __, id) => [{ type: 'Users', id }],
     }),
 
-    // Отримати користувача за email
     getUserByEmail: builder.query<IUserDTO, string>({
       query: (email) => ({
         url: `/email`,
@@ -27,7 +25,6 @@ export const userApi = createApi({
       providesTags: ['Users'],
     }),
 
-    // Створити нового користувача
     createUser: builder.mutation<void, IUserCreateDTO>({
       query: (user) => ({
         url: '',
@@ -37,12 +34,11 @@ export const userApi = createApi({
       invalidatesTags: ['Users'],
     }),
 
-    // Оновити користувача (наприклад, фото профілю)
     updateUser: builder.mutation<void, FormData>({
       query: (formData) => {
         const id = formData.get("Id");
         return {
-          url: `/${id}`,   // ✅ обов’язково з ID
+          url: `/${id}`,  
           method: "PUT",
           body: formData,
         };
@@ -57,8 +53,6 @@ export const userApi = createApi({
       providesTags: ['Users'],
     }),
 
-
-    // Видалити користувача за ID
     deleteUser: builder.mutation<void, number>({
       query: (id) => ({
         url: `/${id}`,

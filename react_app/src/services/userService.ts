@@ -1,4 +1,3 @@
-// src/services/userService.ts
 const BASE = 'http://localhost:5170/api/Users';
 async function fetchAuth(input: string, init: RequestInit = {}) {
   const token = localStorage.getItem('token');

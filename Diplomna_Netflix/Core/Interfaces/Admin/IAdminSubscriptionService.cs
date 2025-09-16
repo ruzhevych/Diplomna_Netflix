@@ -8,5 +8,5 @@ public interface IAdminSubscriptionService
     Task<AdminSubscriptionDto?> GetByIdAsync(int id);
     Task<AdminSubscriptionDto> CreateAsync(AdminSubscriptionCreateDto dto);
     Task<bool> UpdateAsync(int id, AdminSubscriptionUpdateDto dto);
-    Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(Guid id);
 }

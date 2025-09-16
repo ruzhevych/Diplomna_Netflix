@@ -51,12 +51,9 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto flex items-left justify-between py-4 px-6">
-        {/* Лого */}
         <Link to="/home">
           <img src={logo} alt="Logo" className="w-28" />
         </Link>
-
-        {/* Навігація */}
         <nav className="hidden md:flex items-center gap-6 text-white font-medium">
           {menuItems.map((item) => (
             <Link
@@ -71,9 +68,7 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Праворуч: пошук і профіль */}
         <div className="flex items-center gap-4">
-          {/* Пошук */}
           <form onSubmit={handleSearch} className="relative hidden md:block">
             <input
               type="text"
@@ -89,8 +84,6 @@ const Header = () => {
               <Search size={18} />
             </button>
           </form>
-
-          {/* Іконка профілю */}
           <Link
             to="/profile"
             className="text-gray-300 hover:text-lime-400 transition"

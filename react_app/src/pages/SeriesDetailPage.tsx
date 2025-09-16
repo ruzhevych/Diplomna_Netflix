@@ -41,12 +41,12 @@ const SeriesDetailsPage = () => {
             (v) => v.site === "YouTube" && v.type === "Trailer"
           )
         );
-         await addToHistory({
+          await addToHistory({
             id: details.id,
             mediaType: "tv",
             name: details.name,
         }).unwrap();
-        
+
       } catch (e) {
         console.error(e);
       }
@@ -68,21 +68,21 @@ const SeriesDetailsPage = () => {
         if (!favorite) return;
 
         await removeFavorite(favorite.id).unwrap();
-        toast.info("Видалено з улюбленого ❌");
+        toast.info("Removed from favorites ❌");
       } else {
         await addFavorite(payload).unwrap();
         setInFavorites(true);
-        toast.success("Додано в улюблене ❤️");
+        toast.success("Added to favorites ❤️");
       }
     } catch (err) {
-      toast.error("Помилка з улюбленим 😢");
+      toast.error("Error with favorites 😢");
     }
   };
 
   if (!series)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
-        Завантаження...
+        Loading...
       </p>
     );
 
@@ -124,7 +124,7 @@ const SeriesDetailsPage = () => {
 
             <p className="text-gray-400 mb-6 text-lg">
               {series.first_air_date} – {series.status} • ⭐{" "}
-              {series.vote_average.toFixed(1)} ({series.vote_count} голосів)
+              {series.vote_average.toFixed(1)} ({series.vote_count} votes)
             </p>
 
             <p className="text-gray-300 mb-6 leading-relaxed">
@@ -135,28 +135,28 @@ const SeriesDetailsPage = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
               { series.genres && (
                 <p>
-                    <span className="text-white font-semibold">Жанри:</span>{" "}
+                    <span className="text-white font-semibold">Genres:</span>{" "}
                     {series.genres.map((g) => g.name).join(", ")}
                 </p>
               )}
               <p>
-                <span className="text-white font-semibold">Сезонів:</span>{" "}
+                <span className="text-white font-semibold">Seasons:</span>{" "}
                 {series.number_of_seasons}
               </p>
               <p>
-                <span className="text-white font-semibold">Епізодів:</span>{" "}
+                <span className="text-white font-semibold">Episodes:</span>{" "}
                 {series.number_of_episodes}
               </p>
               <p>
-                <span className="text-white font-semibold">Мова:</span>{" "}
+                <span className="text-white font-semibold">Language:</span>{" "}
                 {series.original_language.toUpperCase()}
               </p>
               <p>
-                <span className="text-white font-semibold">Популярність:</span>{" "}
+                <span className="text-white font-semibold">Popularity:</span>{" "}
                 {series.popularity}
               </p>
               <p>
-                <span className="text-white font-semibold">Статус:</span>{" "}
+                <span className="text-white font-semibold">Status:</span>{" "}
                 {series.status}
               </p>
             </div>
@@ -176,7 +176,7 @@ const SeriesDetailsPage = () => {
               ) : (
                 <AiOutlineHeart className="w-6 h-6" />
               )}
-              {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
+              {inFavorites ? "Remove from favorites" : "Add to favorites"}
             </button>
           </div>
         </div>
@@ -185,7 +185,7 @@ const SeriesDetailsPage = () => {
       {/* Last Episode */}
       {series.last_episode_to_air && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0">
-          <h2 className="text-3xl font-bold mb-6">Останній епізод</h2>
+          <h2 className="text-3xl font-bold mb-6">Last episode</h2>
           <div className="flex gap-6 bg-gray-900 p-4 rounded-lg shadow-lg">
             <img
               src={`https://image.tmdb.org/t/p/w300${series.last_episode_to_air.still_path}`}
@@ -197,8 +197,8 @@ const SeriesDetailsPage = () => {
                 {series.last_episode_to_air.name}
               </h3>
               <p className="text-gray-400 text-sm mb-2">
-                {series.last_episode_to_air.air_date} • Епізод{" "}
-                {series.last_episode_to_air.episode_number} (Сезон{" "}
+                {series.last_episode_to_air.air_date} • Episode{" "}
+                {series.last_episode_to_air.episode_number} (Season{" "}
                 {series.last_episode_to_air.season_number})
               </p>
               <p className="text-gray-300">{series.last_episode_to_air.overview}</p>
@@ -210,7 +210,7 @@ const SeriesDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Трейлер</h2>
+          <h2 className="text-3xl font-bold mb-6">Trailer</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}

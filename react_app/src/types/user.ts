@@ -3,7 +3,7 @@ export interface IUser {
   name: string;
   email: string;
   fullName: string;
-  roles: string[];  // 'User' | 'Admin' | 'Moderator'
+  roles: string[];  
   avatar?: string;
 }
 

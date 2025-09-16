@@ -10,7 +10,6 @@ export const adminSubscriptionsApi = createApi({
   tagTypes: ["AdminSubscriptions"],
   endpoints: (builder) => ({
     getAllSubscriptions: builder.query<
-      // Змінено тип з PagedResult<...> на просто масив
       AdminSubscriptionDto[], 
       { page?: number; pageSize?: number; search?: string } | void
     >({
@@ -27,7 +26,6 @@ export const adminSubscriptionsApi = createApi({
       providesTags: (_res) => [{ type: "AdminSubscriptions", id: "LIST" }],
     }),
 
-    // ... інші ваші запити залишаються без змін
     getSubscriptionById: builder.query<AdminSubscriptionDto, number>({
         query: (id) => ({ url: `/${id}`, method: "GET" }),
         providesTags: (_res, _err, id) => [{ type: "AdminSubscriptions", id }],
@@ -36,7 +34,7 @@ export const adminSubscriptionsApi = createApi({
         query: ({ id, dto }) => ({ url: `/${id}`, method: "PATCH", body: dto }),
         invalidatesTags: (_res, _err, { id }) => [{ type: "AdminSubscriptions", id }, { type: "AdminSubscriptions", id: "LIST" }],
     }),
-    deleteSubscription: builder.mutation<void, string>({ // Змінено на string
+    deleteSubscription: builder.mutation<void, string>({
     query: (id) => ({
       url: `/${id}`,
       method: "DELETE",

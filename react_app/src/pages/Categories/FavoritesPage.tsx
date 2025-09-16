@@ -46,19 +46,19 @@ export default function FavoritesPage() {
         const detailsPromises = favorites.map(async (fav) => {
           if (fav.contentType === "movie") {
             const data = await getMovieDetails(fav.contentId);
-            return { 
+            return {
               ...data,
               contentType: "movie" as const,
               contentId: Number(fav.contentId),
-              favoriteId: fav.id
+              favoriteId: fav.id,
             };
           } else {
             const data = await getSeriesDetails(fav.contentId);
-            return { 
-              ...data, 
+            return {
+              ...data,
               contentType: "tv" as const,
               contentId: Number(fav.contentId),
-              favoriteId: fav.id
+              favoriteId: fav.id,
             };
           }
         });
@@ -66,7 +66,7 @@ export default function FavoritesPage() {
         const results = await Promise.all(detailsPromises);
         setItems(results);
       } catch (err: any) {
-        toast.error("Помилка завантаження деталей улюбленого 😢");
+        toast.error("Error loading favorite details 😢");
       } finally {
         setLoadingDetails(false);
       }
@@ -77,20 +77,20 @@ export default function FavoritesPage() {
 
   const handleAdd = async (id: number, type: string) => {
     try {
-      const payload = { contentId: id, contentType: type }; 
+      const payload = { contentId: id, contentType: type };
       await addForLater(payload).unwrap();
-      toast.success("Додано в улюблене ❤️");
+      toast.success("Added to 'Watch Later' list ❤️");
     } catch {
-      toast.error("Не вдалося додати в улюблене 😢");
+      toast.error("Failed to add to 'Watch Later' list 😢");
     }
   };
 
   const handleRemove = async (favoriteId: number) => {
     try {
       await removeFavorite(favoriteId).unwrap();
-      toast.info("Видалено з улюбленого ❌");
+      toast.info("Removed from favorites ❌");
     } catch {
-      toast.error("Не вдалося видалити 😢");
+      toast.error("Failed to remove 😢");
     }
   };
 
@@ -98,16 +98,16 @@ export default function FavoritesPage() {
     <div className="bg-black text-white min-h-screen">
       <Header />
       <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Улюблене</h1>
+        <h1 className="text-3xl font-bold mb-6">Favorites</h1>
 
         {(isLoading || loadingDetails) && (
-          <p className="text-gray-400">Завантаження...</p>
+          <p className="text-gray-400">Loading...</p>
         )}
         {isError && (
-          <p className="text-red-500">Помилка завантаження улюбленого</p>
+          <p className="text-red-500">Error loading favorites</p>
         )}
         {!isLoading && items.length === 0 && (
-          <p className="text-gray-400">Улюблених ще немає 😢</p>
+          <p className="text-gray-400">No favorites yet 😢</p>
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -142,13 +142,6 @@ export default function FavoritesPage() {
                     <Plus size={18} />
                   </button>
 
-                  {/* <button
-                    onClick={() => handleAdd(content.id, content.contentType)}
-                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
-                  >
-                    <ThumbsUp size={18} />
-                  </button> */}
-
                   <button
                     onClick={() => handleRemove(content.favoriteId)}
                     className="ml-auto border border-red-400 text-red-400 rounded-full p-2 hover:bg-red-700 transition"
@@ -157,7 +150,7 @@ export default function FavoritesPage() {
                   </button>
 
                   <button
-                    onClick={() => toast.info("Більше деталей пізніше 😉")}
+                    onClick={() => toast.info("More details coming soon 😉")}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <ChevronDown size={18} />

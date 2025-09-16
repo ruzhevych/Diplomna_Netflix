@@ -18,7 +18,7 @@ export default function BlockUserModal({ open, onClose, onConfirm, userEmail }: 
       <div className="bg-[#111] text-white rounded-xl w-full max-w-lg p-6 shadow-lg">
         <h3 className="text-xl font-semibold mb-2">Block user {userEmail ? `— ${userEmail}` : ""}</h3>
         <p className="text-sm text-gray-300 mb-4">
-          Enter a reason (optional) and duration in days. Leave duration empty for indefinite ban.
+          Enter a reason (optional) and duration in days. Leave duration empty for an indefinite ban.
         </p>
 
         <textarea
