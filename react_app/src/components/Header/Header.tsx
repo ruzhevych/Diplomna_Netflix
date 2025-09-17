@@ -1,6 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Search, User } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
+import FilterPanel from "../FilterPanel";
 
 import logo from "../../../public/logo-green.png";
 
@@ -11,6 +13,7 @@ const Header = () => {
 
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -69,6 +72,15 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowFilters(true)}
+            className="text-gray-300 hover:text-lime-400 transition"
+          >
+            <SlidersHorizontal size={22} />
+          </button>
+
+          {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
+
           <form onSubmit={handleSearch} className="relative hidden md:block">
             <input
               type="text"

@@ -14,6 +14,7 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useAddToHistoryMutation } from "../services/historyApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
+import { Plus, ThumbsUp } from "lucide-react";
 
 const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -142,15 +143,6 @@ const SeriesDetailsPage = () => {
             {series.tagline && <p className="italic text-gray-400 text-xl">"{series.tagline}"</p>}
             <p className="text-gray-300 leading-relaxed">{series.overview}</p>
 
-            <p className="text-gray-400 mb-6 text-lg">
-              {series.first_air_date} – {series.status} • ⭐{" "}
-              {series.vote_average.toFixed(1)} ({series.vote_count} votes)
-            </p>
-
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              {series.overview}
-            </p>
-
             {/* Additional info */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
               { series.genres && (
@@ -181,8 +173,34 @@ const SeriesDetailsPage = () => {
               </p>
             </div>
 
+            <div className="flex items-center gap-4 mt-4">
+                          <button
+                            onClick={() => handleAdd(series.id)}
+                            className="border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition"
+                          >
+                            <Plus size={18} />
+                          </button>
+            
+                          <button
+                            onClick={() => handleAdd(series.id)}
+                            className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
+                            ${
+                              inFavorites
+                                ? "bg-gray-800 text-white hover:bg-gray-700"
+                                : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                            }`}
+                          >
+                            {/* <ThumbsUp size={18} /> */}
+                            {inFavorites ? (
+                            <ThumbsUp className="text-red-500 w-6 h-6 bg-green" />
+                          ) : (
+                            <ThumbsUp className="w-6 h-6" />
+                          )}
+                          </button>
+                        </div>
+
             {/* Favorites button */}
-            <button
+            {/* <button
               onClick={handleFavorite}
               className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
                 ${
@@ -197,7 +215,7 @@ const SeriesDetailsPage = () => {
                 <AiOutlineHeart className="w-6 h-6" />
               )}
               {inFavorites ? "Remove from favorites" : "Add to favorites"}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
@@ -288,7 +306,7 @@ const SeriesDetailsPage = () => {
 
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average.toFixed(1)} />
+        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average} />
       </div>
 
       <Footer />

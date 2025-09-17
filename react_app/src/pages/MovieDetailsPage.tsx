@@ -331,7 +331,7 @@ const MovieDetailsPage = () => {
 
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments contentId={movie.id} contentType="movie" vote_average={movie.vote_average.toFixed(1)}/>
+        <RatingAndComments contentId={movie.id} contentType="movie" vote_average={movie.vote_average}/>
       </div>
 
       <Footer />

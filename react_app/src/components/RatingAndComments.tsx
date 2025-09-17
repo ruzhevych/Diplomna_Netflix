@@ -20,7 +20,7 @@ import delete_icon from "../../public/delete_icon.png";
 interface Props {
   contentId: number;
   contentType: string; // "movie" | "series"
-  vote_average: string;
+  vote_average: number;
 }
 
 export default function RatingAndComments({ contentId, contentType, vote_average }: Props) {
@@ -120,7 +120,7 @@ export default function RatingAndComments({ contentId, contentType, vote_average
           Ваша оцінка: {selected} / 5
         </p>
       )}
-        <p className="text-gray-400 text-sm">Загальна оцінка: ⭐ {vote_average}+</p>
+        <p className="text-gray-400 text-sm">Загальна оцінка: ⭐ {(vote_average/2).toFixed(1)}+</p>
       {/* ----- Comments Section ----- */}
       <h3 className="text-lg font-semibold mt-10 mb-4">Коментарі</h3>
 
