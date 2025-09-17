@@ -43,7 +43,6 @@ const SeriesDetailsPage = () => {
         const vids = await getSeriesVideos(seriesId);
         setVideos(vids.results.filter((v) => v.site === "YouTube" && v.type === "Trailer"));
 
-        // якщо є API – додаємо схожі та рекомендовані
         const similarSeries = await getSimilarTv(seriesId, 1);
         setSimilar(similarSeries.results || []);
         const recSeries = await getRecomendationsTv(seriesId, 1);
@@ -78,14 +77,14 @@ const SeriesDetailsPage = () => {
     }
   }, [favorites, seriesId]);
 
-  const handleAdd = async (id: number) => {
-    try {
-      await AddForLater({ contentId: id, contentType: "tv" }).unwrap();
-      toast.success("Додано у список на потім");
-    } catch {
-      toast.error("Не вдалося додати у список на потім 😢");
-    }
-  };
+  // const handleAdd = async (id: number) => {
+  //   try {
+  //     await AddForLater({ contentId: id, contentType: "tv" }).unwrap();
+  //     toast.success("Додано у список на потім");
+  //   } catch {
+  //     toast.error("Не вдалося додати у список на потім");
+  //   }
+  // };
 
   const handleFavorite = async () => {
     try {
@@ -95,14 +94,14 @@ const SeriesDetailsPage = () => {
         if (!favorite) return;
 
         await removeFavorite(favorite.id).unwrap();
-        toast.info("Removed from favorites ❌");
+        toast.info("Removed from favorites");
       } else {
         await addFavorite(payload).unwrap();
         setInFavorites(true);
-        toast.success("Added to favorites ❤️");
+        toast.success("Added to favorites");
       }
     } catch (err) {
-      toast.error("Error with favorites 😢");
+      toast.error("Error with favorites");
     }
   };
   if (!series)
@@ -188,7 +187,7 @@ const SeriesDetailsPage = () => {
                 ${
                   inFavorites
                     ? "bg-gray-800 text-white hover:bg-gray-700"
-                    : "bg-lime-500 text-white hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                    : "bg-lime-500 text-white hover:bg-[#C4FF00] shadow-lg hover:shadow-2xl"
                 }`}
             >
               {inFavorites ? (

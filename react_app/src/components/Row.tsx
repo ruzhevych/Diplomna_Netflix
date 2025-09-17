@@ -25,7 +25,7 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
   const scroll = (direction: 'left' | 'right') => {
     const container = containerRef.current;
     if (!container) return;
-    const scrollAmount = container.clientWidth; 
+    const scrollAmount = container.clientWidth;
     container.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -34,19 +34,24 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
 
   return (
     <section className="relative p-4">
-      <h2 className="text-xl font-semibold mb-2 text-white">{title}</h2>
-      <button
-        onClick={() => scroll('left')}
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10 hover:bg-opacity-75"
-      >
-        ‹
-      </button>
-      <button
-        onClick={() => scroll('right')}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10 hover:bg-opacity-75"
-      >
-        ›
-      </button>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-3xl font-bold text-white">{title}</h2>
+        <div className="flex gap-1 mr-5">
+          <button
+            onClick={() => scroll('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+      </div>
+      
       <div
         ref={containerRef}
         className="flex overflow-x-auto gap-3 scrollbar-hide scroll-smooth"
@@ -54,7 +59,7 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
         {items.map(item => (
           <div
             key={item.id}
-            className="min-w-[230px] cursor-pointer hover:scale-105 transition-transform"
+            className="min-w-[230px] cursor-pointer hover:scale-95 transition-transform"
             onClick={() => navigate(`/movie/${item.id}`)}
           >
             <img
@@ -62,14 +67,11 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
               alt={item.title || item.original_title}
               className="rounded-lg w-full"
             />
-            <p className="text-sm text-white mt-1 truncate">
-              {item.title || item.original_title}
-            </p>
           </div>
         ))}
       </div>
     </section>
-);
-}
+  );
+};
 
 export default Row;

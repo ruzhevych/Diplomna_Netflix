@@ -4,7 +4,7 @@ import logo from "../../../public/logo-green.png";
 
 const HeaderAdmin = () => {
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-sm shadow-sm">
+    <header className="fixed top-0 left-0 w-full z-50 bg-[#191716]/80 backdrop-blur-sm shadow-sm">
       <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center">
           <Link to="/">

@@ -30,30 +30,30 @@ const HeroBanner = () => {
       className="relative h-[85vh] w-full bg-cover bg-center"
       style={{ backgroundImage: `url(${backdrop})` }}
     >
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/90 to-transparent " />
       
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent " />
-
-      
-      <div className="absolute bottom-36 left-14 w-[600px] text-white ">
-        <h1 className="text-4xl font-bold leading-tight drop-shadow-lg">
+      <div className="absolute bottom-36 left-14 w-[750px] text-white ">
+        <h1 className="text-7xl font-black
+            text-transparent
+            drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
+            [-webkit-text-stroke:1px_#C4FF00]
+            [text-shadow:0_0_10px_rgba(0,0,0,0.8)]">
           {movie.title || movie.original_title}
         </h1>
 
-        <p className="mt-6 text-lg text-gray-200 line-clamp-3 drop-shadow-md">
+        <p className="mt-6 text-lg text-gray-200 font-bold line-clamp-3 drop-shadow-md">
           {movie.overview}
         </p>
-
-        
-        <div className="mt-8 flex gap-4">
+        <div className="mt-8 flex gap-3">
           <button
             onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-lime-500 hover:bg-lime-600 text-black px-8 py-3 rounded-sm w-50 text-lg font-semibold transition"
+            className="bg-[#C4FF00] hover:bg-lime-600 text-black px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
           >
             Watch
           </button>
           <button
             onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-transparent border border-lime-600me hover:bg-gray-400/40 text-white px-8 py-3 rounded-sm w-50 text-lg font-semibold  transition"
+            className="bg-gray-500/90 hover:bg-gray-400/80 text-black px-8 py-2 rounded-sm w-50 text-lg font-semibold  transition"
           >
             About
           </button>

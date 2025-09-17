@@ -24,8 +24,6 @@ import cib_visa from "../../public/cib_visa.png"
 const ProfilePage = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { data: user, error, isLoading } = useGetProfileQuery();
-  // const [user, setUser] = useState<UserProfile | null>(null);
-  // const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
 
@@ -63,8 +61,8 @@ const ProfilePage = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-3 px-3 py-2 rounded-sm cursor-pointer transition ${
                     activeTab === tab.id
-                      ? "bg-lime-500/20 text-lime-400 font-semibold"
-                      : "text-gray-300 hover:text-lime-400 hover:bg-white/5"
+                      ? "bg-lime-500/20 text-[#C4FF00] font-semibold"
+                      : "text-gray-300 hover:text-[#C4FF00]/90  hover:bg-white/5"
                   }`}
                 >
                   <Icon size={18} />
@@ -94,7 +92,7 @@ const ProfilePage = () => {
                     className="w-56 h-56 rounded-sm object-cover shadow-xl border-2 border-gray-700"
                   />
                 ) : (
-                  <div className="bg-gradient-to-br from-lime-400 to-green-600 text-black w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold shadow-xl">
+                  <div className="bg-gradient-to-br from-[#C4FF00] to-[#C4FF00]/50 w-56 h-56 text-black  rounded-sm flex items-center justify-center text-3xl font-bold shadow-xl">
                     {getInitials(user?.fullName || "")}
                   </div>
                 )}
@@ -108,7 +106,7 @@ const ProfilePage = () => {
               <div className="flex gap-4 mt-10">
                 <button
                   onClick={() => navigate("/movie/history", { state: { user } })}
-                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black rounded-sm transition font-medium"
+                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black rounded-sm transition font-medium"
                 >
                   <History size={18} />
                   Watch history
@@ -117,7 +115,7 @@ const ProfilePage = () => {
                   onClick={() => {
                     navigate("/favorites");
                   }}
-                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition"
+                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black font-semibold rounded-sm transition"
                 >
                   <Book size={18} />
                   Favorites
@@ -126,7 +124,7 @@ const ProfilePage = () => {
                   onClick={() => {
                     navigate("/for-later");
                   }}
-                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition"
+                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black font-semibold rounded-sm transition"
                 >
                   <Pin size={18} />
                   For later
@@ -135,7 +133,7 @@ const ProfilePage = () => {
               <div className="flex gap-4 mt-3">
                 <button
                   onClick={() => setIsEditOpen(true)}
-                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-transparent border border-lime-500 hover:bg-lime-700 rounded-sm transition font-medium"
+                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-transparent border border-[#C4FF00] hover:bg-[#C4FF00]/80 rounded-sm transition font-medium"
                 >
                   <Edit size={18} />
                   Edit profile
@@ -147,7 +145,7 @@ const ProfilePage = () => {
                     localStorage.removeItem("accessToken");
                     navigate("/login");
                   }}
-                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-transparent border border-lime-500 hover:bg-lime-700 font-semibold rounded-sm transition"
+                  className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-transparent border border-[#C4FF00] hover:bg-[#C4FF00]/80 font-semibold rounded-sm transition"
                 >
                   <LogOut size={18} />
                   Log Out
@@ -162,8 +160,7 @@ const ProfilePage = () => {
                 Subscription plan
               </h3>
 
-              {/* Current plan */}
-              <div className="bg-lime-600/80 rounded-md mb-6 shadow-lg">
+              <div className="bg-lime-600 rounded-md mb-6 shadow-lg">
                 <div className="p-4 space-y-2 text-white">
                   <h4 className="text-lg font-semibold">
                     {user?.subscriptionType || "Standart"}
@@ -187,34 +184,12 @@ const ProfilePage = () => {
                 <button className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition">
                   Change plan
                 </button>
-              </div>
-
-              {/* Next payment */}
-              <div className="bg-lime-600/80 rounded-md mb-6 shadow-lg">
-                <div className="p-4 space-y-2 text-white">
-                  <h4 className="text-lg font-semibold">Next payment</h4>
-                  <p className="text-sm text-gray-200">October 15, 2025</p>
-                  <p className="text-sm text-gray-300">
-                    Subscription from this date: September 15, 2025
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <img
-                      src={cib_visa}
-                      alt="Visa"
-                      className="h-6"
-                    />
-                    <span className="tracking-widest">•••• •••• •••• 4444</span>
-                  </div>
-                </div>
-                <button className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition">
-                  Change payment method
-                </button>
-              </div>
+              </div>         
 
               {/* Cancellation */}
-              <button className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-sm transition">
+              {/* <button className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-sm transition">
                 Cancel subscription
-              </button>
+              </button> */}
             </section>
           )}
 
@@ -246,7 +221,7 @@ const ProfilePage = () => {
               <button
                 className={`text-left text-lg font-medium transition ${
                   activeTab === "admin"
-                    ? "text-lime-400"
+                    ? "text-[#C4FF00]"
                     : "text-gray-400 hover:text-white"
                 }`}
                 onClick={() => navigate("/admin")}

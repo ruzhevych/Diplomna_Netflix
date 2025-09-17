@@ -74,21 +74,22 @@ const LoginPage = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col"
-      style={{ backgroundImage: "url('/public/login-bg.png')" }}
+      style={{ backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/login-bg.png')" }}
     >
-      <div className="p-6">
+      
+      <div className="absolute left-96 top-8">
         <img src={logo} alt="logo" className="l-10 w-32" />
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <div className="bg-black/70 p-8 w-full max-w-sm">
-          <h2 className="text-white text-3xl font-bold mb-6 text-center">Sign In</h2>
+        <div className="bg-black/70 rounded-sm py-8 px-10 w-full max-w-md">
+          <h2 className="text-white text-3xl py-2 font-bold mb-6 text-left">Sign In</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="email"
               placeholder="Email or mobile number"
-              className="w-full p-3 rounded-sm bg-black/40 border border-gray-500 text-white"
+              className="w-full p-3 rounded-sm bg-[#191716]/80 border-1 border-gray-500 text-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -98,7 +99,7 @@ const LoginPage = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full p-3 rounded-sm bg-black/40 border border-gray-500 text-white"
+                className="w-full p-3 rounded-sm bg-[#191716]/80 border-1 border-gray-500 text-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -114,7 +115,7 @@ const LoginPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-lime-400/90 text-black font-semibold py-3 rounded-sm hover:bg-lime-500 transition"
+              className="w-full bg-[#C4FF00]/90 text-black text-xl font-bold py-2.5 rounded-sm hover:bg-[#C4FF00] transition"
               disabled={isLoading}
             >
               {isLoading ? 'Please wait...' : 'Sign In'}
@@ -123,7 +124,7 @@ const LoginPage = () => {
 
           <button
             type="button"
-            className="flex items-center justify-center w-full bg-gray-100 hover:bg-gray-200 transition text-black font-semibold px-4 py-3 rounded-sm mt-4"
+            className="flex items-center justify-center w-full bg-gray-100 text-xl hover:bg-gray-200 transition text-black font-bold px-4 py-2.5 rounded-sm mt-3"
             onClick={() => googleLoginFunc()}
           >
             <GoogleIcon className="w-5 h-5 mr-2" />
@@ -132,7 +133,7 @@ const LoginPage = () => {
 
           <div className="flex justify-between items-center text-sm text-gray-400 mt-3">
             <label className="flex items-center space-x-2">
-              <input type="checkbox" className="accent-lime-400" />
+              <input type="checkbox" className="accent-[#C4FF00]/80" />
               <span>Remember me</span>
             </label>
             <button
