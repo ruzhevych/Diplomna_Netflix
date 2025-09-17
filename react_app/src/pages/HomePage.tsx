@@ -11,6 +11,8 @@ import {
   getTopRatedMovies,
   getUpcomingMovies,
   getPopularTV,
+  getCartoons,
+  getAnime,
   //getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
@@ -63,7 +65,7 @@ const HomePage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await getPopularMovies();
+        const data = await getPopularMovies(1);
         setMovies(data.results);
       } catch (err) {
         console.error("Помилка при завантаженні фільмів:", err);
@@ -85,12 +87,12 @@ const HomePage = () => {
         <HeroBanner />
 
         <section className="px-">
-          <Row title="Movies" fetcher={getPopularMovies} />
-          <Row title="TV Series" fetcher={getPopularTV} />
-          {/* <Row title="Anime" fetcher={getAnime} /> */}
-          <Row title="Cartoons" fetcher={getTopRatedMovies} />
-          <Row title="New & Popular" fetcher={getUpcomingMovies} />
-          <Top10Row title="Top 10 TV Series Today" fetcher={getPopularTV} />
+          <Row title="Movies" fetcher={() => getPopularMovies(1)} />
+          <Row title="TV Series" fetcher={() => getPopularTV(1)} />
+          <Row title="Anime" fetcher={() => getAnime(1)} />
+          <Row title="Cartoons" fetcher={() => getCartoons(1)} />
+          <Row title="New & Popular" fetcher={() => getUpcomingMovies(1)} />
+          <Top10Row title="Top 10 TV Series Today" fetcher={() => getPopularTV(1)} />
         </section>
       </div>
       {/* Футер */}

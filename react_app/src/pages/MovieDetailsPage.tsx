@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Movie } from "../types/movie";
-import { type Video, getMovieDetails, getMovieVideos } from "../services/movieApi";
+import type { Collection, Movie } from "../types/movie";
+import {
+  type Video,
+  getCollections,
+  getMovieDetails,
+  getMovieVideos,
+  getRecomendationsMovies,
+  getSimilarMovies,
+} from "../services/movieApi";
 import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
@@ -10,24 +17,28 @@ import {
 import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import CommentsSection from "../components/CommentsSection";
-import RatingSection from "../components/RatingSection";
 import { useAddToHistoryMutation } from "../services/historyApi";
+import { Play, Plus, ThumbsUp } from "lucide-react";
+import { useAddForLaterMutation } from "../services/forLaterApi";
+import RatingAndComments from "../components/RatingAndComments";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const movieId = Number(id);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [movie, setMovie] = useState<Movie | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [similar, setSimilar] = useState<Movie[]>([]);
+  const [recommendations, setRecommendations] = useState<Movie[]>([]);
+  const [collections, setCollections] = useState<Collection | null>(null);
 
   const { data: favorites } = useGetFavoritesQuery();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [inFavorites, setInFavorites] = useState(false);
   const [addToHistory] = useAddToHistoryMutation();
+  const [AddForLater] = useAddForLaterMutation();
 
   useEffect(() => {
     if (!movieId) return;
@@ -35,6 +46,19 @@ const MovieDetailsPage = () => {
       try {
         const details = await getMovieDetails(movieId);
         setMovie(details);
+
+        const similarMovies = await getSimilarMovies(movieId, 1);
+        setSimilar(similarMovies.results || similarMovies); 
+
+        const recMovies = await getRecomendationsMovies(movieId, 1);
+        setRecommendations(recMovies.results || recMovies);
+
+        if (details.belongs_to_collection) {
+        const data = await getCollections(details.belongs_to_collection.id, 1);
+        setCollections(data.results || data);
+      } else {
+        setCollections(null); 
+      }
 
         const vids = await getMovieVideos(movieId);
         setVideos(
@@ -78,6 +102,37 @@ const MovieDetailsPage = () => {
     }
   };
 
+  const handlePlay = (id: number) => {
+      navigate(`/movie/${id}`);
+    };
+  
+    const handleAdd = async (id: number) => {
+      try {
+        const payload = { contentId: id, contentType: "movie" }; 
+        await AddForLater(payload).unwrap();
+        toast.success("Додано у список на потім");
+        console.log("➕ Added to list:", id);
+      }
+      catch {
+        toast.error("Не вдалося додати у список на потім 😢");
+      }
+      
+    };
+    
+    const handleLike = async (id: number) => {
+      try {
+        const favorite = favorites?.find((f) => f.contentId === movieId);
+        if (!favorite) return;
+        const payload = { contentId: id, contentType: "movie" }; 
+        await addFavorite(payload).unwrap();
+        toast.success("Додано в улюблене 👍");
+        console.log("➕ Added to list:", id);
+      }
+      catch {
+        toast.error("Не вдалося додати в улюблене 😢");
+      }
+    };
+
   if (!movie)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
@@ -109,37 +164,69 @@ const MovieDetailsPage = () => {
             <img
               src={posterUrl}
               alt={movie.title || movie.original_title}
-              className="rounded-sm+
-               shadow-2xl w-full"
+              className="rounded shadow-2xl w-full"
             />
           </div>
 
           {/* Info */}
           <div className="flex-1 flex flex-col gap-4">
-            <h1 className="text-5xl font-extrabold">{movie.title || movie.original_title}</h1>
+            <h1 className="text-5xl font-extrabold">{movie.title}</h1>
             {movie.tagline && (
               <p className="italic text-gray-400 text-xl">"{movie.tagline}"</p>
             )}
-            <p className="text-gray-400 text-lg">
-              {movie.release_date} • ⭐{" "}
-              {movie.vote_average.toFixed()} ({movie.vote_count} голосів)
-            </p>
             <p className="text-gray-300 leading-relaxed">{movie.overview}</p>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mt-4">
-              <p><span className="text-white font-semibold">Популярність:</span> {movie.popularity}</p>
-              { movie.genres && (
-                <p><span className="text-white font-semibold">Жанри:</span> {movie.genres.map((g) => g.name).join(", ")}</p>
+              <p>
+                <span className="text-white font-semibold">Популярність:</span>{" "}
+                {movie.popularity}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Жанри:</span>{" "}
+                {movie.genres?.map((g) => g.name).join(", ")}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Тривалість:</span>{" "}
+                {movie.runtime} хв
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 mt-4">
+              <button
+                onClick={() => handlePlay(movie.id)}
+                className="bg-white text-black rounded-full w-12 h-12 flex items-center justify-center hover:scale-110 transition"
+              >
+                <Play size={18} />
+              </button>
+
+              <button
+                onClick={() => handleAdd(movie.id)}
+                className="border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition"
+              >
+                <Plus size={18} />
+              </button>
+
+              <button
+                onClick={() => handleLike(movie.id)}
+                className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
+                ${
+                  inFavorites
+                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                }`}
+              >
+                {/* <ThumbsUp size={18} /> */}
+                {inFavorites ? (
+                <ThumbsUp className="text-red-500 w-6 h-6 bg-green" />
+              ) : (
+                <ThumbsUp className="w-6 h-6" />
               )}
-              <p><span className="text-white font-semibold">Тривалість:</span> {movie.runtime} хв</p>
-              <p><span className="text-white font-semibold">Бюджет:</span> ${movie.budget?.toLocaleString()}</p>
-              <p><span className="text-white font-semibold">Касові збори:</span> ${movie.revenue?.toLocaleString()}</p>
-              <p><span className="text-white font-semibold">Мова:</span> {movie.original_language.toUpperCase()}</p>
+              </button>
             </div>
 
             {/* Favorites button */}
-            <button
+            {/* <button
               onClick={handleFavorite}
               className={`mt-6 flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
                 ${
@@ -148,39 +235,16 @@ const MovieDetailsPage = () => {
                     : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
                 }`}
             >
-              {inFavorites ? <AiFillHeart className="text-red-500 w-6 h-6" /> : <AiOutlineHeart className="w-6 h-6" />}
+              {inFavorites ? (
+                <AiFillHeart className="text-red-500 w-6 h-6" />
+              ) : (
+                <AiOutlineHeart className="w-6 h-6" />
+              )}
               {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
-
-      {/* Collection */}
-      {movie.belongs_to_collection && (
-        <div className="mt-12 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h3 className="text-2xl font-bold mb-4">Колекція</h3>
-          <div className="flex items-center gap-6 bg-gray-900 p-4 rounded-lg shadow-lg hover:bg-gray-800 transition">
-            <img
-              src={`https://image.tmdb.org/t/p/w300${movie.belongs_to_collection.poster_path}`}
-              alt={movie.belongs_to_collection.name}
-              className="w-32 rounded-md shadow-md"
-            />
-            {movie.belongs_to_collection && (
-              <div>
-              <h4 className="text-xl font-semibold">{movie.belongs_to_collection.name}</h4>
-              <button
-                onClick={() => {
-                  navigate(`/collection/${movie.belongs_to_collection?.id}`);
-                }}
-                className="mt-3 px-4 py-2 bg-lime-500 text-black rounded hover:bg-lime-600"
-              >
-                Переглянути колекцію
-              </button>
-            </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Trailer */}
       {trailer && (
@@ -197,10 +261,79 @@ const MovieDetailsPage = () => {
         </div>
       )}
 
+
+      {collections != null && (
+        <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Колекція</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {collections.parts.map((c) => (
+              <div
+                key={c.id}
+                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => navigate(`/movie/${c.id}`)}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${c.poster_path}`}
+                  alt={c.title}
+                  className="rounded-lg shadow-md"
+                />
+                <p className="mt-2 text-center text-sm">{c.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
+      {/* Recommendations */}
+      {recommendations.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Рекомендовані</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {recommendations.map((rec) => (
+              <div
+                key={rec.id}
+                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => navigate(`/movie/${rec.id}`)}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
+                  alt={rec.title}
+                  className="rounded-lg shadow-md"
+                />
+                <p className="mt-2 text-center text-sm">{rec.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Similar Movies */}
+      {similar.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Схожі фільми</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {similar.map((sm) => (
+              <div
+                key={sm.id}
+                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => navigate(`/movie/${sm.id}`)}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
+                  alt={sm.title}
+                  className="rounded-lg shadow-md"
+                />
+                <p className="mt-2 text-center text-sm">{sm.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingSection contentId={movie.id} contentType="movie" />
-        <CommentsSection movieId={movie.id} movieType="movie" />
+        <RatingAndComments contentId={movie.id} contentType="movie" vote_average={movie.vote_average.toFixed(1)}/>
       </div>
 
       <Footer />

@@ -8,13 +8,13 @@ export default function MoviesPage() {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   
     useEffect(() => {
-      getMovieGenres().then((data) => setGenres(data.genres));
+      getMovieGenres(1).then((data) => setGenres(data.genres));
     }, []);
   return (
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaGrid title="Популярні фільми" fetchData={getPopularMovies}  genres={genres}/>;
+        <MediaGrid title="Популярні фільми" fetchData={(page) => getPopularMovies(page ?? 1)}  genres={genres}/>;
       </div>
       <Footer />
     </div>

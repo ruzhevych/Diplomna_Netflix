@@ -11,7 +11,7 @@ const HeroBanner = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data: TMDBResponse<Movie> = await getPopularMovies();
+        const data: TMDBResponse<Movie> = await getPopularMovies(1);
         const pick =
           data.results[Math.floor(Math.random() * data.results.length)];
         setMovie(pick);

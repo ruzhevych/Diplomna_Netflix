@@ -33,7 +33,7 @@ const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data: TMDBResponse<Movie> = await getPopularMovies();
+        const data: TMDBResponse<Movie> = await getPopularMovies(1);
         setMovies(data.results.slice(0, 10)); 
       } catch (err) {
         console.error("Помилка завантаження:", err);

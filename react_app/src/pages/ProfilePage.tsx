@@ -18,6 +18,7 @@ import {
 import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
 import ProfileEditModal from "./ProfileEditModal";
+import cib_visa from "../../public/cib_visa.png"
 
 
 const ProfilePage = () => {
@@ -176,7 +177,7 @@ const tabs = [
         </p>
         <div className="flex items-center gap-2 mt-2">
           <img
-            src="/visa-icon.svg"
+            src={cib_visa}
             alt="Visa"
             className="h-6"
           />
@@ -198,7 +199,7 @@ const tabs = [
         </p>
         <div className="flex items-center gap-2 mt-2">
           <img
-            src="/visa-icon.svg"
+            src={cib_visa}
             alt="Visa"
             className="h-6"
           />

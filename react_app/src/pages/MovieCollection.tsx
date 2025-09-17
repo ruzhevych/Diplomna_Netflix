@@ -16,7 +16,7 @@ const MovieCollection = () => {
     if (!collectionId) return;
     (async () => {
       try {
-        const data = await getCollections(collectionId);
+        const data = await getCollections(collectionId, 1);
         setCollection(data);
       } catch (e) {
         console.error(e);
