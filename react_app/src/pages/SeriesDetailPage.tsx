@@ -10,7 +10,7 @@ import {
 import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-import { Play, Plus, ThumbsUp } from "lucide-react";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useAddToHistoryMutation } from "../services/historyApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
@@ -54,6 +54,17 @@ const SeriesDetailsPage = () => {
           mediaType: "tv",
           name: details.name,
         }).unwrap();
+        setVideos(
+          vids.results.filter(
+            (v) => v.site === "YouTube" && v.type === "Trailer"
+          )
+        );
+          await addToHistory({
+            id: details.id,
+            mediaType: "tv",
+            name: details.name,
+        }).unwrap();
+
       } catch (e) {
         console.error(e);
       }
@@ -76,19 +87,30 @@ const SeriesDetailsPage = () => {
     }
   };
 
-  const handleLike = async (id: number) => {
+  const handleFavorite = async () => {
     try {
-      const payload = { contentId: id, contentType: "tv" };
-      await addFavorite(payload).unwrap();
-      toast.success("Додано в улюблене 👍");
-      setInFavorites(true);
-    } catch {
-      toast.error("Не вдалося додати в улюблене 😢");
+      const payload = { contentId: seriesId, contentType: "tv" };
+      if (inFavorites) {
+        const favorite = favorites?.find((f) => f.contentId === seriesId);
+        if (!favorite) return;
+
+        await removeFavorite(favorite.id).unwrap();
+        toast.info("Removed from favorites ❌");
+      } else {
+        await addFavorite(payload).unwrap();
+        setInFavorites(true);
+        toast.success("Added to favorites ❤️");
+      }
+    } catch (err) {
+      toast.error("Error with favorites 😢");
     }
   };
-
   if (!series)
-    return <p className="text-white text-center mt-10 animate-fadeIn">Завантаження...</p>;
+    return (
+      <p className="text-white text-center mt-10 animate-fadeIn">
+        Loading...
+      </p>
+    );
 
   const posterUrl = `https://image.tmdb.org/t/p/w500${series.poster_path}`;
   const backdropUrl = `https://image.tmdb.org/t/p/original${series.backdrop_path}`;
@@ -120,39 +142,62 @@ const SeriesDetailsPage = () => {
             {series.tagline && <p className="italic text-gray-400 text-xl">"{series.tagline}"</p>}
             <p className="text-gray-300 leading-relaxed">{series.overview}</p>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mt-4">
-              <p><span className="text-white font-semibold">Жанри:</span> {series.genres?.map(g => g.name).join(", ")}</p>
-              <p><span className="text-white font-semibold">Сезонів:</span> {series.number_of_seasons}</p>
-              <p><span className="text-white font-semibold">Епізодів:</span> {series.number_of_episodes}</p>
-              <p><span className="text-white font-semibold">Мова:</span> {series.original_language.toUpperCase()}</p>
-              <p><span className="text-white font-semibold">Популярність:</span> {series.popularity}</p>
-              <p><span className="text-white font-semibold">Статус:</span> {series.status}</p>
+            <p className="text-gray-400 mb-6 text-lg">
+              {series.first_air_date} – {series.status} • ⭐{" "}
+              {series.vote_average.toFixed(1)} ({series.vote_count} votes)
+            </p>
+
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              {series.overview}
+            </p>
+
+            {/* Additional info */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
+              { series.genres && (
+                <p>
+                    <span className="text-white font-semibold">Genres:</span>{" "}
+                    {series.genres.map((g) => g.name).join(", ")}
+                </p>
+              )}
+              <p>
+                <span className="text-white font-semibold">Seasons:</span>{" "}
+                {series.number_of_seasons}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Episodes:</span>{" "}
+                {series.number_of_episodes}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Language:</span>{" "}
+                {series.original_language.toUpperCase()}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Popularity:</span>{" "}
+                {series.popularity}
+              </p>
+              <p>
+                <span className="text-white font-semibold">Status:</span>{" "}
+                {series.status}
+              </p>
             </div>
 
-            {/* Buttons */}
-            <div className="flex items-center gap-4 mt-4">
-              <button
-                onClick={() => navigate(`/watch/series/${series.id}`)}
-                className="bg-white text-black rounded-full w-12 h-12 flex items-center justify-center hover:scale-110 transition"
-              >
-                <Play size={18} />
-              </button>
-
-              <button
-                onClick={() => handleAdd(series.id)}
-                className="border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition"
-              >
-                <Plus size={18} />
-              </button>
-
-              <button
-                onClick={() => handleLike(series.id)}
-                className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
-                ${inFavorites ? "bg-gray-800" : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"}`}
-              >
-                <ThumbsUp className={`w-6 h-6 ${inFavorites ? "text-red-500" : ""}`} />
-              </button>
-            </div>
+            {/* Favorites button */}
+            <button
+              onClick={handleFavorite}
+              className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
+                ${
+                  inFavorites
+                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-lime-500 text-white hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                }`}
+            >
+              {inFavorites ? (
+                <AiFillHeart className="text-red-500 w-6 h-6" />
+              ) : (
+                <AiOutlineHeart className="w-6 h-6" />
+              )}
+              {inFavorites ? "Remove from favorites" : "Add to favorites"}
+            </button>
           </div>
         </div>
       </div>
@@ -160,7 +205,7 @@ const SeriesDetailsPage = () => {
       {/* Last Episode */}
       {series.last_episode_to_air && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0">
-          <h2 className="text-3xl font-bold mb-6">Останній епізод</h2>
+          <h2 className="text-3xl font-bold mb-6">Last episode</h2>
           <div className="flex gap-6 bg-gray-900 p-4 rounded-lg shadow-lg">
             <img
               src={`https://image.tmdb.org/t/p/w300${series.last_episode_to_air.still_path}`}
@@ -170,8 +215,8 @@ const SeriesDetailsPage = () => {
             <div>
               <h3 className="text-xl font-semibold">{series.last_episode_to_air.name}</h3>
               <p className="text-gray-400 text-sm mb-2">
-                {series.last_episode_to_air.air_date} • Епізод{" "}
-                {series.last_episode_to_air.episode_number} (Сезон{" "}
+                {series.last_episode_to_air.air_date} • Episode{" "}
+                {series.last_episode_to_air.episode_number} (Season{" "}
                 {series.last_episode_to_air.season_number})
               </p>
               <p className="text-gray-300">{series.last_episode_to_air.overview}</p>
@@ -183,7 +228,7 @@ const SeriesDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Трейлер</h2>
+          <h2 className="text-3xl font-bold mb-6">Trailer</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}

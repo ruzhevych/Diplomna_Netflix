@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 
 export default function MoviesPage() {
     const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
-    //const [episode, setSpisode] = useState<{ id: number; name: string }[]>([]);
-
   useEffect(() => {
     getTvGenres(1).then((data) => setGenres(data.genres));
     //getSeriesEpisode().then((data) => setSpisode(data.))

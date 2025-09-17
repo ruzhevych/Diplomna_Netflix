@@ -80,7 +80,7 @@ const CommentEditModal = ({
             className="w-full py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm 
                        transition duration-200 shadow-md shadow-lime-500/30 hover:shadow-lime-500/50"
           >
-            Зберегти зміни
+            Save changes
           </button>
         </form>
       </div>

@@ -55,9 +55,7 @@ export default function SendMessageModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      {/* Modal */}
       <div className="relative z-[101] w-full max-w-lg rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-2xl">
         <div className="mb-4">
           <h2 className="text-xl font-semibold">Надіслати повідомлення</h2>

@@ -9,7 +9,6 @@ export interface AdminUser {
   isBlocked: boolean;
 }
 
-
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;

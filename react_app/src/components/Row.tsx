@@ -25,7 +25,7 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
   const scroll = (direction: 'left' | 'right') => {
     const container = containerRef.current;
     if (!container) return;
-    const scrollAmount = container.clientWidth; // прокрутити на ширину видимої області
+    const scrollAmount = container.clientWidth; 
     container.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -35,7 +35,6 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
   return (
     <section className="relative p-4">
       <h2 className="text-xl font-semibold mb-2 text-white">{title}</h2>
-      {/* Кнопки для прокрутки */}
       <button
         onClick={() => scroll('left')}
         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10 hover:bg-opacity-75"
@@ -48,7 +47,6 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
       >
         ›
       </button>
-      {/* Контейнер без скролбара */}
       <div
         ref={containerRef}
         className="flex overflow-x-auto gap-3 scrollbar-hide scroll-smooth"

@@ -6,7 +6,6 @@ import { Play, X, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useGetHistoryQuery, useDeleteFromHistoryMutation, useClearHistoryMutation } from "../../services/historyApi";
 import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
-//import type { HistoryItemDetails } from "../../types/history";
 
 export interface HistoryItemDetails {
   movieId: number;
@@ -18,9 +17,15 @@ export interface HistoryItemDetails {
   viewedAt: string;
 }
 
-
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
+/**
+ * A page component that displays the user's viewing history for movies and TV shows.
+ * It fetches the history from the backend and then retrieves detailed information for each item.
+ * The page provides options to play content again, remove a single item from the history, or clear the entire history.
+ *
+ * @returns {JSX.Element} The movie history page component.
+ */
 export default function MovieHistoryPage() {
   const { data: history, isLoading, isError } = useGetHistoryQuery();
   const [deleteFromHistory] = useDeleteFromHistoryMutation();
@@ -43,26 +48,26 @@ export default function MovieHistoryPage() {
           history.map(async (h) => {
             if (h.mediaType === "movie") {
               const data = await getMovieDetails(h.id);
-              return { 
-                ...data, 
+              return {
+                ...data,
                 mediaType: "movie",
                 movieId: h.id,
-                viewedAt: h.viewedAt || "" 
+                viewedAt: h.viewedAt || "",
               };
             } else {
               const data = await getSeriesDetails(h.id);
-              return { 
-                ...data, 
+              return {
+                ...data,
                 mediaType: "tv",
                 movieId: h.id,
-                viewedAt: h.viewedAt || ""
+                viewedAt: h.viewedAt || "",
               };
             }
           })
         );
         setItems(results);
       } catch (err: any) {
-        toast.error("Не вдалося завантажити історію 😢");
+        toast.error("Failed to load history 😢");
       } finally {
         setLoadingDetails(false);
       }
@@ -74,18 +79,18 @@ export default function MovieHistoryPage() {
   const handleRemove = async (movieId: number) => {
     try {
       await deleteFromHistory(movieId).unwrap();
-      toast.info("Видалено з історії ❌");
+      toast.info("Removed from history ❌");
     } catch {
-      toast.error("Не вдалося видалити 😢");
+      toast.error("Failed to remove 😢");
     }
   };
 
   const handleClear = async () => {
     try {
       await clearHistory().unwrap();
-      toast.info("Історія очищена 🗑️");
+      toast.info("History cleared 🗑️");
     } catch {
-      toast.error("Не вдалося очистити історію 😢");
+      toast.error("Failed to clear history 😢");
     }
   };
 
@@ -94,20 +99,20 @@ export default function MovieHistoryPage() {
       <Header />
       <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Історія переглядів</h1>
+          <h1 className="text-3xl font-bold">Viewing History</h1>
           {items.length > 0 && (
             <button
               onClick={handleClear}
               className="border border-red-400 text-red-400 px-4 py-2 rounded hover:bg-red-700 transition"
             >
-              Очистити історію
+              Clear History
             </button>
           )}
         </div>
 
-        {(isLoading || loadingDetails) && <p className="text-gray-400">Завантаження...</p>}
-        {isError && <p className="text-red-500">Помилка завантаження історії</p>}
-        {!isLoading && items.length === 0 && <p className="text-gray-400">Історія порожня 😢</p>}
+        {(isLoading || loadingDetails) && <p className="text-gray-400">Loading...</p>}
+        {isError && <p className="text-red-500">Error loading history</p>}
+        {!isLoading && items.length === 0 && <p className="text-gray-400">History is empty 😢</p>}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {items.map((content) => (
@@ -135,7 +140,7 @@ export default function MovieHistoryPage() {
                   </button>
 
                   <button
-                    onClick={() => toast.info("Більше деталей пізніше 😉")}
+                    onClick={() => toast.info("More details coming soon 😉")}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <ChevronDown size={18} />
@@ -143,7 +148,7 @@ export default function MovieHistoryPage() {
                 </div>
 
                 <div className="text-gray-300 text-sm mb-1">
-                  {new Date(content.viewedAt).toLocaleString("uk-UA", {
+                  {new Date(content.viewedAt).toLocaleString("en-US", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",

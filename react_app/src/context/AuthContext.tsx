@@ -14,7 +14,6 @@ interface AuthContextType {
   isActive: boolean | null
   isBlocked: boolean | null
   googleTempToken: string | null
-  //user: UserProfile | null
   setGoogleTempToken: (token: string | null) => void
 }
 

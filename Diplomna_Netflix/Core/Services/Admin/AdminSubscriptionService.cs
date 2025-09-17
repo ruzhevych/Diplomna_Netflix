@@ -123,18 +123,20 @@ public class AdminSubscriptionService : IAdminSubscriptionService
     }
 
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var user = await _userManager.FindByIdAsync(id.ToString());
-        if (user == null)
-            throw new Exception("User not found");
-
-        var sub = await _subscriptionRepo.Query()
-            .FirstOrDefaultAsync(s => s.UserId == user.Id);
-        if (sub == null) return false;
-
-        _subscriptionRepo.Delete(sub);
-        await _subscriptionRepo.SaveChangesAsync();
-        return true;
+        var entityToDelete = new SubscriptionEntity { Id = id };
+        try
+        {
+            _subscriptionRepo.Delete(entityToDelete);
+            await _subscriptionRepo.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            
+            Console.WriteLine(ex.Message); 
+            return false;
+        }
     }
 }

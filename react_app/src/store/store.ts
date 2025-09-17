@@ -8,8 +8,10 @@ import {favoritesApi} from "../services/favoritesApi.ts";
 import { adminApi } from "../services/adminApi";
 import { forLaterApi } from '../services/forLaterApi.ts'
 import { commentsApi } from '../services/commentApi.ts'
+import { adminSubscriptionsApi } from '../services/adminSubscriptionsApi.ts'
 import { ratingApi } from '../services/ratingApi.ts'
 import { historyApi } from '../services/historyApi.ts'
+
 
 export const store = configureStore({
   reducer: {
@@ -21,8 +23,10 @@ export const store = configureStore({
     [favoritesApi.reducerPath]: favoritesApi.reducer,
     [forLaterApi.reducerPath]: forLaterApi.reducer,
     [commentsApi.reducerPath]: commentsApi.reducer,
+    [adminSubscriptionsApi.reducerPath]: adminSubscriptionsApi.reducer,
     [ratingApi.reducerPath]: ratingApi.reducer,
     [historyApi.reducerPath]: historyApi.reducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -32,6 +36,7 @@ export const store = configureStore({
       favoritesApi.middleware, 
       forLaterApi.middleware,
       commentsApi.middleware,
+      adminSubscriptionsApi.middleware,
       ratingApi.middleware,
       historyApi.middleware,
     ),

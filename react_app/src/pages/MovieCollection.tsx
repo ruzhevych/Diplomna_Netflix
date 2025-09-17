@@ -27,7 +27,7 @@ const MovieCollection = () => {
   if (!collection)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
-        Завантаження колекції...
+        Downloading...
       </p>
     );
 
@@ -37,7 +37,6 @@ const MovieCollection = () => {
     <div className="bg-black text-white min-h-screen">
       <Header />
 
-      {/* Backdrop */}
       <div
         className="relative h-72 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
@@ -49,7 +48,7 @@ const MovieCollection = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-10 animate-fadeIn">
-        <h2 className="text-2xl font-bold mb-6">Фільми в колекції</h2>
+        <h2 className="text-2xl font-bold mb-6">Movies in collection</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {collection.parts.map((movie) => (
             <Link

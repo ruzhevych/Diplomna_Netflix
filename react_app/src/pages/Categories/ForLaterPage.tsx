@@ -25,18 +25,19 @@ interface ForLaterItem {
   forLaterId: number;
 }
 
+
 export default function ForLaterPage() {
   const { data: forLaters, isLoading, isError } = useGetForLatersQuery();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeForLater] = useRemoveForLaterMutation();
 
-  const [forLaterItems, setForLaterIItems] = useState<ForLaterItem[]>([]);
+  const [forLaterItems, setForLaterItems] = useState<ForLaterItem[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!forLaters || forLaters.length === 0) {
-      setForLaterIItems([]);
+      setForLaterItems([]);
       return;
     }
 
@@ -46,27 +47,27 @@ export default function ForLaterPage() {
         const detailsPromises = forLaters.map(async (fl) => {
           if (fl.contentType === "movie") {
             const data = await getMovieDetails(fl.contentId);
-            return { 
+            return {
               ...data,
               contentType: "movie" as const,
               contentId: Number(fl.contentId),
-              forLaterId: fl.id
+              forLaterId: fl.id,
             };
           } else {
             const data = await getSeriesDetails(fl.contentId);
-            return { 
-              ...data, 
+            return {
+              ...data,
               contentType: "tv" as const,
               contentId: Number(fl.contentId),
-              forLaterId: fl.id
+              forLaterId: fl.id,
             };
           }
         });
 
         const results = await Promise.all(detailsPromises);
-        setForLaterIItems(results);
+        setForLaterItems(results);
       } catch (err: any) {
-        toast.error("Помилка завантаження деталей улюбленого 😢");
+        toast.error("Error loading 'watch later' details 😢");
       } finally {
         setLoadingDetails(false);
       }
@@ -77,20 +78,20 @@ export default function ForLaterPage() {
 
   const handleAdd = async (id: number, type: string) => {
     try {
-      const payload = { contentId: id, contentType: type }; 
+      const payload = { contentId: id, contentType: type };
       await addFavorite(payload).unwrap();
-      toast.success("Додано в улюблене ❤️");
+      toast.success("Added to favorites ❤️");
     } catch {
-      toast.error("Не вдалося додати в улюблене 😢");
+      toast.error("Failed to add to favorites 😢");
     }
   };
 
   const handleRemove = async (forLaterId: number) => {
     try {
       await removeForLater(forLaterId).unwrap();
-      toast.info("Видалено з улюбленого ❌");
+      toast.info("Removed from 'watch later' list ❌");
     } catch {
-      toast.error("Не вдалося видалити 😢");
+      toast.error("Failed to remove 😢");
     }
   };
 
@@ -98,16 +99,16 @@ export default function ForLaterPage() {
     <div className="bg-black text-white min-h-screen">
       <Header />
       <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Улюблене</h1>
+        <h1 className="text-3xl font-bold mb-6">Watch Later</h1>
 
         {(isLoading || loadingDetails) && (
-          <p className="text-gray-400">Завантаження...</p>
+          <p className="text-gray-400">Loading...</p>
         )}
         {isError && (
-          <p className="text-red-500">Помилка завантаження улюбленого</p>
+          <p className="text-red-500">Error loading 'watch later' list</p>
         )}
         {!isLoading && forLaterItems.length === 0 && (
-          <p className="text-gray-400">Улюблених ще немає 😢</p>
+          <p className="text-gray-400">Your 'watch later' list is empty 😢</p>
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -135,13 +136,6 @@ export default function ForLaterPage() {
                     <Play size={18} />
                   </button>
 
-                  {/* <button
-                    onClick={() => handleAdd(content.id, content.contentType)}
-                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
-                  >
-                    <Plus size={18} />
-                  </button> */}
-
                   <button
                     onClick={() => handleAdd(content.id, content.contentType)}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
@@ -157,7 +151,7 @@ export default function ForLaterPage() {
                   </button>
 
                   <button
-                    onClick={() => toast.info("Більше деталей пізніше 😉")}
+                    onClick={() => toast.info("More details coming soon 😉")}
                     className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                   >
                     <ChevronDown size={18} />

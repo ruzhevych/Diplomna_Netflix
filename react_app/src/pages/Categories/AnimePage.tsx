@@ -4,14 +4,12 @@ import MediaTvGrid from "../../components/MediaTvGrid";
 import { getAnime, getTvGenres } from "../../services/movieApi";
 import { useEffect, useState } from "react";
 
-
 export default function MoviesPage() {
 const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
     getTvGenres(1).then((data) => setGenres(data.genres));
   }, []);
-
 
   return (
     <div className="bg-black text-white">

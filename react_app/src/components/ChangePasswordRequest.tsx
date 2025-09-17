@@ -14,16 +14,17 @@ const ChangePasswordRequest = ({ email }: Props) => {
     try {
       await forgotPassword({ email }).unwrap();
       setStatus("sent");
-      toast.success("Лист з інструкціями відправлено на вашу пошту 📩");
+      toast.success("An email with instructions has been sent to your address 📩");
     } catch (err: any) {
-      toast.error(err?.data?.message || "Помилка при відправці листа");
+      toast.error(err?.data?.message || "Error sending the email");
     }
   };
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-gray-400">
-        Для зміни паролю на вашу пошту <span className="text-lime-400">{email}</span> буде відправлено лист із посиланням.
+        To change your password, an email with a link will be sent to your address{" "}
+        <span className="text-lime-400">{email}</span>.
       </p>
 
       <button
@@ -31,7 +32,7 @@ const ChangePasswordRequest = ({ email }: Props) => {
         disabled={isLoading || status === "sent"}
         className="px-4 py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? "Відправка..." : status === "sent" ? "Лист відправлено ✅" : "Змінити пароль"}
+        {isLoading ? "Sending..." : status === "sent" ? "Email sent ✅" : "Change password"}
       </button>
     </div>
   );

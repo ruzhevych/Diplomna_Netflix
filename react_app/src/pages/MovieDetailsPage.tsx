@@ -21,6 +21,7 @@ import { useAddToHistoryMutation } from "../services/historyApi";
 import { Play, Plus, ThumbsUp } from "lucide-react";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
+import { AiFillHeart } from "react-icons/ai";
 
 const MovieDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -91,14 +92,14 @@ const MovieDetailsPage = () => {
 
         await removeFavorite(favorite.id).unwrap();
         setInFavorites(false);
-        toast.info("Видалено з улюбленого ❌");
+        toast.info("Deleted from Favorites");
       } else {
         await addFavorite(payload).unwrap();
         setInFavorites(true);
-        toast.success("Додано в улюблене ❤️");
+        toast.success("Added to Favorites");
       }
     } catch {
-      toast.error("Помилка з улюбленим 😢");
+      toast.error("Error with Favorites");
     }
   };
 
@@ -136,7 +137,7 @@ const MovieDetailsPage = () => {
   if (!movie)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
-        Завантаження...
+        Downloading...
       </p>
     );
 
@@ -147,19 +148,14 @@ const MovieDetailsPage = () => {
   return (
     <div className="bg-black text-white min-h-screen">
       <Header />
-
-      {/* Backdrop */}
       <div
         className="relative h-[80vh] w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
       </div>
-
-      {/* Main content */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 -mt-40 relative z-10">
         <div className="flex flex-col md:flex-row gap-10 animate-fadeIn">
-          {/* Poster */}
           <div className="md:w-1/3 w-full">
             <img
               src={posterUrl}
@@ -167,16 +163,12 @@ const MovieDetailsPage = () => {
               className="rounded shadow-2xl w-full"
             />
           </div>
-
-          {/* Info */}
           <div className="flex-1 flex flex-col gap-4">
             <h1 className="text-5xl font-extrabold">{movie.title}</h1>
             {movie.tagline && (
               <p className="italic text-gray-400 text-xl">"{movie.tagline}"</p>
             )}
             <p className="text-gray-300 leading-relaxed">{movie.overview}</p>
-
-            {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mt-4">
               <p>
                 <span className="text-white font-semibold">Популярність:</span>{" "}
@@ -227,6 +219,18 @@ const MovieDetailsPage = () => {
 
             {/* Favorites button */}
             {/* <button
+              <p><span className="text-white font-semibold">Popularity:</span> {movie.popularity}</p>
+              { movie.genres && (
+                <p><span className="text-white font-semibold">Genres:</span> {movie.genres.map((g) => g.name).join(", ")}</p>
+              )}
+              <p><span className="text-white font-semibold">Duration:</span> {movie.runtime} хв</p>
+              <p><span className="text-white font-semibold">Budget:</span> ${movie.budget?.toLocaleString()}</p>
+              <p><span className="text-white font-semibold">Total Supply:</span> ${movie.revenue?.toLocaleString()}</p>
+              <p><span className="text-white font-semibold">Language:</span> {movie.original_language.toUpperCase()}</p>
+            </div>
+
+
+            <button
               onClick={handleFavorite}
               className={`mt-6 flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
                 ${
@@ -235,13 +239,11 @@ const MovieDetailsPage = () => {
                     : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
                 }`}
             >
-              {inFavorites ? (
-                <AiFillHeart className="text-red-500 w-6 h-6" />
-              ) : (
-                <AiOutlineHeart className="w-6 h-6" />
-              )}
-              {inFavorites ? "Видалити з улюбленого" : "Додати в улюблене"}
-            </button> */}
+              
+              {inFavorites ? <AiFillHeart className="text-red-500 w-6 h-6" /> : <AiOutlineHeart className="w-6 h-6" />}
+              {inFavorites ? "Delete from Favorites" : "Add to Favorites"}
+            </button>
+            */}
           </div>
         </div>
       </div>
@@ -249,7 +251,7 @@ const MovieDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Трейлер</h2>
+          <h2 className="text-3xl font-bold mb-6">Trailer</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
@@ -260,7 +262,6 @@ const MovieDetailsPage = () => {
           </div>
         </div>
       )}
-
 
       {collections != null && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
@@ -284,8 +285,6 @@ const MovieDetailsPage = () => {
         </div>
       )}
 
-
-      {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
           <h2 className="text-3xl font-bold mb-6">Рекомендовані</h2>
@@ -308,7 +307,6 @@ const MovieDetailsPage = () => {
         </div>
       )}
 
-      {/* Similar Movies */}
       {similar.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
           <h2 className="text-3xl font-bold mb-6">Схожі фільми</h2>
