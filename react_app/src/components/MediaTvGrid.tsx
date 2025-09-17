@@ -4,10 +4,11 @@ import { Play, Plus, ThumbsUp, ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAddFavoriteMutation } from "../services/favoritesApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
+import { useFilters } from "../context/FilterContext";
 
 interface MediaGridProps {
   title: string;
-  fetchData: (page?: number) => Promise<any>;
+  fetchData: (page?: number, filters?: { ratingFrom: number; ratingTo: number; genres: number[] }) => Promise<any>;
   genres: { id: number; name: string }[];
 }
 
@@ -21,17 +22,18 @@ const MediaTvGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [page, setPage] = useState(1);
   const [addFavorite] = useAddFavoriteMutation();
   const [AddForLater] = useAddForLaterMutation();
+  const { filters } = useFilters();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     loadData(1, true);
-  }, [fetchData]);
+  }, [fetchData, filters]);
 
   const loadData = async (pageNum: number, reset = false) => {
     try {
       setLoading(true);
-      const data = await fetchData(pageNum);
+      const data = await fetchData(pageNum, filters);
       setItems((prev) => (reset ? data.results : [...prev, ...data.results]));
       setPage(pageNum);
     } catch (err: any) {
