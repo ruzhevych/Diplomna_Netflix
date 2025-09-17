@@ -87,33 +87,33 @@ const ChoosePlanPage = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col"
-      style={{ backgroundImage: "url('/login-bg.png')" }}
+      style={{ backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/login-bg.png')" }}
     >
-      <div className="flex justify-between items-center p-6">
-        <img src={logo} alt="logo" className="w-32" />
+      <div className="flex justify-between items-center py-6 px-16">
+        <img src={logo} alt="logo" className="w-32 " />
         <button
           onClick={() => navigate(-1)}
-          className="text-white hover:underline"
+          className="text-white font-bold hover:underline"
         >
           Back
         </button>
       </div>
       <div className="max-w-4xl mx-auto w-full">
-        <h2 className="px-4 py-2 inline-block w-full text-white rounded-sm font-semibold text-2xl mb-2 bg-gradient-to-r from-lime-600 to-green-600/0">
+        <h2 className="px-4 py-2 inline-block w-full text-white rounded-lg font-semibold text-2xl mb-2 bg-gradient-to-r from-[#C4FF00]/60 to-[#C4FF00]/0">
           Choose your tariff plan
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid py-3 grid-cols-1 md:grid-cols-3 gap-4">
       {plans.map((plan) => (
         <div
           key={plan.name}
           onClick={() => setSelectedPlan(plan.name)}
-          className={`cursor-pointer bg-black/80 text-white p-2 rounded-lg transition border-2 ${
-            selectedPlan === plan.name ? "border-lime-400" : "border-transparent"
+          className={`cursor-pointer bg-[#191716]/80 text-white p-3 rounded-lg transition border-2 ${
+            selectedPlan === plan.name ? "border-[#C4FF00]/50" : "border-transparent"
           }`}
         > 
-          <div className="bg-gradient-to-r from-lime-600/70 to-lime-600/50 text-white px-4 pt-2 pb-1 rounded-md w-full mb-2">
+          <div className="bg-gradient-to-r bg-[#C4FF00]/20 to-lime-600/50 text-white px-6 pt-2 pb-1 rounded-md w-full mb-2">
             <h3 className="font-semibold text-lg ">{plan.name}</h3>
-            <p className="text-lm text-gray-100 opacity-90 ">
+            <p className="text-lm text-gray-100 opacity-90 mb-2">
               {plan.name === "Basic" ? "720p" : plan.name === "Standard" ? "1080p" : "4K + HDR"}
             </p>
           </div>
@@ -164,7 +164,7 @@ const ChoosePlanPage = () => {
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="bg-gradient-to-r w-full from-green-600/0 to-lime-600 text-2xl text-white font-semibold px-8 py-2 rounded-sm text-right"
+            className="bg-gradient-to-r w-full from-green-600/0 to-[#C4FF00]/60 text-2xl text-white font-semibold px-8 py-2 rounded-lg text-right"
           >
             {isLoading ? "Please wait..." : "Next ➜"}
           </button>

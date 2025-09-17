@@ -15,14 +15,14 @@ const PlanIntroPage = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col"
-      style={{ backgroundImage: "url('/public/login-bg.png')" }}
+      style={{ backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/login-bg.png')" }}
     >
-      <div className="p-6">
+      <div className="absolute left-96 top-8">
         <img src={logo} alt="logo" className="w-32" />
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <div className="bg-black/70 p-8 w-full max-w-sm text-center">
+        <div className="bg-black/70 p-10 w-full max-w-md text-center">
           <h2 className="text-white text-3xl font-bold mb-4 text-left">
             Choose your tariff plan
           </h2>
@@ -38,7 +38,7 @@ const PlanIntroPage = () => {
 
           <button
             onClick={handleNext}
-            className="w-full bg-lime-500 text-black font-semibold py-3 rounded-sm hover:bg-lime-400/90 transition"
+            className="w-full bg-[#C4FF00]/90 text-black font-semibold py-3 rounded-sm hover:bg-lime-400/90 transition"
           >
             Next
           </button>

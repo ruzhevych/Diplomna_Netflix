@@ -6,27 +6,26 @@ import Row from "../components/Row";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer/Footer"
 
+
 import {
   getPopularMovies,
-  getTopRatedMovies,
   getUpcomingMovies,
   getPopularTV,
   getCartoons,
   getAnime,
-  //getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
 
 
-// Топ-10 рядок
 const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   const [items, setItems] = useState<Movie[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
       try {
         const data = await fetcher();
-        setItems(data.results.slice(0, 10));
+        setItems(data.results.slice(0, 7));
       } catch (err) {
         console.error("Помилка завантаження:", err);
       }
@@ -35,26 +34,29 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   }, [fetcher]);
 
   return (
-    <div className="mb-10 ">
-      <h2 className="text-lg font-bold mb-2 text-left">{title}</h2>
-      <div className="flex w-full gap-4 overflow-x-auto scrollbar-hide justify-center items-center">
-        {items.map((item, index) => (
-          <div key={item.id} className="relative flex-shrink-0">
-            <span className="absolute -left-5 top-2 z-20 text-8xl font-bold text-white
-               drop-shadow-[2px_2px_4px_rgba(0,0,0,0.9)]
-               [text-shadow:_0_0_2px_white,0_0_10px_black]
-               [-webkit-text-stroke:2px_white]">
-              {index + 1}
-            </span>
-            <img
-              src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-              alt={item.title || item.original_title}
-              className=" w-40 rounded-md"
-            />
-          </div>
-        ))}
+    <div className="mb-10">
+  <h2 className="font-bold mb-4 ml-6 text-3xl text-left">{title}</h2>
+  <div className="flex w-full gap-24 overflow-x-auto scrollbar-hide justify-center items-center">
+    {items.map((item, index) => (
+      <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/movie/${item.id}`)}>
+        <span
+          className="absolute -left-20 -top-8 z-0 text-big font-black
+            text-[#0d0d0d]
+            drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
+            [-webkit-text-stroke:2px_#C4FF00]
+            [text-shadow:_0_0_2px_black,0_0_10px_rgba(0,0,0,0.8)]"
+        >
+          {index + 1}
+        </span>
+        <img
+          src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+          alt={item.title || item.original_title}
+          className="relative w-36 rounded-md"
+        />
       </div>
-    </div>
+    ))}
+  </div>
+</div>
   );
 };
 
@@ -86,7 +88,7 @@ const HomePage = () => {
       <div className="mt-20">
         <HeroBanner />
 
-        <section className="px-">
+        <section className="px-2">
           <Row title="Movies" fetcher={() => getPopularMovies(1)} />
           <Row title="TV Series" fetcher={() => getPopularTV(1)} />
           <Row title="Anime" fetcher={() => getAnime(1)} />
