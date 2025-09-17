@@ -89,7 +89,6 @@ const ChoosePlanPage = () => {
       className="min-h-screen bg-cover bg-center flex flex-col"
       style={{ backgroundImage: "url('/login-bg.png')" }}
     >
-      {/* Logo & Back */}
       <div className="flex justify-between items-center p-6">
         <img src={logo} alt="logo" className="w-32" />
         <button
@@ -99,14 +98,10 @@ const ChoosePlanPage = () => {
           Back
         </button>
       </div>
-
-      {/* Title */}
       <div className="max-w-4xl mx-auto w-full">
         <h2 className="px-4 py-2 inline-block w-full text-white rounded-sm font-semibold text-2xl mb-2 bg-gradient-to-r from-lime-600 to-green-600/0">
           Choose your tariff plan
         </h2>
-
-        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {plans.map((plan) => (
         <div
@@ -115,20 +110,17 @@ const ChoosePlanPage = () => {
           className={`cursor-pointer bg-black/80 text-white p-2 rounded-lg transition border-2 ${
             selectedPlan === plan.name ? "border-lime-400" : "border-transparent"
           }`}
-        >
-          
+        > 
           <div className="bg-gradient-to-r from-lime-600/70 to-lime-600/50 text-white px-4 pt-2 pb-1 rounded-md w-full mb-2">
             <h3 className="font-semibold text-lg ">{plan.name}</h3>
             <p className="text-lm text-gray-100 opacity-90 ">
               {plan.name === "Basic" ? "720p" : plan.name === "Standard" ? "1080p" : "4K + HDR"}
             </p>
           </div>
-
           <p className="mb-2 px-3">
             <span className="font-semibold">Monthly price</span> <br />
             {plan.price}
           </p>
-
           <p className="mb-2 px-3">
             <span className="font-semibold">Video and sound quality</span> <br />
             {plan.quality}
@@ -167,11 +159,7 @@ const ChoosePlanPage = () => {
       ))}
     </div>
 
-
-
         {error && <p className="text-red-500 mt-4 ">{error}</p>}
-
-        {/* Next Button */}
         <div className="flex justify-end mt-2">
           <button
             onClick={handleSubmit}

@@ -9,7 +9,7 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 async function searchTMDB(query: string): Promise<TMDBResponse<Movie>> {
   const url = `${BASE_URL}/search/multi?api_key=${API_KEY}&language=uk-UA&query=${encodeURIComponent(query)}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error('Не вдалося виконати пошук');
+  if (!res.ok) throw new Error('Failed to perform search');
   return res.json();
 }
 
@@ -36,11 +36,11 @@ const SearchPage = () => {
     <div className="pt-20 bg-black min-h-screen text-white">
       <Header />
       <div className="container mx-auto px-6">
-        <h2 className="text-2xl font-semibold mb-4">Результати пошуку: “{query}”</h2>
-        {loading && <p>Завантаження...</p>}
+        <h2 className="text-2xl font-semibold mb-4">Search Results for: “{query}”</h2>
+        {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && results.length === 0 && (
-          <p>Нічого не знайдено.</p>
+          <p>Nothing was found.</p>
         )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {results.map((item) => (

@@ -62,18 +62,18 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Overlay з плавною появою */}
+   
       <div
         onClick={onClose}
         className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 opacity-100"
       />
 
-      {/* Модальне вікно з анімацією */}
+      
       <div
         className="relative bg-white/5 backdrop-blur-xl p-8 rounded-sm shadow-2xl w-full max-w-lg text-white
                    transform transition-all duration-300 scale-100 opacity-100"
       >
-        {/* Кнопка закриття */}
+    
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
@@ -81,7 +81,7 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
           <X size={24} />
         </button>
         
-        {/* Аватар */}
+    
         <div className="flex flex-col items-center space-y-3">
           <h2 className="text-3xl font-bold text-lime-400 drop-shadow-md">
             Edit Profile
@@ -109,7 +109,7 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
           
         </div>
 
-        {/* Форма */}
+       
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div className="relative">
             <User className="absolute top-4 left-3 text-gray-400" size={20} />
@@ -117,7 +117,7 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Повне ім’я"
+              placeholder="Name"
               className="w-full pl-10 pr-4 py-3 rounded-sm  bg-black/70 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
             />
           </div>
@@ -139,7 +139,7 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Новий пароль (не обов'язково)"
+              placeholder="New Password"
               className="w-full pl-10 pr-4 py-3 rounded-sm bg-black/70 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
             />
           </div>

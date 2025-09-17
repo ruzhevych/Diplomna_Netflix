@@ -1,21 +1,22 @@
-// src/components/SubscriptionsTable.tsx
 import {
   useGetAllSubscriptionsQuery,
   useDeleteSubscriptionMutation,
 } from "../../services/adminSubscriptionsApi";
 
+
 export default function SubscriptionsTable() {
   const { data: subs, isLoading, isError, error } = useGetAllSubscriptionsQuery();
   const [deleteSubscription] = useDeleteSubscriptionMutation();
 
-  if (isLoading) return <div className="text-gray-400 text-lg text-center p-8">Завантаження...</div>;
+  if (isLoading)
+    return <div className="text-gray-400 text-lg text-center p-8">Loading...</div>;
   if (isError) {
     console.error(error);
-    return <div className="text-red-500 text-lg text-center p-8">Помилка завантаження.</div>;
+    return <div className="text-red-500 text-lg text-center p-8">Error loading data.</div>;
   }
 
   if (!subs || subs.length === 0) {
-    return <div className="text-gray-400 text-lg text-center p-8">Немає доступних підписок.</div>;
+    return <div className="text-gray-400 text-lg text-center p-8">No subscriptions available.</div>;
   }
 
   return (
@@ -25,11 +26,11 @@ export default function SubscriptionsTable() {
           <tr>
             <th className="px-4 py-3">ID</th>
             <th className="px-4 py-3">Email</th>
-            <th className="px-4 py-3">Тип</th>
-            <th className="px-4 py-3">Початок</th>
-            <th className="px-4 py-3">Кінець</th>
-            <th className="px-4 py-3">Активна</th>
-            <th className="px-4 py-3">Дії</th>
+            <th className="px-4 py-3">Type</th>
+            <th className="px-4 py-3">Start Date</th>
+            <th className="px-4 py-3">End Date</th>
+            <th className="px-4 py-3">Status</th>
+            <th className="px-4 py-3">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/10">
@@ -46,19 +47,19 @@ export default function SubscriptionsTable() {
                     s.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                   }`}
                 >
-                  {s.isActive ? 'Активна' : 'Неактивна'}
+                  {s.isActive ? 'Active' : 'Inactive'}
                 </span>
               </td>
               <td className="px-4 py-3">
                 <button
                   onClick={() => {
-                    if (window.confirm('Видалити підписку?')) {
+                    if (window.confirm('Delete subscription?')) {
                       deleteSubscription(s.id);
                     }
                   }}
                   className="rounded-sm bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-700"
                 >
-                  Видалити
+                  Delete
                 </button>
               </td>
             </tr>

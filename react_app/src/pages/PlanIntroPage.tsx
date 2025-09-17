@@ -17,12 +17,10 @@ const PlanIntroPage = () => {
       className="min-h-screen bg-cover bg-center flex flex-col"
       style={{ backgroundImage: "url('/public/login-bg.png')" }}
     >
-      {/* Логотип */}
       <div className="p-6">
         <img src={logo} alt="logo" className="w-32" />
       </div>
 
-      {/* Контент */}
       <div className="flex flex-1 items-center justify-center">
         <div className="bg-black/70 p-8 w-full max-w-sm text-center">
           <h2 className="text-white text-3xl font-bold mb-4 text-left">

@@ -6,7 +6,7 @@ import {
   useSendMessageMutation,
   useDeleteUserMutation,
   useChangeUserRoleMutation,
-  useUnblockUserMutation
+  useUnblockUserMutation,
 } from "../../services/adminApi";
 import { useGetProfileQuery } from "../../services/userApi";
 import UserSearch from "./UserSearch";
@@ -29,7 +29,7 @@ function UsersTable() {
   const [deleteUser] = useDeleteUserMutation();
   const [sendMessage] = useSendMessageMutation();
   const { data: profile } = useGetProfileQuery();
-  
+
   const adminId = profile?.id;
 
   const [isMsgOpen, setMsgOpen] = useState(false);
@@ -81,15 +81,15 @@ function UsersTable() {
       setSortOrder("asc");
     }
   };
-  
+
   return (
     <>
       <div className="mb-4">
         <UserSearch onSearch={(val) => { setPage(1); setSearch(val); }} />
       </div>
 
-      {isLoading && <p className="text-gray-400">Завантаження...</p>}
-      {isError && <p className="text-red-500">Помилка завантаження</p>}
+      {isLoading && <p className="text-gray-400">Loading...</p>}
+      {isError && <p className="text-red-500">Error loading data.</p>}
 
       {sortedData && (
         <div className="overflow-x-auto rounded-sm">
@@ -103,16 +103,16 @@ function UsersTable() {
                   Email {sortField === "email" && (sortOrder === "asc" ? "▲" : "▼")}
                 </th>
                 <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("fullName")}>
-                  Ім’я {sortField === "fullName" && (sortOrder === "asc" ? "▲" : "▼")}
+                  Name {sortField === "fullName" && (sortOrder === "asc" ? "▲" : "▼")}
                 </th>
                 <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("role")}>
-                  Роль {sortField === "role" && (sortOrder === "asc" ? "▲" : "▼")}
+                  Role {sortField === "role" && (sortOrder === "asc" ? "▲" : "▼")}
                 </th>
-                <th className="px-4 py-3">Статус</th>
-                <th className="px-4 py-3">Роль</th>
-                <th className="px-4 py-3">Блокування</th>
-                <th className="px-4 py-3">Видалити</th>
-                <th className="px-4 py-3">Написати</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Change Role</th>
+                <th className="px-4 py-3">Block/Unblock</th>
+                <th className="px-4 py-3">Delete</th>
+                <th className="px-4 py-3">Message</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -122,64 +122,64 @@ function UsersTable() {
                   <td className="px-4 py-3">{u.email}</td>
                   <td className="px-4 py-3">{u.fullName || "—"}</td>
                   <td className="px-4 py-3">{u.role}</td>
-                   <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-sm text-xs ${u.isBlocked ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
-                         {u.isBlocked ? "Заблокований" : "Активний"}
-                      </span>
-                   </td>
-                   <td className="px-4 py-3">
-                      <select
-                        value={u.role}
-                        onChange={(e) => changeUserRole({ id: u.id, role: e.target.value })}
-                        className="rounded-sm bg-gray-700 px-2 py-1 text-sm text-white"
-                      >
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Moderator">Moderator</option>
-                      </select>
-                    </td>
-                    <td className="px-4 py-3">
-                       <div className="flex gap-2 justify-center">
-                          {u.isBlocked ? (
-                              <button
-                                onClick={() => {
-                                if (adminId === undefined) return; 
-                                unblockUser({ userId: u.id, adminId });
-                              }}
-                              className="rounded-sm bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700">
-                                Розблокувати
-                              </button>
-                          ) : (
-                              <button
-                                onClick={() => openBlockModal(u.id, u.email)}
-                                className="px-3 py-1 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs">
-                                Заблокувати
-                              </button>
-                          )}
-                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                       <div className="flex gap-2 justify-center">
-                          <button
-                              onClick={() => {
-                                 if (window.confirm(`Ви впевнені, що хочете видалити ${u.email}?`)) {
-                                    deleteUser(u.id);
-                                 }
-                              }}
-                              className="rounded-sm bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
-                              Видалити
-                          </button>
-                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                       <div className="flex gap-2 justify-center">
-                          <button
-                              onClick={() => openMsgModal(u.id, u.email)}
-                              className="rounded-sm bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700">
-                              Написати
-                          </button>
-                       </div>
-                    </td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-sm text-xs ${u.isBlocked ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"}`}>
+                      {u.isBlocked ? "Blocked" : "Active"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.role}
+                      onChange={(e) => changeUserRole({ id: u.id, role: e.target.value })}
+                      className="rounded-sm bg-gray-700 px-2 py-1 text-sm text-white"
+                    >
+                      <option value="User">User</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Moderator">Moderator</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2 justify-center">
+                      {u.isBlocked ? (
+                        <button
+                          onClick={() => {
+                            if (adminId === undefined) return;
+                            unblockUser({ userId: u.id, adminId });
+                          }}
+                          className="rounded-sm bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700">
+                          Unblock
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => openBlockModal(u.id, u.email)}
+                          className="px-3 py-1 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs">
+                          Block
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Are you sure you want to delete ${u.email}?`)) {
+                            deleteUser(u.id);
+                          }
+                        }}
+                        className="rounded-sm bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => openMsgModal(u.id, u.email)}
+                        className="rounded-sm bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700">
+                        Message
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -195,7 +195,7 @@ function UsersTable() {
           onPageChange={setPage}
         />
       )}
-      
+
       <SendMessageModal
         open={isMsgOpen}
         onClose={() => setMsgOpen(false)}
@@ -212,13 +212,13 @@ function UsersTable() {
             userId: selectedUser.id,
             adminId,
             durationDays: days ?? 0,
-            reason: reason ?? '',
+            reason: reason ?? "",
           });
         }}
         userEmail={selectedUser?.email}
       />
     </>
   );
-};
+}
 
 export default UsersTable;
