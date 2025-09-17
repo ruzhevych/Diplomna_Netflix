@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Series } from "../types/movie";
-import { type Video } from "../services/movieApi";
-import { getSeriesDetails, getSeriesVideos } from "../services/movieApi";
+import { type Video, getSeriesDetails, getSeriesVideos, getSimilarTv, getRecomendationsTv } from "../services/movieApi";
 import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
@@ -12,22 +11,27 @@ import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import CommentsSection from "../components/CommentsSection";
-import RatingSection from "../components/RatingSection";
 import { useAddToHistoryMutation } from "../services/historyApi";
+import { useAddForLaterMutation } from "../services/forLaterApi";
+import RatingAndComments from "../components/RatingAndComments";
 
 const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const seriesId = Number(id);
+  const navigate = useNavigate();
 
   const [series, setSeries] = useState<Series | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [similar, setSimilar] = useState<Series[]>([]);
+  const [recommendations, setRecommendations] = useState<Series[]>([]);
 
   const { data: favorites } = useGetFavoritesQuery();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
-  const [inFavorites, setInFavorites] = useState(false);
   const [addToHistory] = useAddToHistoryMutation();
+  const [AddForLater] = useAddForLaterMutation();
+
+  const [inFavorites, setInFavorites] = useState(false);
 
   useEffect(() => {
     if (!seriesId) return;
@@ -35,7 +39,21 @@ const SeriesDetailsPage = () => {
       try {
         const details = await getSeriesDetails(seriesId);
         setSeries(details);
+
         const vids = await getSeriesVideos(seriesId);
+        setVideos(vids.results.filter((v) => v.site === "YouTube" && v.type === "Trailer"));
+
+        // якщо є API – додаємо схожі та рекомендовані
+        const similarSeries = await getSimilarTv(seriesId, 1);
+        setSimilar(similarSeries.results || []);
+        const recSeries = await getRecomendationsTv(seriesId, 1);
+        setRecommendations(recSeries.results || []);
+
+        await addToHistory({
+          id: details.id,
+          mediaType: "tv",
+          name: details.name,
+        }).unwrap();
         setVideos(
           vids.results.filter(
             (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -60,6 +78,15 @@ const SeriesDetailsPage = () => {
     }
   }, [favorites, seriesId]);
 
+  const handleAdd = async (id: number) => {
+    try {
+      await AddForLater({ contentId: id, contentType: "tv" }).unwrap();
+      toast.success("Додано у список на потім");
+    } catch {
+      toast.error("Не вдалося додати у список на потім 😢");
+    }
+  };
+
   const handleFavorite = async () => {
     try {
       const payload = { contentId: seriesId, contentType: "tv" };
@@ -78,7 +105,6 @@ const SeriesDetailsPage = () => {
       toast.error("Error with favorites 😢");
     }
   };
-
   if (!series)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
@@ -94,33 +120,27 @@ const SeriesDetailsPage = () => {
     <div className="bg-black text-white min-h-screen">
       <Header />
 
-      {/* backdrop */}
+      {/* Backdrop */}
       <div
-        className="relative h-[70vh] w-full bg-cover bg-center"
+        className="relative h-[80vh] w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 -mt-40 relative z-10">
         <div className="flex flex-col md:flex-row gap-10 animate-fadeIn">
           {/* Poster */}
-          <div className="w-full md:w-1/3">
-            <img
-              src={posterUrl}
-              alt={series.name}
-              className="rounded-2xl shadow-2xl w-full"
-            />
+          <div className="md:w-1/3 w-full">
+            <img src={posterUrl} alt={series.name} className="rounded shadow-2xl w-full" />
           </div>
 
           {/* Info */}
-          <div className="flex-1">
-            <h1 className="text-5xl font-extrabold mb-4">{series.name}</h1>
-            {series.tagline && (
-              <p className="italic text-gray-400 text-xl mb-6">
-                "{series.tagline}"
-              </p>
-            )}
+          <div className="flex-1 flex flex-col gap-4">
+            <h1 className="text-5xl font-extrabold">{series.name}</h1>
+            {series.tagline && <p className="italic text-gray-400 text-xl">"{series.tagline}"</p>}
+            <p className="text-gray-300 leading-relaxed">{series.overview}</p>
 
             <p className="text-gray-400 mb-6 text-lg">
               {series.first_air_date} – {series.status} • ⭐{" "}
@@ -193,9 +213,7 @@ const SeriesDetailsPage = () => {
               className="w-52 rounded-md shadow-md"
             />
             <div>
-              <h3 className="text-xl font-semibold">
-                {series.last_episode_to_air.name}
-              </h3>
+              <h3 className="text-xl font-semibold">{series.last_episode_to_air.name}</h3>
               <p className="text-gray-400 text-sm mb-2">
                 {series.last_episode_to_air.air_date} • Episode{" "}
                 {series.last_episode_to_air.episode_number} (Season{" "}
@@ -222,10 +240,55 @@ const SeriesDetailsPage = () => {
         </div>
       )}
 
+      {/* Recommendations */}
+      {recommendations.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Рекомендовані серіали</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {recommendations.map((rec) => (
+              <div
+                key={rec.id}
+                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => navigate(`/series/${rec.id}`)}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
+                  alt={rec.name}
+                  className="rounded-lg shadow-md"
+                />
+                <p className="mt-2 text-center text-sm">{rec.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Similar Series */}
+      {similar.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-bold mb-6">Схожі серіали</h2>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {similar.map((sm) => (
+              <div
+                key={sm.id}
+                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => navigate(`/series/${sm.id}`)}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
+                  alt={sm.name}
+                  className="rounded-lg shadow-md"
+                />
+                <p className="mt-2 text-center text-sm">{sm.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingSection contentId={series.id} contentType="tv" />
-        <CommentsSection movieId={series.id} movieType="tv" />
+        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average.toFixed(1)} />
       </div>
 
       <Footer />

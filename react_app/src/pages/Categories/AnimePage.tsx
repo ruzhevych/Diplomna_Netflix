@@ -8,14 +8,14 @@ export default function MoviesPage() {
 const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
-    getTvGenres().then((data) => setGenres(data.genres));
+    getTvGenres(1).then((data) => setGenres(data.genres));
   }, []);
 
   return (
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaTvGrid title="Популярні фільми" fetchData={getAnime} genres={genres}/>
+        <MediaTvGrid title="Популярні аніме" fetchData={(page) => getAnime(page ?? 1)} genres={genres}/>
       </div>
       <Footer />
     </div>
