@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import {
   useAddRatingMutation,
   useGetUserRatingQuery,
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export default function RatingAndComments({ contentId, contentType, vote_average }: Props) {
+  const { t } = useTranslation();
   // ----- Rating -----
   const [hover, setHover] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -40,9 +42,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
     setSelected(stars);
     try {
       await addRating({ contentId, contentType, stars }).unwrap();
-      toast.success(`Ви поставили оцінку ${stars} ⭐`);
+      toast.success(t("ratingAndComments.rateSuccess", { stars }));
     } catch (err: any) {
-      toast.error(err?.data?.message || "Помилка при збереженні оцінки");
+      toast.error(err?.data?.message || t("ratingAndComments.rateError"));
     }
   }
 
@@ -78,7 +80,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
     try {
       await addComment(dto).unwrap();
       setNewComment("");
+      toast.success(t("ratingAndComments.commentSuccess"));
     } catch (err) {
+      toast.error(t("ratingAndComments.commentError"));
       console.error("Помилка при додаванні коментаря:", err);
     }
   }
@@ -86,7 +90,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
   async function handleDeleteComment(id: string) {
     try {
       await deleteComment(id).unwrap();
+      toast.success(t("ratingAndComments.deleteSuccess"));
     } catch (err) {
+      toast.error(t("ratingAndComments.deleteError"));
       console.error("Помилка при видаленні коментаря:", err);
     }
   }
@@ -94,9 +100,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
   return (
     <div className="max-w-6xl mx-auto gap-8 my-10 bg-[#141414]/80 p-6 rounded-xl">
       {/* ----- Rating Section ----- */}
-      <h3 className="text-lg font-semibold mb-3">Ваша оцінка</h3>
+      <h3 className="text-lg font-semibold mb-3">{t("ratingAndComments.yourRating")}</h3>
       {isRatingLoading ? (
-        <p>Завантаження вашої оцінки...</p>
+        <p>{t("ratingAndComments.loadingRating")}</p>
       ) : (
         <div className="flex gap-2 mb-6">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -111,37 +117,40 @@ export default function RatingAndComments({ contentId, contentType, vote_average
               onClick={() => handleRatingClick(star)}
               onMouseEnter={() => setHover(star)}
               onMouseLeave={() => setHover(null)}
+              aria-label={t("ratingAndComments.starLabel", { star })}
             />
           ))}
         </div>
       )}
       {selected && (
         <p className="mt-2 text-sm text-gray-400">
-          Ваша оцінка: {selected} / 5
+          {t("ratingAndComments.yourRatingText", { selected })}
         </p>
       )}
-        <p className="text-gray-400 text-sm">Загальна оцінка: ⭐ {(vote_average/2).toFixed(1)}+</p>
+
+      <p className="text-gray-400 text-sm">{t("ratingAndComments.totalRating", { vote_average })}</p>
+
       {/* ----- Comments Section ----- */}
-      <h3 className="text-lg font-semibold mt-10 mb-4">Коментарі</h3>
+      <h3 className="text-lg font-semibold mt-10 mb-4">{t("ratingAndComments.commentsTitle")}</h3>
 
       <div className="flex gap-2 mb-4">
         <input
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Напишіть коментар..."
+          placeholder={t("ratingAndComments.commentPlaceholder")}
           className="flex-1 px-3 py-2 rounded bg-[#E0E2DB] text-black"
         />
         <button
           onClick={handleAddComment}
           className="px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/90 rounded text-black"
         >
-          Додати
+          {t("ratingAndComments.addCommentButton")}
         </button>
       </div>
 
-      {isCommentsLoading && <p>Завантаження...</p>}
+      {isCommentsLoading && <p>{t("ratingAndComments.loadingComments")}</p>}
       {isError && (
-        <p className="text-red-500">Помилка при завантаженні коментарів</p>
+        <p className="text-red-500">{t("ratingAndComments.commentsError")}</p>
       )}
 
       <div className="space-y-3">
@@ -172,12 +181,14 @@ export default function RatingAndComments({ contentId, contentType, vote_average
                       setSelectedComment({ id: c.id, content: c.content });
                       setIsEditing(true);
                     }}
+                    aria-label={t("ratingAndComments.editCommentButton")}
                   >
                     <img src={edit_icon} alt="edit" className="w-3 h-3" />
                   </button>
                   <button
                     className="flex gap-2"
                     onClick={() => handleDeleteComment(c.id)}
+                    aria-label={t("ratingAndComments.deleteCommentButton")}
                   >
                     <img src={delete_icon} alt="delete" className="w-3 h-3" />
                   </button>
@@ -199,4 +210,3 @@ export default function RatingAndComments({ contentId, contentType, vote_average
     </div>
   );
 }
-

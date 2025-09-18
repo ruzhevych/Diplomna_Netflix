@@ -1,75 +1,81 @@
+// src/components/Header.tsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Search, User } from "lucide-react";
+import { useTranslation } from "react-i18next"; 
+import LanguageSwitcher from "../LanguageSwitcher";
 import { SlidersHorizontal } from "lucide-react";
 import FilterPanel from "../FilterPanel";
+
 
 import logo from "../../../public/logo-green.png";
 
 const Header = () => {
-  const [query, setQuery] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
-
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
   const [showFilters, setShowFilters] = useState(false);
 
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
-      setQuery("");
-    }
-  };
 
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY.current) {
-        setShowHeader(false); 
-      } else {
-        setShowHeader(true); 
-      }
-      lastScrollY.current = window.scrollY;
-    };
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      setQuery("");
+    }
+  };
 
-    window.addEventListener("scroll", handleScroll);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current) {
+        setShowHeader(false); 
+      } else {
+        setShowHeader(true); 
+      }
+      lastScrollY.current = window.scrollY;
+    };
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("scroll", handleScroll);
 
-  const menuItems = [
-    { path: "/movies", label: "Movies" },
-    { path: "/tvseries", label: "TV Series" },
-    { path: "/anime", label: "Anime" },
-    { path: "/cartoons", label: "Cartoons" },
-    { path: "/newandpopular", label: "New & Popular" },
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const menuItems = [
+    { path: "/movies", label: t("menu.movies") }, 
+    { path: "/tvseries", label: t("menu.tvseries") },
+    { path: "/anime", label: t("menu.anime") },
+    { path: "/cartoons", label: t("menu.cartoons") },
+    { path: "/newandpopular", label: t("menu.newAndPopular") },
   ];
 
-  return (
-    <header
-      className={`fixed top-0 w-full bg-[#171716]/100 backdrop-blur-md z-20 transition-transform duration-300 ${
-        showHeader ? "translate-y-0" : "-translate-y-full"
-      }`}
-    >
-      <div className="container mx-auto flex items-left justify-between py-4 px-6">
-        <Link to="/home">
-          <img src={logo} alt="Logo" className="w-28" />
-        </Link>
-        <nav className="hidden md:flex items-center gap-6 text-white font-medium">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`text-white hover:text-lime-400 transition no-underline ${
-          location.pathname === item.path ? "border-b-2 border-lime-400 pb-1" : ""
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+  return (
+    <header
+      className={`fixed top-0 w-full bg-[#171716]/100 backdrop-blur-md z-20 transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      <div className="container mx-auto flex items-left justify-between py-4 px-6">
+        <Link to="/home">
+          <img src={logo} alt="Logo" className="w-28" />
+        </Link>
+        <nav className="hidden md:flex items-center gap-6 text-white font-medium">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`text-white hover:text-lime-400 transition no-underline ${
+          location.pathname === item.path ? "border-b-2 border-lime-400 pb-1" : ""
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
 
         <div className="flex items-center gap-4">
           <button
@@ -102,10 +108,12 @@ const Header = () => {
           >
             <User size={22} />
           </Link>
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
   );
+
 };
 
 export default Header;

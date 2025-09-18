@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useForgotPasswordMutation } from '../services/authApi';
-import logo from '../../public/logo-green.png'; // твій логотип
+import logo from '../../public/logo-green.png'; 
 
 const ForgotPasswordPage = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -16,9 +18,9 @@ const ForgotPasswordPage = () => {
     setError('');
     try {
       await forgotPassword({ email }).unwrap();
-      toast.success('Password reset instructions have been sent to your email');
+      toast.success(t('forgotPassword.successToast'));
     } catch {
-      setError('Something went wrong while sending the email');
+      setError(t('forgotPassword.errorToast'));
     }
   };
 
@@ -38,17 +40,17 @@ const ForgotPasswordPage = () => {
 
       {/* Form */}
       <div className="flex flex-1 items-center justify-center">
-        <div className="bg-black/80 p-8  w-full max-w-sm">
+        <div className="bg-black/80 p-8 w-full max-w-sm">
           <h2 className="text-white text-2xl font-bold mb-6 text-left">
-            Forgot Password
+            {t('forgotPassword.title')}
           </h2>
           <p className="text-white text-l font-light mb-6 text-left">
-            Enter your email then we will send you a code to reset your password.
-            </p>
+            {t('forgotPassword.instructionText')}
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('forgotPassword.emailPlaceholder')}
               className="w-full p-3 rounded-sm bg-transparent border border-gray-500 text-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -60,7 +62,7 @@ const ForgotPasswordPage = () => {
               disabled={isLoading}
               className="w-full bg-lime-400/80 text-black font-semibold py-2 mt-4 rounded-sm hover:bg-lime-500 transition"
             >
-              {isLoading ? 'Please wait...' : 'Email me'}
+              {isLoading ? t('forgotPassword.loadingButton') : t('forgotPassword.submitButton')}
             </button>
           </form>
 
@@ -68,7 +70,7 @@ const ForgotPasswordPage = () => {
             onClick={() => navigate(-1)}
             className="w-full mt-3 bg-gray-700/80 text-white py-2 rounded-sm hover:bg-gray-600 transition"
           >
-            Back
+            {t('forgotPassword.backButton')}
           </button>
         </div>
       </div>

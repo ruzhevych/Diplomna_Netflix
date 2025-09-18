@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Movie, TMDBResponse } from '../types/movie';
 import Header from '../components/Header/Header';
+import { useTranslation } from 'react-i18next';
 import Footer from '../components/Footer/Footer';
 import { toast } from 'react-toastify';
 import { Play, Plus, ChevronDown, ThumbsUp } from 'lucide-react';
@@ -9,12 +10,13 @@ import { getMovieDetails, getSeriesDetails } from '../services/movieApi';
 import { useAddForLaterMutation } from '../services/forLaterApi';
 import { useAddFavoriteMutation } from '../services/favoritesApi';
 
+
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-async function searchTMDB(query: string): Promise<TMDBResponse<Movie>> {
-  const url = `${BASE_URL}/search/multi?api_key=${API_KEY}&language=uk-UA&query=${encodeURIComponent(query)}`;
+async function searchTMDB(query: string, language: string): Promise<TMDBResponse<Movie>> {
+  const url = `${BASE_URL}/search/multi?api_key=${API_KEY}&language=${language}&query=${encodeURIComponent(query)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to perform search');
   return res.json();
@@ -30,6 +32,7 @@ interface SearchItem {
 }
 
 const SearchPage = () => {
+  const { t, i18n } = useTranslation();
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const query = params.get('query') || '';
@@ -43,7 +46,8 @@ const SearchPage = () => {
   useEffect(() => {
     if (!query) return;
     setLoading(true);
-    searchTMDB(query)
+   
+    searchTMDB(query, i18n.language)
       .then((data) => {
         // Беремо тільки movie та tv
         const filtered = data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv');
@@ -51,7 +55,7 @@ const SearchPage = () => {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [query]);
+  }, [query, i18n.language]); 
 
   const handleAdd = async (id: number, type: string) => {
     try {
@@ -76,11 +80,13 @@ const SearchPage = () => {
     <div className="bg-black text-white min-h-screen">
       <Header />
       <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Search Results for: "{query}"</h1>
+        <h1 className="text-3xl font-bold mb-6">Search Results for: "{t('searchResults.title')}"</h1>
 
-        {loading && <p className="text-gray-400">Loading...</p>}
+       {loading && <p>{t('searchResults.loading')}</p>}
         {error && <p className="text-red-500">{error}</p>}
-        {!loading && !error && results.length === 0 && <p className="text-gray-400">Nothing was found.</p>}
+        {!loading && !error && results.length === 0 && (
+          <p>{t('searchResults.noResults')}</p>
+        )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {results.map((content) => (

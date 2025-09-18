@@ -15,11 +15,13 @@ import { useAddToHistoryMutation } from "../services/historyApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
 import { Plus, ThumbsUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const seriesId = Number(id);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const [series, setSeries] = useState<Series | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
@@ -63,7 +65,7 @@ const SeriesDetailsPage = () => {
         console.error(e);
       }
     })();
-  }, [seriesId, addToHistory]);
+  }, [seriesId, addToHistory, i18n.language]);
 
   useEffect(() => {
     if (favorites) {
@@ -71,15 +73,6 @@ const SeriesDetailsPage = () => {
       setInFavorites(found);
     }
   }, [favorites, seriesId]);
-
-  // const handleAdd = async (id: number) => {
-  //   try {
-  //     await AddForLater({ contentId: id, contentType: "tv" }).unwrap();
-  //     toast.success("Додано у список на потім");
-  //   } catch {
-  //     toast.error("Не вдалося додати у список на потім");
-  //   }
-  // };
 
   const handleFavorite = async () => {
     try {
@@ -89,14 +82,14 @@ const SeriesDetailsPage = () => {
         if (!favorite) return;
 
         await removeFavorite(favorite.id).unwrap();
-        toast.info("Removed from favorites");
+        toast.info(t("seriesDetails.favorites.removed"));
       } else {
         await addFavorite(payload).unwrap();
         setInFavorites(true);
-        toast.success("Added to favorites");
+        toast.success(t("seriesDetails.favorites.added"));
       }
     } catch (err) {
-      toast.error("Error with favorites");
+      toast.error(t("seriesDetails.favorites.error"));
     }
   };
 
@@ -129,7 +122,7 @@ const SeriesDetailsPage = () => {
   if (!series)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
-        Loading...
+        {t("seriesDetails.loading")}
       </p>
     );
 
@@ -163,32 +156,41 @@ const SeriesDetailsPage = () => {
             {series.tagline && <p className="italic text-gray-400 text-xl">"{series.tagline}"</p>}
             <p className="text-gray-300 leading-relaxed">{series.overview}</p>
 
+            <p className="text-gray-400 mb-6 text-lg">
+              {series.first_air_date} – {series.status} • ⭐{" "}
+              {series.vote_average.toFixed(1)} ({series.vote_count} {t("seriesDetails.votes")})
+            </p>
+
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              {series.overview}
+            </p>
+
             {/* Additional info */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
               { series.genres && (
                 <p>
-                    <span className="text-white font-semibold">Genres:</span>{" "}
+                    <span className="text-white font-semibold">{t("seriesDetails.genres")}:</span>{" "}
                     {series.genres.map((g) => g.name).join(", ")}
                 </p>
               )}
               <p>
-                <span className="text-white font-semibold">Seasons:</span>{" "}
+                <span className="text-white font-semibold">{t("seriesDetails.seasons")}:</span>{" "}
                 {series.number_of_seasons}
               </p>
               <p>
-                <span className="text-white font-semibold">Episodes:</span>{" "}
+                <span className="text-white font-semibold">{t("seriesDetails.episodes")}:</span>{" "}
                 {series.number_of_episodes}
               </p>
               <p>
-                <span className="text-white font-semibold">Language:</span>{" "}
+                <span className="text-white font-semibold">{t("seriesDetails.language")}:</span>{" "}
                 {series.original_language.toUpperCase()}
               </p>
               <p>
-                <span className="text-white font-semibold">Popularity:</span>{" "}
+                <span className="text-white font-semibold">{t("seriesDetails.popularity")}:</span>{" "}
                 {series.popularity}
               </p>
               <p>
-                <span className="text-white font-semibold">Status:</span>{" "}
+                <span className="text-white font-semibold">{t("seriesDetails.status")}:</span>{" "}
                 {series.status}
               </p>
             </div>
@@ -243,7 +245,7 @@ const SeriesDetailsPage = () => {
       {/* Last Episode */}
       {series.last_episode_to_air && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0">
-          <h2 className="text-3xl font-bold mb-6">Last episode</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("seriesDetails.lastEpisode")}</h2>
           <div className="flex gap-6 bg-gray-900 p-4 rounded-lg shadow-lg">
             <img
               src={`https://image.tmdb.org/t/p/w300${series.last_episode_to_air.still_path}`}
@@ -253,9 +255,7 @@ const SeriesDetailsPage = () => {
             <div>
               <h3 className="text-xl font-semibold">{series.last_episode_to_air.name}</h3>
               <p className="text-gray-400 text-sm mb-2">
-                {series.last_episode_to_air.air_date} • Episode{" "}
-                {series.last_episode_to_air.episode_number} (Season{" "}
-                {series.last_episode_to_air.season_number})
+                {series.last_episode_to_air.air_date} • {t("seriesDetails.episode")} {series.last_episode_to_air.episode_number} ({t("seriesDetails.season")} {series.last_episode_to_air.season_number})
               </p>
               <p className="text-gray-300">{series.last_episode_to_air.overview}</p>
             </div>
@@ -266,7 +266,7 @@ const SeriesDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Trailer</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("seriesDetails.trailer")}</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
@@ -281,7 +281,7 @@ const SeriesDetailsPage = () => {
       {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Рекомендовані серіали</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("seriesDetails.recommendations")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {recommendations.map((rec) => (
               <div
@@ -304,7 +304,7 @@ const SeriesDetailsPage = () => {
       {/* Similar Series */}
       {similar.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Схожі серіали</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("seriesDetails.similar")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {similar.map((sm) => (
               <div

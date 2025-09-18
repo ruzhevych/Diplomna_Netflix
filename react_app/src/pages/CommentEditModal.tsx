@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { X, MessageSquare } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useUpdateCommentMutation } from "../services/commentApi";
+import { toast } from 'react-toastify';
 
 interface CommentEditModalProps {
   isOpen: boolean;
@@ -15,6 +17,7 @@ const CommentEditModal = ({
   commentId,
   initialContent,
 }: CommentEditModalProps) => {
+  const { t } = useTranslation();
   const [content, setContent] = useState(initialContent);
   const [updateComment] = useUpdateCommentMutation();
 
@@ -30,6 +33,7 @@ const CommentEditModal = ({
       await updateComment({ commentId, newContent: content }).unwrap();
       onClose();
     } catch (err) {
+      toast.error(t("commentEditModal.error"));
       console.error("Помилка редагування коментаря:", err);
     }
   };
@@ -47,7 +51,7 @@ const CommentEditModal = ({
       {/* Modal */}
       <div
         className="relative bg-white/5 backdrop-blur-xl p-6 rounded-sm shadow-2xl w-full max-w-md text-white
-                   transform transition-all duration-300 scale-100 opacity-100"
+                    transform transition-all duration-300 scale-100 opacity-100"
       >
         {/* Close button */}
         <button
@@ -59,7 +63,7 @@ const CommentEditModal = ({
 
         <div className="flex flex-col items-center space-y-3">
           <h2 className="text-2xl font-bold text-lime-400 drop-shadow-md">
-            Edit Comment
+            {t("commentEditModal.title")}
           </h2>
           <MessageSquare size={40} className="text-lime-500" />
         </div>
@@ -70,17 +74,17 @@ const CommentEditModal = ({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={4}
-            placeholder="Редагуйте ваш коментар..."
-            className="w-full px-3 py-2 rounded-sm bg-black/70 text-white placeholder-gray-500 
-                       focus:ring-2 focus:ring-lime-500 outline-none transition resize-none"
+            placeholder={t("commentEditModal.placeholder")}
+            className="w-full px-3 py-2 rounded-sm bg-black/70 text-white placeholder-gray-500
+                        focus:ring-2 focus:ring-lime-500 outline-none transition resize-none"
           />
 
           <button
             type="submit"
-            className="w-full py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm 
-                       transition duration-200 shadow-md shadow-lime-500/30 hover:shadow-lime-500/50"
+            className="w-full py-2 bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-sm
+                        transition duration-200 shadow-md shadow-lime-500/30 hover:shadow-lime-500/50"
           >
-            Save changes
+            {t("commentEditModal.saveButton")}
           </button>
         </form>
       </div>
@@ -89,4 +93,3 @@ const CommentEditModal = ({
 };
 
 export default CommentEditModal;
-

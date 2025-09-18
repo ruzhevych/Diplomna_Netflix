@@ -21,9 +21,10 @@ import { useAddToHistoryMutation } from "../services/historyApi";
 import { Play, Plus, ThumbsUp } from "lucide-react";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
-import { AiFillHeart } from "react-icons/ai";
+import { useTranslation } from "react-i18next";
 
 const MovieDetailsPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const movieId = Number(id);
   const navigate = useNavigate();
@@ -49,17 +50,17 @@ const MovieDetailsPage = () => {
         setMovie(details);
 
         const similarMovies = await getSimilarMovies(movieId, 1);
-        setSimilar(similarMovies.results || similarMovies); 
+        setSimilar(similarMovies.results || similarMovies);
 
         const recMovies = await getRecomendationsMovies(movieId, 1);
         setRecommendations(recMovies.results || recMovies);
 
         if (details.belongs_to_collection) {
-        const data = await getCollections(details.belongs_to_collection.id, 1);
-        setCollections(data.results || data);
-      } else {
-        setCollections(null); 
-      }
+          const data = await getCollections(details.belongs_to_collection.id, 1);
+          setCollections(data.results || data);
+        } else {
+          setCollections(null);
+        }
 
         const vids = await getMovieVideos(movieId);
         setVideos(
@@ -92,52 +93,47 @@ const MovieDetailsPage = () => {
 
         await removeFavorite(favorite.id).unwrap();
         setInFavorites(false);
-        toast.info("Deleted from Favorites");
+        toast.info(t("movieDetails.favorites.removed"));
       } else {
         await addFavorite(payload).unwrap();
         setInFavorites(true);
-        toast.success("Added to Favorites");
+        toast.success(t("movieDetails.favorites.added"));
       }
     } catch {
-      toast.error("Error with Favorites");
+      toast.error(t("movieDetails.favorites.error"));
     }
   };
 
   const handlePlay = (id: number) => {
-      navigate(`/movie/${id}`);
-    };
-  
-    const handleAdd = async (id: number) => {
-      try {
-        const payload = { contentId: id, contentType: "movie" }; 
-        await AddForLater(payload).unwrap();
-        toast.success("Додано у список на потім");
-        console.log("➕ Added to list:", id);
-      }
-      catch {
-        toast.error("Не вдалося додати у список на потім 😢");
-      }
-      
-    };
-    
-    const handleLike = async (id: number) => {
-      try {
-        const favorite = favorites?.find((f) => f.contentId === movieId);
-        if (!favorite) return;
-        const payload = { contentId: id, contentType: "movie" }; 
-        await addFavorite(payload).unwrap();
-        toast.success("Додано в улюблене 👍");
-        console.log("➕ Added to list:", id);
-      }
-      catch {
-        toast.error("Не вдалося додати в улюблене 😢");
-      }
-    };
+    navigate(`/movie/${id}`);
+  };
+
+  const handleAdd = async (id: number) => {
+    try {
+      const payload = { contentId: id, contentType: "movie" };
+      await AddForLater(payload).unwrap();
+      toast.success(t("movieDetails.forLater.added"));
+      console.log("➕ Added to list:", id);
+    } catch {
+      toast.error(t("movieDetails.forLater.error"));
+    }
+  };
+
+  const handleLike = async (id: number) => {
+    try {
+      const payload = { contentId: id, contentType: "movie" };
+      await addFavorite(payload).unwrap();
+      toast.success(t("movieDetails.favorites.added"));
+      console.log("➕ Added to favorites:", id);
+    } catch {
+      toast.error(t("movieDetails.favorites.error"));
+    }
+  };
 
   if (!movie)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
-        Downloading...
+        {t("movieDetails.loading")}
       </p>
     );
 
@@ -171,16 +167,16 @@ const MovieDetailsPage = () => {
             <p className="text-gray-300 leading-relaxed">{movie.overview}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mt-4">
               <p>
-                <span className="text-white font-semibold">Популярність:</span>{" "}
+                <span className="text-white font-semibold">{t("movieDetails.popularity")}:</span>{" "}
                 {movie.popularity}
               </p>
               <p>
-                <span className="text-white font-semibold">Жанри:</span>{" "}
+                <span className="text-white font-semibold">{t("movieDetails.genres")}:</span>{" "}
                 {movie.genres?.map((g) => g.name).join(", ")}
               </p>
               <p>
-                <span className="text-white font-semibold">Тривалість:</span>{" "}
-                {movie.runtime} хв
+                <span className="text-white font-semibold">{t("movieDetails.duration")}:</span>{" "}
+                {movie.runtime} {t("movieDetails.minutes")}
               </p>
             </div>
 
@@ -200,7 +196,7 @@ const MovieDetailsPage = () => {
               </button>
 
               <button
-                onClick={() => handleLike(movie.id)}
+                onClick={handleFavorite}
                 className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
                 ${
                   inFavorites
@@ -208,42 +204,13 @@ const MovieDetailsPage = () => {
                     : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
                 }`}
               >
-                {/* <ThumbsUp size={18} /> */}
                 {inFavorites ? (
-                <ThumbsUp className="text-red-500 w-6 h-6 bg-green" />
-              ) : (
-                <ThumbsUp className="w-6 h-6" />
-              )}
+                  <ThumbsUp className="text-red-500 w-6 h-6 bg-green" />
+                ) : (
+                  <ThumbsUp className="w-6 h-6" />
+                )}
               </button>
             </div>
-
-            {/* Favorites button */}
-            {/* <button
-              <p><span className="text-white font-semibold">Popularity:</span> {movie.popularity}</p>
-              { movie.genres && (
-                <p><span className="text-white font-semibold">Genres:</span> {movie.genres.map((g) => g.name).join(", ")}</p>
-              )}
-              <p><span className="text-white font-semibold">Duration:</span> {movie.runtime} хв</p>
-              <p><span className="text-white font-semibold">Budget:</span> ${movie.budget?.toLocaleString()}</p>
-              <p><span className="text-white font-semibold">Total Supply:</span> ${movie.revenue?.toLocaleString()}</p>
-              <p><span className="text-white font-semibold">Language:</span> {movie.original_language.toUpperCase()}</p>
-            </div>
-
-
-            <button
-              onClick={handleFavorite}
-              className={`mt-6 flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
-                ${
-                  inFavorites
-                    ? "bg-gray-800 text-white hover:bg-gray-700"
-                    : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
-                }`}
-            >
-              
-              {inFavorites ? <AiFillHeart className="text-red-500 w-6 h-6" /> : <AiOutlineHeart className="w-6 h-6" />}
-              {inFavorites ? "Delete from Favorites" : "Add to Favorites"}
-            </button>
-            */}
           </div>
         </div>
       </div>
@@ -251,7 +218,7 @@ const MovieDetailsPage = () => {
       {/* Trailer */}
       {trailer && (
         <div className="mt-16 max-w-6xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Trailer</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.trailer")}</h2>
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
@@ -265,7 +232,7 @@ const MovieDetailsPage = () => {
 
       {collections != null && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Колекція</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.collection")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {collections.parts.map((c) => (
               <div
@@ -287,7 +254,7 @@ const MovieDetailsPage = () => {
 
       {recommendations.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Рекомендовані</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.recommendations")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {recommendations.map((rec) => (
               <div
@@ -309,7 +276,7 @@ const MovieDetailsPage = () => {
 
       {similar.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">Схожі фільми</h2>
+          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.similar")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {similar.map((sm) => (
               <div
