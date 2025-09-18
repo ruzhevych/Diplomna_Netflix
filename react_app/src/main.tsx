@@ -12,6 +12,7 @@ import { Provider } from 'react-redux'
 import { store } from './store/store'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { APP_ENV } from './env'
+import './locales/i18n'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>

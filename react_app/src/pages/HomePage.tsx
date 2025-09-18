@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Row from "../components/Row";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer/Footer"
-
+import { useTranslation } from 'react-i18next';
 
 import {
   getPopularMovies,
@@ -20,6 +20,7 @@ import type { Movie } from "../types/movie";
 const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   const [items, setItems] = useState<Movie[]>([]);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     const load = async () => {
@@ -80,7 +81,7 @@ const HomePage = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-
+  const { t } = useTranslation();
   return (
     <div className="bg-black/95 text-white overflow-x-auto scrollbar-hide">
       
@@ -89,12 +90,12 @@ const HomePage = () => {
         <HeroBanner />
 
         <section className="px-2">
-          <Row title="Movies" fetcher={() => getPopularMovies(1)} />
-          <Row title="TV Series" fetcher={() => getPopularTV(1)} />
-          <Row title="Anime" fetcher={() => getAnime(1)} />
-          <Row title="Cartoons" fetcher={() => getCartoons(1)} />
-          <Row title="New & Popular" fetcher={() => getUpcomingMovies(1)} />
-          <Top10Row title="Top 10 TV Series Today" fetcher={() => getPopularTV(1)} />
+          <Row title={t('homePage.movies')} fetcher={() => getPopularMovies(1)} />
+          <Row title={t('homePage.tv')} fetcher={() => getPopularTV(1)} />
+          <Row title={t('homePage.anime')} fetcher={() => getAnime(1)} />
+          <Row title={t('homePage.cartoons')} fetcher={() => getCartoons(1)} />
+          <Row title={t('homePage.newAndPopular')} fetcher={() => getUpcomingMovies(1)} />
+          <Top10Row title={t('homePage.top10')} fetcher={() => getPopularTV(1)} />
         </section>
       </div>
       {/* Футер */}

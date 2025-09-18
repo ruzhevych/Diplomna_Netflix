@@ -1,0 +1,313 @@
+{
+  "menu": {
+    "movies": "Movies",
+    "tvseries": "TV Series",
+    "anime": "Anime",
+    "cartoons": "Cartoons",
+    "newAndPopular": "New & Popular"
+  },
+  "search": {
+    "placeholder": "Search"
+  },
+  "blockedPage": {
+    "loading": "Loading...",
+    "error": {
+      "title": "Failed to get blocking information",
+      "loginAgain": "Log in again"
+    },
+    "title": "Your account is blocked",
+    "defaultReason": "You have been blocked by an administrator.",
+    "yourEmail": "Your email",
+    "administrator": "Administrator",
+    "blockingDate": "Blocking date",
+    "unblockingExpected": "Unblocking expected",
+    "goToHomepage": "Go to homepage (limited access)",
+    "logOut": "Log out",
+    "contactSupport": "Contact support"
+  },
+  "searchResults": {
+    "title": "Search Results for:",
+    "loading": "Loading...",
+    "noResults": "Nothing was found."
+  },
+  "seriesDetails": {
+    "loading": "Loading...",
+    "votes": "votes",
+    "genres": "Genres",
+    "seasons": "Seasons",
+    "episodes": "Episodes",
+    "language": "Language",
+    "popularity": "Popularity",
+    "status": "Status",
+    "favorites": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "added": "Added to favorites",
+      "removed": "Removed from favorites",
+      "error": "Error with favorites"
+    },
+    "lastEpisode": "Last episode",
+    "episode": "Episode",
+    "season": "Season",
+    "trailer": "Trailer",
+    "recommendations": "Recommended series",
+    "similar": "Similar series"
+  },
+  "api": {
+    "fetchError": "Failed to get data from TMDB"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "newPasswordPlaceholder": "New password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "loading": "Please wait...",
+    "changePassword": "Change password",
+    "back": "Back",
+    "passwordsDontMatch": "Passwords do not match",
+    "success": "Password successfully changed",
+    "error": "Something went wrong"
+  },
+  "register": {
+    "title": "Sign Up",
+    "fullNamePlaceholder": "Full Name",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "agreeToTerms": "I agree to the <1>Terms of Service</1> and <3>Privacy Policy</3>",
+    "continueButton": "Continue",
+    "googleButton": "Sign in with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign In",
+    "passwordsDontMatch": "Passwords do not match",
+    "agreeTermsError": "You must agree to the Terms of Service and Privacy Policy",
+    "success": "Successful registration",
+    "googleError": "Error during Google registration"
+  },
+  "profile": {
+    "loading": "Downloading...",
+    "error": "Error",
+    "menu": {
+      "overview": "Overview",
+      "subscription": "Subscription",
+      "security": "Security",
+      "devices": "Devices",
+      "adminPanel": "Admin Panel"
+    },
+    "overview": {
+      "title": "User Profile",
+      "name": "Name",
+      "email": "E-mail",
+      "watchHistory": "Watch history",
+      "favorites": "Favorites",
+      "forLater": "For later",
+      "editProfile": "Edit profile",
+      "logOut": "Log Out"
+    },
+    "subscription": {
+      "title": "Subscription plan",
+      "planType": {
+        "Standart": "Standart"
+      },
+      "details": "2 devices, 1080p",
+      "startDate": "Subscription from this date",
+      "date": "September 15, 2025",
+      "nextPayment": "Next payment",
+      "nextDate": "October 15, 2025",
+      "changePlan": "Change plan"
+    },
+    "security": {
+      "title": "Security",
+      "description": "🔒 Manage your account password and security."
+    },
+    "devices": {
+      "title": "Devices",
+      "description": "📱 Here is a list of your active devices."
+    },
+    "admin": {
+      "adminPanel": "Admin Panel"
+    }
+  },
+  "profileEditModal": {
+    "title": "Edit Profile",
+    "namePlaceholder": "Name",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "New Password",
+    "saveChanges": "Save changes",
+    "avatarAlt": "Avatar",
+    "error": "Update failed"
+  },
+  "planIntro": {
+    "title": "Choose your tariff plan",
+    "point1": "♦ Start easily — stop whenever you want.",
+    "point2": "♦ Thousands of shows and movies with one subscription.",
+    "point3": "♦ Watch anywhere, anytime, on any screen.",
+    "nextButton": "Next"
+  },
+  "movieDetails": {
+    "loading": "Downloading...",
+    "popularity": "Popularity",
+    "genres": "Genres",
+    "duration": "Duration",
+    "minutes": "min",
+    "trailer": "Trailer",
+    "collection": "Collection",
+    "recommendations": "Recommendations",
+    "similar": "Similar movies",
+    "forLater": {
+      "added": "Added to 'For Later' list",
+      "error": "Failed to add to 'For Later' list 😢"
+    },
+    "favorites": {
+      "added": "Added to favorites 👍",
+      "removed": "Deleted from favorites",
+      "error": "Error with favorites"
+    }
+  },
+  "landingPage": {
+    "login": "Log In",
+    "heroTitle": "Movies, series and lots of other content <br /> without limits",
+    "heroSubtitle": "From <1>4,99 EUR</1>. You can cancel subscription anytime",
+    "heroText": "Ready to watch? Enter your e-mail to subscribe or update it!",
+    "emailPlaceholder": "Email",
+    "startButton": "Start",
+    "popularNow": "Popular Now",
+    "noDescription": "No description.",
+    "moreReasons": "More reasons to subscribe",
+    "reasons": {
+      "tv": {
+        "title": "Watch on TV",
+        "subtitle": "Smart TV, Playstation, Xbox, Chromecast, Apple TV and other devices."
+      },
+      "download": {
+        "title": "Download and watch offline",
+        "subtitle": "Save your favorite TV shows and movies to your phone or tablet."
+      },
+      "anywhere": {
+        "title": "Watch anywhere",
+        "subtitle": "Watch on your phone, tablet, laptop or TV without restrictions."
+      },
+      "kids": {
+        "title": "Create profiles for kids",
+        "subtitle": "Safe browsing for kids with their own profiles."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "What is the service?",
+      "a1": "It's an online platform for watching movies and TV series anytime and on any device.",
+      "q2": "How much does a subscription cost?",
+      "a2": "Subscriptions start from 4.99 EUR per month. You can choose the plan that's right for you.",
+      "q3": "Where can I watch?",
+      "a3": "Watch on TVs, smartphones, tablets, and computers. All you need is an internet connection.",
+      "q4": "How do I cancel my subscription?",
+      "a4": "You can cancel your subscription at any time in your account settings without any additional fees.",
+      "q5": "Is there content for children?",
+      "a5": "Yes! You can create a children's profile with safe viewing and limited access to content."
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "instructionText": "Enter your email then we will send you a code to reset your password.",
+    "emailPlaceholder": "Enter your email",
+    "loadingButton": "Please wait...",
+    "submitButton": "Email me",
+    "backButton": "Back",
+    "successToast": "Password reset instructions have been sent to your email",
+    "errorToast": "Something went wrong while sending the email"
+  },
+  "commentEditModal": {
+    "title": "Edit Comment",
+    "placeholder": "Edit your comment...",
+    "saveButton": "Save changes",
+    "error": "Error editing comment"
+  },
+  "choosePlan": {
+    "backButton": "Back",
+    "title": "Choose your tariff plan",
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "quality": "Good"
+      },
+      "standard": {
+        "name": "Standard",
+        "quality": "Great"
+      },
+      "premium": {
+        "name": "Premium",
+        "quality": "Best"
+      }
+    },
+    "labels": {
+      "price": "Monthly price",
+      "quality": "Video and sound quality",
+      "resolution": "Resolution",
+      "extra": "Spatial audio",
+      "spatialAudioExtra": "Spatial audio (immersive sound) Included",
+      "devices": "Supported devices",
+      "streams": "Devices your household can watch at the same time",
+      "downloads": "Download devices"
+    },
+    "errors": {
+      "noPlanSelected": "Please choose a plan",
+      "invalidFlow": "Invalid registration flow. Please try again.",
+      "somethingWentWrong": "Something went wrong during registration"
+    },
+    "buttons": {
+      "loading": "Please wait...",
+      "next": "Next ➜"
+    },
+    "toast": {
+      "googleRegisterSuccess": "Google registration successful!",
+      "registerSuccess": "Registration successful!"
+    }
+  },
+  "ratingAndComments": {
+    "yourRating": "Your Rating",
+    "loadingRating": "Loading your rating...",
+    "rateSuccess": "You rated {{stars}} ⭐",
+    "rateError": "Error saving rating",
+    "yourRatingText": "Your rating: {{selected}} / 5",
+    "totalRating": "Total rating: ⭐ {{vote_average}}+",
+    "commentsTitle": "Comments",
+    "commentPlaceholder": "Write a comment...",
+    "addCommentButton": "Add",
+    "loadingComments": "Loading...",
+    "commentsError": "Error loading comments",
+    "commentSuccess": "Comment added successfully!",
+    "commentError": "Error adding comment",
+    "deleteSuccess": "Comment deleted successfully!",
+    "deleteError": "Error deleting comment",
+    "editCommentButton": "Edit comment",
+    "deleteCommentButton": "Delete comment",
+    "starLabel": "Rate {{star}} stars"
+  },
+  "mediaGrid": {
+    "errorLoadingData": "Error loading data",
+    "addToWatchLaterSuccess": "Added to 'Watch Later' list",
+    "addToWatchLaterError": "Failed to add to 'Watch Later' list 😢",
+    "addToFavoritesSuccess": "Added to favorites 👍",
+    "addToFavoritesError": "Failed to add to favorites 😢",
+    "loading": "Loading...",
+    "loadMoreButton": "Load More",
+    "playButton": "Play",
+    "addButton": "Add to watch later list",
+    "likeButton": "Add to favorites",
+    "expandButton": "Expand details"
+  },
+  "heroBanner": {
+    "watchButton": "Watch",
+    "aboutButton": "About",
+    "errorLoading": "Error loading movie for the banner:"
+  },
+  "homePage": {
+    "movies": "Movies",
+    "tv": "TV Series",
+    "anime": "Anime",
+    "cartoons": "Cartoons",
+    "newAndPopular": "New & Popular",
+    "top10": "Top 10 TV Series Today",
+    "errorLoadingMovies": "Error loading movies:",
+    "errorLoadingTop10": "Error loading Top 10 series:"
+  }
+}
