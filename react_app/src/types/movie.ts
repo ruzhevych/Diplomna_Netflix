@@ -25,6 +25,7 @@ export interface Movie {
   video?: boolean;
   vote_average: number;
   vote_count: number;
+  media_type: 'movie';
 }
 
 export interface Series {
@@ -60,6 +61,7 @@ export interface Series {
   type?: string;
   vote_average: number;
   vote_count: number;
+  media_type: 'tv';
 }
 
 export interface BelongsToCollection {

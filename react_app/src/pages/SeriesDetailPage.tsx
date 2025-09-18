@@ -59,12 +59,6 @@ const SeriesDetailsPage = () => {
             (v) => v.site === "YouTube" && v.type === "Trailer"
           )
         );
-          await addToHistory({
-            id: details.id,
-            mediaType: "tv",
-            name: details.name,
-        }).unwrap();
-
       } catch (e) {
         console.error(e);
       }
@@ -105,6 +99,33 @@ const SeriesDetailsPage = () => {
       toast.error("Error with favorites");
     }
   };
+
+  const handleAdd = async (id: number) => {
+        try {
+          const payload = { contentId: id, contentType: "movie" }; 
+          await AddForLater(payload).unwrap();
+          toast.success("Додано у список на потім");
+          console.log("➕ Added to list:", id);
+        }
+        catch {
+          toast.error("Не вдалося додати у список на потім 😢");
+        }
+        
+      };
+      
+      const handleLike = async (id: number) => {
+        try {
+          const favorite = favorites?.find((f) => f.contentId === seriesId);
+          if (!favorite) return;
+          const payload = { contentId: id, contentType: "movie" }; 
+          await addFavorite(payload).unwrap();
+          toast.success("Додано в улюблене 👍");
+          console.log("➕ Added to list:", id);
+        }
+        catch {
+          toast.error("Не вдалося додати в улюблене 😢");
+        }
+      };
   if (!series)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
@@ -181,7 +202,7 @@ const SeriesDetailsPage = () => {
                           </button>
             
                           <button
-                            onClick={() => handleAdd(series.id)}
+                            onClick={() => handleLike(series.id)}
                             className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
                             ${
                               inFavorites
