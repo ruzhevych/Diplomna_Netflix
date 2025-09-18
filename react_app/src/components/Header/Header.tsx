@@ -2,8 +2,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Search, User } from "lucide-react";
-import { useTranslation } from "react-i18next"; // <-- Імпортуємо useTranslation
+import { useTranslation } from "react-i18next"; 
 import LanguageSwitcher from "../LanguageSwitcher";
+import { SlidersHorizontal } from "lucide-react";
+import FilterPanel from "../FilterPanel";
+
 
 import logo from "../../../public/logo-green.png";
 
@@ -11,10 +14,11 @@ const Header = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(); // <-- Ініціалізуємо хук
+  const { t } = useTranslation();
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
+  const [showFilters, setShowFilters] = useState(false);
 
-  const [showHeader, setShowHeader] = useState(true);
-  const lastScrollY = useRef(0);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -41,7 +45,7 @@ const Header = () => {
   }, []);
 
   const menuItems = [
-    { path: "/movies", label: t("menu.movies") }, // <-- Використовуємо t()
+    { path: "/movies", label: t("menu.movies") }, 
     { path: "/tvseries", label: t("menu.tvseries") },
     { path: "/anime", label: t("menu.anime") },
     { path: "/cartoons", label: t("menu.cartoons") },
@@ -72,34 +76,44 @@ const Header = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <form onSubmit={handleSearch} className="relative hidden md:block">
-            <input
-              type="text"
-              placeholder={t("search.placeholder")} // <-- Використовуємо t()
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-40 px-3 py-1 rounded bg-zinc-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lime-400"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-lime-400"
-            >
-              <Search size={18} />
-            </button>
-          </form>
-          {/* Замість "profile" можна використати t() якщо хочете перекласти іконку користувача */}
-          <Link
-            to="/profile"
-            className="text-gray-300 hover:text-lime-400 transition"
-          >
-           <User size={22} />
-          </Link>
-          <LanguageSwitcher />
-        </div>
-      </div>
-    </header>
-  );
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowFilters(true)}
+            className="text-gray-300 hover:text-lime-400 transition"
+          >
+            <SlidersHorizontal size={22} />
+          </button>
+
+          {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
+
+          <form onSubmit={handleSearch} className="relative hidden md:block">
+            <input
+              type="text"
+              placeholder="Search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-40 px-3 py-1 rounded bg-zinc-800 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lime-400"
+            />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-lime-400"
+            >
+              <Search size={18} />
+            </button>
+          </form>
+          <Link
+            to="/profile"
+            className="text-gray-300 hover:text-lime-400 transition"
+          >
+            <User size={22} />
+          </Link>
+          <LanguageSwitcher />
+        </div>
+      </div>
+    </header>
+  );
+
 };
 
 export default Header;

@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { Movie, TMDBResponse } from '../types/movie';
 import Header from '../components/Header/Header';
 import { useTranslation } from 'react-i18next';
+import Footer from '../components/Footer/Footer';
+import { toast } from 'react-toastify';
+import { Play, Plus, ChevronDown, ThumbsUp } from 'lucide-react';
+import { getMovieDetails, getSeriesDetails } from '../services/movieApi';
+import { useAddForLaterMutation } from '../services/forLaterApi';
+import { useAddFavoriteMutation } from '../services/favoritesApi';
 
+
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -14,14 +22,26 @@ async function searchTMDB(query: string, language: string): Promise<TMDBResponse
   return res.json();
 }
 
+interface SearchItem {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string | null;
+  genres?: { id: number; name: string }[];
+  media_type: 'movie' | 'tv';
+}
+
 const SearchPage = () => {
   const { t, i18n } = useTranslation();
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const query = params.get('query') || '';
-  const [results, setResults] = useState<Movie[]>([]);
+  const [results, setResults] = useState<SearchItem[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [addForLater] = useAddForLaterMutation();
+  const [addFavorite] = useAddFavoriteMutation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!query) return;
@@ -29,37 +49,105 @@ const SearchPage = () => {
    
     searchTMDB(query, i18n.language)
       .then((data) => {
-        setResults(data.results);
+        // Беремо тільки movie та tv
+        const filtered = data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv');
+        setResults(filtered);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [query, i18n.language]); 
 
+  const handleAdd = async (id: number, type: string) => {
+    try {
+      await addForLater({ contentId: id, contentType: type }).unwrap();
+      toast.success("Added to 'Watch Later' list ❤️");
+    } catch {
+      toast.error("Failed to add to 'Watch Later' list 😢");
+    }
+  };
+
+  const handleLike = async (id: number, type: string) => {
+      try {
+        const payload = { contentId: id, contentType: type };
+        await addFavorite(payload).unwrap();
+        toast.success("Added to favorites ❤️");
+      } catch {
+        toast.error("Failed to add to favorites 😢");
+      }
+    };
+
   return (
-    <div className="pt-20 bg-black min-h-screen text-white">
+    <div className="bg-black text-white min-h-screen">
       <Header />
-      <div className="container mx-auto px-6">
-        <h2 className="text-2xl font-semibold mb-4">
-          {t('searchResults.title')} “{query}”
-        </h2>
-        {loading && <p>{t('searchResults.loading')}</p>}
+      <div className="px-8 mt-20 py-10 max-w-[1600px] mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Search Results for: "{t('searchResults.title')}"</h1>
+
+       {loading && <p>{t('searchResults.loading')}</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && results.length === 0 && (
           <p>{t('searchResults.noResults')}</p>
         )}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {results.map((item) => (
-            <div key={item.id} className="bg-zinc-800 p-2 rounded">
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          {results.map((content) => (
+            <div
+              key={content.id}
+              className="relative group cursor-pointer rounded-lg overflow-hidden bg-black"
+            >
               <img
-                src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-                alt={item.title || item.original_title}
-                className="rounded"
+                src={
+                  content.poster_path
+                    ? `${IMAGE_BASE_URL}${content.poster_path}`
+                    : "/no-poster.png"
+                }
+                alt={content.title || content.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
-              <p className="mt-2 text-sm">{item.title || item.original_title}</p>
+
+              <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
+                <div className="flex items-center gap-3 mb-3">
+                  <button
+                    onClick={() => navigate(`/${content.media_type}/${content.id}`)}
+                    className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                  >
+                    <Play size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => handleAdd(content.id, content.media_type)}
+                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  >
+                    <Plus size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => handleLike(content.id, content.media_type)}
+                    className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  >
+                    <ThumbsUp size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => toast.info("More details coming soon 😉")}
+                    className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  >
+                    <ChevronDown size={18} />
+                  </button>
+                </div>
+
+                {content.genres && (
+                  <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                    {content.genres.slice(0, 3).map((g) => (
+                      <span key={g.id}>{g.name}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

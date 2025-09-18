@@ -5,10 +5,14 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useAddFavoriteMutation } from "../services/favoritesApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
+import { useFilters } from "../context/FilterContext";
 
 interface MediaGridProps {
   titleKey: string;
-  fetchData: (page?: number) => Promise<any>;
+
+  title: string;
+  fetchData: (page?: number, filters?: { ratingFrom: number; ratingTo: number; genres: number[] }) => Promise<any>;
+
   genres: { id: number; name: string }[];
 }
 
@@ -22,17 +26,18 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
   const [page, setPage] = useState(1);
   const [addFavorite] = useAddFavoriteMutation();
   const [AddForLater] = useAddForLaterMutation();
+  const { filters } = useFilters();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     loadData(1, true);
-  }, [fetchData]);
+  }, [fetchData, filters]);
 
   const loadData = async (pageNum: number, reset = false) => {
     try {
       setLoading(true);
-      const data = await fetchData(pageNum);
+      const data = await fetchData(pageNum, filters);
       setItems((prev) => (reset ? data.results : [...prev, ...data.results]));
       setPage(pageNum);
     } catch (err: any) {

@@ -21,7 +21,7 @@ import delete_icon from "../../public/delete_icon.png";
 interface Props {
   contentId: number;
   contentType: string; // "movie" | "series"
-  vote_average: string;
+  vote_average: number;
 }
 
 export default function RatingAndComments({ contentId, contentType, vote_average }: Props) {
@@ -127,7 +127,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
           {t("ratingAndComments.yourRatingText", { selected })}
         </p>
       )}
+
       <p className="text-gray-400 text-sm">{t("ratingAndComments.totalRating", { vote_average })}</p>
+
       {/* ----- Comments Section ----- */}
       <h3 className="text-lg font-semibold mt-10 mb-4">{t("ratingAndComments.commentsTitle")}</h3>
 

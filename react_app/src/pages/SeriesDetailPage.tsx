@@ -14,6 +14,7 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useAddToHistoryMutation } from "../services/historyApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
+import { Plus, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const SeriesDetailsPage = () => {
@@ -60,12 +61,6 @@ const SeriesDetailsPage = () => {
             (v) => v.site === "YouTube" && v.type === "Trailer"
           )
         );
-          await addToHistory({
-            id: details.id,
-            mediaType: "tv",
-            name: details.name,
-        }).unwrap();
-
       } catch (e) {
         console.error(e);
       }
@@ -97,6 +92,33 @@ const SeriesDetailsPage = () => {
       toast.error(t("seriesDetails.favorites.error"));
     }
   };
+
+  const handleAdd = async (id: number) => {
+        try {
+          const payload = { contentId: id, contentType: "movie" }; 
+          await AddForLater(payload).unwrap();
+          toast.success("Додано у список на потім");
+          console.log("➕ Added to list:", id);
+        }
+        catch {
+          toast.error("Не вдалося додати у список на потім 😢");
+        }
+        
+      };
+      
+      const handleLike = async (id: number) => {
+        try {
+          const favorite = favorites?.find((f) => f.contentId === seriesId);
+          if (!favorite) return;
+          const payload = { contentId: id, contentType: "movie" }; 
+          await addFavorite(payload).unwrap();
+          toast.success("Додано в улюблене 👍");
+          console.log("➕ Added to list:", id);
+        }
+        catch {
+          toast.error("Не вдалося додати в улюблене 😢");
+        }
+      };
   if (!series)
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
@@ -173,8 +195,34 @@ const SeriesDetailsPage = () => {
               </p>
             </div>
 
+            <div className="flex items-center gap-4 mt-4">
+                          <button
+                            onClick={() => handleAdd(series.id)}
+                            className="border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition"
+                          >
+                            <Plus size={18} />
+                          </button>
+            
+                          <button
+                            onClick={() => handleLike(series.id)}
+                            className={`border border-gray-400 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-gray-700 transition
+                            ${
+                              inFavorites
+                                ? "bg-gray-800 text-white hover:bg-gray-700"
+                                : "bg-lime-500 text-black hover:bg-lime-600 shadow-lg hover:shadow-2xl"
+                            }`}
+                          >
+                            {/* <ThumbsUp size={18} /> */}
+                            {inFavorites ? (
+                            <ThumbsUp className="text-red-500 w-6 h-6 bg-green" />
+                          ) : (
+                            <ThumbsUp className="w-6 h-6" />
+                          )}
+                          </button>
+                        </div>
+
             {/* Favorites button */}
-            <button
+            {/* <button
               onClick={handleFavorite}
               className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium text-lg transition-all duration-300
                 ${
@@ -188,8 +236,8 @@ const SeriesDetailsPage = () => {
               ) : (
                 <AiOutlineHeart className="w-6 h-6" />
               )}
-              {inFavorites ? t("seriesDetails.favorites.remove") : t("seriesDetails.favorites.add")}
-            </button>
+              {inFavorites ? "Remove from favorites" : "Add to favorites"}
+            </button> */}
           </div>
         </div>
       </div>
@@ -278,7 +326,7 @@ const SeriesDetailsPage = () => {
 
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average.toFixed(1)} />
+        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average} />
       </div>
 
       <Footer />

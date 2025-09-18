@@ -14,7 +14,7 @@ export default function MoviesPage() {
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaTvGrid title="Популярні серіали" fetchData={(page) => getPopularTV(page ?? 1)}  genres={genres}/>;
+        <MediaTvGrid title="Популярні серіали" fetchData={(page, filters) => getPopularTV(page ?? 1, filters)}  genres={genres}/>;
       </div>
       <Footer />
     </div>
