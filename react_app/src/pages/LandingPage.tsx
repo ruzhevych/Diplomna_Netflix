@@ -8,15 +8,24 @@ import { type Movie, type TMDBResponse } from "../types/movie";
 import { getPopularMovies } from "../services/movieApi";
 import { GiFilmProjector } from "react-icons/gi";
 import { MdOutlineScreenSearchDesktop } from "react-icons/md";
-import LanguageSwitcher from "../components/LanguageSwitcher"; 
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useAuth } from "../context/AuthContext";
+import { useGetProfileQuery } from "../services/userApi";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const AVATAR_PLACEHOLDER = "https://via.placeholder.com/40/C4FF00/000000?text=👤";
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
+
+  const { isAuthenticated, isAuthReady } = useAuth();
+  
+  const { data: userProfile, isLoading: isProfileLoading } = useGetProfileQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,12 +59,26 @@ const LandingPage: React.FC = () => {
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
           <img src={logo} alt="Logo" className="w-32 md:w-40" />
           <div className="flex items-center gap-4">
-          <LanguageSwitcher/>
-            <Link to="/login">
-              <button className="bg-[#C4FF00]/70 px-4 py-2 rounded-sm text-white font-semibold hover:bg-[#C4FF00]/60">
-                {t("landingPage.login")}
-              </button>
-            </Link>
+            <LanguageSwitcher />
+            {isAuthReady ? (
+              isAuthenticated ? (
+                <Link to="/profile">
+                  <img
+                    src={userProfile?.profilePictureUrl ? `http://localhost:5170${userProfile.profilePictureUrl}` : AVATAR_PLACEHOLDER}
+                    alt="User Avatar"
+                    className={`w-10 h-10 rounded-full border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
+                  />
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <button className="bg-[#C4FF00]/70 px-4 py-2 rounded-sm text-white font-semibold hover:bg-[#C4FF00]/60">
+                    {t("landingPage.login")}
+                  </button>
+                </Link>
+              )
+            ) : (
+              <div className="w-24 h-10 bg-gray-700 rounded-sm animate-pulse"></div>
+            )}
           </div>
         </div>
       </header>
@@ -163,8 +186,6 @@ const LandingPage: React.FC = () => {
             ))}
           </div>
 
-          {/* ====================================================================================== */}
-
           {selectedMovie && (
             <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
               <div className="bg-[#191716] rounded-lg max-w-2xl mx-auto w-full max-h-[90vh] overflow-y-auto relative">
@@ -205,7 +226,7 @@ const LandingPage: React.FC = () => {
                     )}
                     {selectedMovie.vote_average && (
                       <span className="flex items-center gap-1">
-                        <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 text-yellow-500">
+                        <svg fill="currentColor" viewBox="0 24 24" className="w-4 h-4 text-yellow-500">
                           <path d="M12 .587l3.668 7.425L24 9.425l-6 5.856L19.332 24 12 20.255 4.668 24 6 15.281 0 9.425l8.332-1.413L12 .587z" />
                         </svg>
                         {selectedMovie.vote_average.toFixed(1)}
@@ -221,7 +242,7 @@ const LandingPage: React.FC = () => {
                     className="border text-white no-underline px-6 py-3 rounded-lg hover:bg-[#555555] transition flex items-center justify-center gap-2 font-bold"
                   >
                     {t("landingPage.startButton")}
-                    <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
+                    <svg fill="currentColor" viewBox="0 24 24" className="w-5 h-5">
                       <path d="M5 3l14 9-14 9z" />
                     </svg>
                   </a>
