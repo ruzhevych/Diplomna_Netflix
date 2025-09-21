@@ -71,8 +71,7 @@ const ProfilePage = () => {
             })}
           </ul>
         </aside>
-
-        {/* Main content */}
+        
         <main className="flex-1 space-y-5">
           {/* Tabs */}
           {activeTab === "overview" && (
@@ -95,7 +94,6 @@ const ProfilePage = () => {
                   </div>
                 )}
 
-                {/* Basic information */}
                 <div className="flex-1 flex flex-col gap-0">
                   <p className="text-l font-regular text-white-400">{t("profile.overview.name")}: <span className="text-2xl font-semibold text-lime-400">{user?.fullName}</span></p>
                   <p className="text-l font-regular text-white-400">{t("profile.overview.email")}: <span className="text-gray-400">{user?.email}</span></p>
