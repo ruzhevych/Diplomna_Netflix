@@ -71,8 +71,7 @@ const ProfilePage = () => {
             })}
           </ul>
         </aside>
-
-        {/* Main content */}
+        
         <main className="flex-1 space-y-5">
           {/* Tabs */}
           {activeTab === "overview" && (
@@ -94,6 +93,7 @@ const ProfilePage = () => {
                     {getInitials(user?.fullName || "")}
                   </div>
                 )}
+              </div>
 
                 {/* Basic information */}
                 <div className="flex-1 space-y-4">
@@ -140,7 +140,7 @@ const ProfilePage = () => {
                       <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
                     </div>
                   </div>
-                </div>
+
               </div>
               <div className="flex gap-4 mt-10">
                 <button

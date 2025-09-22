@@ -39,7 +39,7 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   <h2 className="font-bold mb-4 ml-6 text-3xl text-left">{title}</h2>
   <div className="flex w-full gap-24 overflow-x-auto scrollbar-hide justify-center items-center">
     {items.map((item, index) => (
-      <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/movie/${item.id}`)}>
+      <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
         <span
           className="absolute -left-20 -top-8 z-0 text-big font-black
             text-[#0d0d0d]
