@@ -112,7 +112,6 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  {/* Email field */}
                   <div className="flex flex-col">
                     <label htmlFor="email" className="text-sm font-semibold text-white mb-1">{t("profile.overview.email")}</label>
                     <div className="relative">
