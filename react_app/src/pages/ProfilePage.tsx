@@ -96,9 +96,51 @@ const ProfilePage = () => {
                 )}
 
                 {/* Basic information */}
-                <div className="flex-1 flex flex-col gap-0">
-                  <p className="text-l font-regular text-white-400">{t("profile.overview.name")}: <span className="text-2xl font-semibold text-lime-400">{user?.fullName}</span></p>
-                  <p className="text-l font-regular text-white-400">{t("profile.overview.email")}: <span className="text-gray-400">{user?.email}</span></p>
+                <div className="flex-1 space-y-4">
+                  {/* Name field */}
+                  <div className="flex flex-col">
+                    <label htmlFor="name" className="text-sm font-semibold text-white mb-1">{t("profile.overview.name")}</label>
+                    <div className="relative">
+                      <input
+                        id="name"
+                        type="text"
+                        value={user?.fullName || ""}
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
+
+                  {/* Email field */}
+                  <div className="flex flex-col">
+                    <label htmlFor="email" className="text-sm font-semibold text-white mb-1">{t("profile.overview.email")}</label>
+                    <div className="relative">
+                      <input
+                        id="email"
+                        type="text"
+                        value={user?.email || ""}
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
+
+                  {/* Password field */}
+                  <div className="flex flex-col">
+                    <label htmlFor="password" className="text-sm font-semibold text-white mb-1">{t("profile.overview.password")}</label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        type="password"
+                        value="********"
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-4 mt-10">

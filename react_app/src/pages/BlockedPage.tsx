@@ -1,119 +1,115 @@
 import { useNavigate } from "react-router-dom";
 import { useGetBlockInfoQuery } from "../services/userApi";
 import { useTranslation } from "react-i18next";
+import logo from '../../public/logo-green.png';
+import loginBg from '../../public/login-bg.png'; // Імпортуємо фон напряму
 
 export default function BlockedPage() {
-  const navigate = useNavigate();
-  const { data, isLoading, isError } = useGetBlockInfoQuery();
-  const { t, i18n } = useTranslation(); 
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useGetBlockInfoQuery();
+  const { t, i18n } = useTranslation();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="animate-pulse text-gray-400">{t("blockedPage.loading")}</p>
-      </div>
-    );
-  }
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="animate-pulse text-gray-400">{t("blockedPage.loading")}</p>
+      </div>
+    );
+  }
 
-  if (isError || !data) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="bg-[#141414] p-6 rounded-xl text-center">
-          <h2 className="text-xl font-semibold mb-2">
-            {t("blockedPage.error.title")}
-          </h2>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded mt-4"
-          >
-            {t("blockedPage.error.loginAgain")}
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (isError || !data) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="bg-[#141414] p-6 rounded-xl text-center">
+          <h2 className="text-xl font-semibold mb-2">
+            {t("blockedPage.error.title")}
+          </h2>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded mt-4"
+          >
+            {t("blockedPage.error.loginAgain")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const reason = data.reason || t("blockedPage.defaultReason");
-  const unblockDate = data.durationDays
-    ? new Date(
-        new Date(data.blockedAt).getTime() +
-          data.durationDays * 24 * 60 * 60 * 1000
-      ).toLocaleString(i18n.language, { 
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-    : null;
+  const reason = data.reason || t("blockedPage.defaultReason");
+  const blockedDate = new Date(data.blockedAt).toLocaleString(i18n.language, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  const unblockDate = data.durationDays
+    ? new Date(
+        new Date(data.blockedAt).getTime() +
+        data.durationDays * 24 * 60 * 60 * 1000
+      ).toLocaleString(i18n.language, { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
 
-  return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="bg-[#141414] p-8 rounded-sm max-w-xl w-full text-center shadow-lg">
-        <h1 className="text-3xl font-bold mb-4 text-red-500">
-          {t("blockedPage.title")}
-        </h1>
+  return (
+    <div
+      className="min-h-screen bg-cover bg-center flex flex-col"
+      style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${loginBg})` }}
+    >
+      <div className="absolute left-96 top-8">
+        <img src={logo} alt="logo" className="l-10 w-32" />
+      </div>
 
-        <p className="text-gray-300 mb-6">{reason}</p>
+      <div className="flex flex-1 items-center justify-center">
+        <div className="bg-black/70 rounded-sm py-8 px-10 w-full max-w-sm text-white text-base">
+          <h1 className="text-3xl font-semibold mb-2 text-white">
+            {t("blockedPage.title")}
+          </h1>
+          <p className="text-white text-xl font-regular mb-3  ">{t("blockedPage.details")}</p>
 
-        {data.userEmail && (
-          <p className="text-gray-400 mb-2">
-            <span className="font-semibold">{t("blockedPage.yourEmail")}:</span> {data.userEmail}
-          </p>
-        )}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span className="font-semibold text-2xl text-white">{t("blockedPage.yourEmail")}:</span>
+              <input 
+                type="text" 
+                value={data.userEmail} 
+                readOnly 
+                className="bg-[#1e1e1e] border text-white text-sm px-3 py-2.5 mt-1 rounded-sm cursor-not-allowed focus:outline-none"
+              />
+            </div>
 
-        {data.adminEmail && (
-          <p className="text-gray-400 mb-2">
-            <span className="font-semibold">{t("blockedPage.administrator")}:</span>{" "}
-            {data.adminEmail}
-          </p>
-        )}
+            <div className="flex flex-col">
+              <span className="font-semibold text-2xl text-white">{t("blockedPage.administratorEmail")}:</span>
+              <input 
+                type="text" 
+                value={data.adminEmail} 
+                readOnly 
+                className="bg-[#1e1e1e] border-1 text-white text-sm px-3 py-2.5 mt-1 rounded-sm cursor-not-allowed focus:outline-none"
+              />
+            </div>
+            
+            <div className="flex flex-col">
+              <span className="font-semibold text-2xl text-white">{t("blockedPage.blockingReason")}:</span>
+              <span className="text-sm mt-1">{reason}</span>
+            </div>
 
-        <p className="text-gray-400 mb-2">
-          <span className="font-semibold">{t("blockedPage.blockingDate")}:</span>{" "}
-          {new Date(data.blockedAt).toLocaleString(i18n.language, { 
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })}
-        </p>
+            <div className="flex flex-col">
+              <span className="font-semibold text-2xl text-white">{t("blockedPage.blockedOn")}:</span>
+              <span className="text-sm mt-1">{blockedDate}</span>
+            </div>
 
-        {unblockDate && (
-          <p className="text-sm text-gray-400 mb-4">
-            <span className="font-semibold">{t("blockedPage.unblockingExpected")}:</span>{" "}
-            {unblockDate}
-          </p>
-        )}
-
-        <div className="flex flex-col gap-3 mt-6">
-          <button
-            onClick={() => navigate("/")}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-sm text-sm"
-          >
-            {t("blockedPage.goToHomepage")}
-          </button>
-
-          <button
-            onClick={() => {
-              localStorage.clear();
-              navigate("/login");
-            }}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-sm text-sm"
-          >
-            {t("blockedPage.logOut")}
-          </button>
-
-          <a
-            href="mailto:support@yourapp.com"
-            className="px-4 py-2 bg-lime-500 hover:bg-lime-400 rounded-sm text-sm text-white block"
-          >
-            {t("blockedPage.contactSupport")}
-          </a>
-        </div>
-      </div>
-    </div>
-  );
+            {unblockDate && (
+              <div className="flex flex-col">
+                <span className="font-semibold text-2xl text-white">{t("blockedPage.unblockingExpected")}:</span>
+                <span className="text-sm mt-1">{unblockDate}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
