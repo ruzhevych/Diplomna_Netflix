@@ -32,7 +32,30 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<SubscriptionDto?> GetByIdAsync(string id)
     {
-        var s = await _subscriptionRepo.GetByIdAsync(id);
+        if (!Guid.TryParse(id, out var guidId))
+            return null; // некоректний формат id
+        
+        var s = await _subscriptionRepo.Query()
+            .FirstOrDefaultAsync(x => x.Id == guidId);
+        
+        if (s == null) return null;
+
+        return new SubscriptionDto
+        {
+            Id = s.Id,
+            UserId = s.UserId,
+            Type = s.Type,
+            StartDate = s.StartDate,
+            EndDate = s.EndDate,
+            IsActive = s.IsActive
+        };
+    }
+    
+    public async Task<SubscriptionDto?> GetByUserIdAsync(long userId)
+    {
+        var s = await _subscriptionRepo.Query()
+            .FirstOrDefaultAsync(x => x.UserId == userId);
+
         if (s == null) return null;
 
         return new SubscriptionDto
@@ -46,15 +69,16 @@ public class SubscriptionService : ISubscriptionService
         };
     }
 
-    public async Task<SubscriptionDto> CreateAsync(SubscriptionCreateDto dto)
+
+    public async Task<SubscriptionDto> CreateAsync(SubscriptionCreateDto dto, long userId)
     {
         var entity = new SubscriptionEntity
         {
             Id = Guid.NewGuid(),
-            UserId = dto.UserId,
+            UserId = userId,
             Type = dto.Type,
-            StartDate = dto.StartDate,
-            EndDate = dto.EndDate,
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddDays(30),
             IsActive = true
         };
 
@@ -72,22 +96,19 @@ public class SubscriptionService : ISubscriptionService
         };
     }
 
-    public async Task<bool> UpdateAsync(int id, SubscriptionUpdateDto dto)
+    public async Task<bool> UpdateAsync(Guid id, SubscriptionUpdateDto dto)
     {
         var entity = await _subscriptionRepo.GetByIdAsync(id);
         if (entity == null) return false;
 
         entity.Type = dto.Type;
-        entity.StartDate = dto.StartDate;
-        entity.EndDate = dto.EndDate;
-        entity.IsActive = dto.IsActive;
 
         _subscriptionRepo.Update(entity);
         await _subscriptionRepo.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> DeleteAsync(string id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var entity = await _subscriptionRepo.GetByIdAsync(id);
         if (entity == null) return false;

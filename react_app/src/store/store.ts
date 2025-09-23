@@ -11,6 +11,8 @@ import { commentsApi } from '../services/commentApi.ts'
 import { adminSubscriptionsApi } from '../services/adminSubscriptionsApi.ts'
 import { ratingApi } from '../services/ratingApi.ts'
 import { historyApi } from '../services/historyApi.ts'
+import { paymentApi } from '../services/paymentApi.ts'
+import { subscriptionApi } from '../services/subscriptionApi.ts'
 
 
 export const store = configureStore({
@@ -26,6 +28,8 @@ export const store = configureStore({
     [adminSubscriptionsApi.reducerPath]: adminSubscriptionsApi.reducer,
     [ratingApi.reducerPath]: ratingApi.reducer,
     [historyApi.reducerPath]: historyApi.reducer,
+    [paymentApi.reducerPath]: paymentApi.reducer,
+    [subscriptionApi.reducerPath]: subscriptionApi.reducer,
 
   },
   middleware: (getDefaultMiddleware) =>
@@ -39,6 +43,8 @@ export const store = configureStore({
       adminSubscriptionsApi.middleware,
       ratingApi.middleware,
       historyApi.middleware,
+      paymentApi.middleware,
+      subscriptionApi.middleware,
     ),
 })
 

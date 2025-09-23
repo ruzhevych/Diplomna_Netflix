@@ -13,9 +13,5 @@ public class SubscriptionEditValidator : AbstractValidator<SubscriptionUpdateDto
             .WithMessage("Тип підписки обов'язковий і максимум 20 символів.")
             .Must(t => t == "Basic" || t == "Standard" || t == "Premium")
             .WithMessage("Тип має бути: Basic, Standard або Premium.");
-
-        RuleFor(x => x.StartDate)
-            .LessThan(x => x.EndDate)
-            .WithMessage("Дата початку має бути меншою за дату завершення.");
     }
 }

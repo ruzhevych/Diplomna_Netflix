@@ -15,6 +15,8 @@ firstName?: string;
 lastName?: string;
 profilePictureUrl?: string;
 subscriptionType: string;
+subscriptionId: string;
+cardId: number;
 role: string;
 isBlocked: boolean;
 }

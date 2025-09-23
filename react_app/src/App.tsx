@@ -25,6 +25,7 @@ import SerisesDetailsPage from './pages/SeriesDetailPage.tsx';
 import ForLaterPage from './pages/Categories/ForLaterPage.tsx';
 import MovieCollection from './pages/MovieCollection.tsx';
 import MovieHistoryPage from './pages/Categories/MovieHistoryPage.tsx';
+import PaymentPage from './pages/PaymentPage.tsx'
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
 
         <Route path="/choose-plan" element={<ChoosePlanPage />} />
         <Route path="/plan-intro" element={<PlanIntroPage />} />
+        <Route path="/payment" element={<PaymentPage/>}></Route>
 
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/anime" element={<AnimePage />} />
