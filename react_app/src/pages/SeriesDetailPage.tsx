@@ -161,10 +161,6 @@ const SeriesDetailsPage = () => {
               {series.vote_average.toFixed(1)} ({series.vote_count} {t("seriesDetails.votes")})
             </p>
 
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              {series.overview}
-            </p>
-
             {/* Additional info */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
               { series.genres && (

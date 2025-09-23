@@ -54,19 +54,17 @@ const ChoosePlanPage = () => {
   });
 
   const formatPlanType = (plan: string) => {
-  switch (plan.toLowerCase()) {
-    case "basic":
-      return "Basic";
-    case "standard":
-      return "Standard";
-    case "premium":
-      return "Premium";
-    default:
-      return plan;
-  }
-};
-
-
+    switch (plan.toLowerCase()) {
+      case "basic":
+        return "Basic";
+      case "standard":
+        return "Standard";
+      case "premium":
+        return "Premium";
+      default:
+        return plan;
+    }
+  };
 
   const handleSubmit = async () => {
     if (!selectedPlan) {
@@ -77,7 +75,7 @@ const ChoosePlanPage = () => {
 
     if (isAuthenticated) {
       try {
-        if (!user?.subscriptionId) {
+        if (!user?.subscriptionId && !user?.cardId) {
           navigate("/payment", {
             state: {
               selectedPlan,
@@ -87,6 +85,7 @@ const ChoosePlanPage = () => {
               googleTempToken,
             },
           });
+          window.location.reload();
           return;
         }
         await updateSubscription({
@@ -95,6 +94,7 @@ const ChoosePlanPage = () => {
         }).unwrap();
 
         navigate("/profile");
+        window.location.reload();
       } catch (e) {
         console.error("Update subscription failed:", e);
         setError(t("choosePlan.errors.updateFailed"));
@@ -110,6 +110,8 @@ const ChoosePlanPage = () => {
           googleTempToken,
         },
       });
+      window.location.reload();
+
     }
   };
 

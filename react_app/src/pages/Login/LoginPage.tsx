@@ -50,8 +50,10 @@ const LoginPage = () => {
       if (res.accessToken && res.isActive) {
         loginContext(res.accessToken);
         navigate("/home");
+        window.location.reload();
       } else {
         setGoogleTempToken(googleToken)
+        loginContext(res.accessToken);
         navigate("/plan-intro");
       }
 

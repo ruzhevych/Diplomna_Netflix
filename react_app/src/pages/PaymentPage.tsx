@@ -33,7 +33,6 @@ const PaymentPage = () => {
 
   const [createCard, { isLoading: isCardLoading }] = useAddCardMutation();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
-  const [login, {isLoading: isLoginLoading}] = useLoginMutation();
   const [addSub] = useAddSubscriptionMutation();
   const [googleRegister, { isLoading: isGoogleLoading }] = useGoogleRegisterMutation();
 
@@ -98,6 +97,7 @@ const PaymentPage = () => {
 
         toast.success("Registration completed!");
         navigate("/home");
+        window.location.reload();
       } else {
         await addSub({ type: formatPlanType(selectedPlan) }).unwrap();
 
@@ -112,6 +112,7 @@ const PaymentPage = () => {
 
         toast.success("Payment method successfully added");
         navigate("/home");
+        window.location.reload();
       }
     } catch (err: any) {
       console.error("Payment/Register error:", err);

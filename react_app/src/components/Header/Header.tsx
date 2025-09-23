@@ -24,7 +24,13 @@ const Header = () => {
   const [showFilters, setShowFilters] = useState(false);
   const { data: user } = useGetProfileQuery();
 
+
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const allowedPaths = ["/movies", "/tvseries", "/anime", "/cartoons", "/newandpopular"];
+  const isFilterVisible = allowedPaths.includes(location.pathname);
+
+
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -44,10 +50,14 @@ const Header = () => {
       lastScrollY.current = window.scrollY;
     };
 
+
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+
+
 
   const menuItems = [
     { path: "/movies", label: t("menu.movies") },
