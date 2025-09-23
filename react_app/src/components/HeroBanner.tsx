@@ -4,7 +4,11 @@ import { getPopularMovies } from "../services/movieApi";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const HeroBanner = () => {
+interface HeroBannerProps {
+  onAboutClick: (movie: Movie) => void;
+}
+
+const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
   const { t } = useTranslation();
   const [movie, setMovie] = useState<Movie | null>(null);
   const navigate = useNavigate();
@@ -54,8 +58,8 @@ const HeroBanner = () => {
             {t("heroBanner.watchButton")}
           </button>
           <button
-            onClick={() => navigate(`/movie/${movie.id}`)}
-            className="bg-gray-500/90 hover:bg-gray-400/80 text-black px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
+            onClick={() => onAboutClick(movie)}
+            className="bg-[#D9D9D9]/30 hover:bg-[#D9D9D9]/50 text-white px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
           >
             {t("heroBanner.aboutButton")}
           </button>
