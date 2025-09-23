@@ -45,7 +45,6 @@ const ProfilePage = () => {
   const [deleteCard] = useDeleteCardMutation();
 
   const handleUpdateCard = async (userId: number, card: CardUpdateDTO) => {
-    // приклад: відкриваєш модалку редагування
     await updateCard({
       id: userId,
       dto: {
@@ -61,16 +60,10 @@ const ProfilePage = () => {
   const handleCancel = async () => {
   try {
     if (!user?.subscriptionId) return;
-
-    // 1. Видаляємо підписку
     await cancelSubscription(user.subscriptionId).unwrap();
-
-    // 2. Видаляємо спосіб оплати
     if (user?.cardId) {
       await deleteCard(user.cardId).unwrap();
     }
-
-    // 3. Перенаправляємо на головну
     navigate("/");
   } catch (err) {
     console.error("Cancel subscription failed:", err);
@@ -132,7 +125,7 @@ const ProfilePage = () => {
                 {/* Avatar */}
                 {user?.profilePictureUrl ? (
                   <img
-                    src={user?.profilePictureUrl ? `http://localhost:5170${user.profilePictureUrl}` : "/default-avatar.png"}
+                    src={user?.profilePictureUrl}
                     alt={user.fullName}
                     className="w-56 h-56 rounded-sm object-cover shadow-xl border-2 border-gray-700"
                   />
@@ -141,11 +134,54 @@ const ProfilePage = () => {
                     {getInitials(user?.fullName || "")}
                   </div>
                 )}
+              </div>
 
-                <div className="flex-1 flex flex-col gap-0">
-                  <p className="text-l font-regular text-white-400">{t("profile.overview.name")}: <span className="text-2xl font-semibold text-lime-400">{user?.fullName}</span></p>
-                  <p className="text-l font-regular text-white-400">{t("profile.overview.email")}: <span className="text-gray-400">{user?.email}</span></p>
-                </div>
+                {/* Basic information */}
+                <div className="flex-1 space-y-4">
+                  {/* Name field */}
+                  <div className="flex flex-col">
+                    <label htmlFor="name" className="text-sm font-semibold text-white mb-1">{t("profile.overview.name")}</label>
+                    <div className="relative">
+                      <input
+                        id="name"
+                        type="text"
+                        value={user?.fullName || ""}
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="email" className="text-sm font-semibold text-white mb-1">{t("profile.overview.email")}</label>
+                    <div className="relative">
+                      <input
+                        id="email"
+                        type="text"
+                        value={user?.email || ""}
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
+
+                  {/* Password field */}
+                  <div className="flex flex-col">
+                    <label htmlFor="password" className="text-sm font-semibold text-white mb-1">{t("profile.overview.password")}</label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        type="password"
+                        value="********"
+                        readOnly
+                        className="bg-[#141414] text-white py-3 px-4 rounded-sm w-full focus:outline-none pr-10"
+                      />
+                      <Edit size={20} onClick={() => setIsEditOpen(true)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-white transition" />
+                    </div>
+                  </div>
+
               </div>
               <div className="flex gap-4 mt-10">
                 <button
@@ -255,7 +291,6 @@ const ProfilePage = () => {
                         </button>
                       </div>
 
-                      {/* Блок з наступною оплатою */}
                       <div className="bg-lime-800/70 rounded-lg shadow-lg overflow-hidden border border-lime-700 mt-4">
                         <div className="p-4 text-white space-y-2">
                           <h4 className="text-lg font-semibold">Next payment</h4>

@@ -40,9 +40,9 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
 
       <div className="absolute bottom-36 left-14 w-[750px] text-white ">
         <h1 className="text-7xl font-black
-             text-transparent
+             text-white
              drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
-             [-webkit-text-stroke:1px_#C4FF00]
+             
              [text-shadow:0_0_10px_rgba(0,0,0,0.8)]">
           {movie.title || movie.original_title}
         </h1>

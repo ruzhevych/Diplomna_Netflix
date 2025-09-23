@@ -10,20 +10,18 @@
     "placeholder": "Search"
   },
   "blockedPage": {
+    "title": "Your Account Has Been Blocked",
+    "details": "Please review the details below:",
+    "yourEmail": "Your email",
+    "administratorEmail": "Administrator email",
+    "blockingReason": "Reason for blocking",
+    "blockedOn": "Blocked on",
+    "unblockingExpected": "Will be unblocked on",
     "loading": "Loading...",
     "error": {
-      "title": "Failed to get blocking information",
-      "loginAgain": "Log in again"
-    },
-    "title": "Your account is blocked",
-    "defaultReason": "You have been blocked by an administrator.",
-    "yourEmail": "Your email",
-    "administrator": "Administrator",
-    "blockingDate": "Blocking date",
-    "unblockingExpected": "Unblocking expected",
-    "goToHomepage": "Go to homepage (limited access)",
-    "logOut": "Log out",
-    "contactSupport": "Contact support"
+      "title": "Error loading data",
+      "loginAgain": "Try again"
+    }
   },
   "searchResults": {
     "title": "Search Results for:",
@@ -73,7 +71,7 @@
     "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
     "confirmPasswordPlaceholder": "Confirm Password",
-    "agreeToTerms": "I agree to the <1>Terms of Service</1> and <3>Privacy Policy</3>",
+    "agreeToTerms": "I agree to the Terms of Service and Privacy Policy",
     "continueButton": "Continue",
     "googleButton": "Sign in with Google",
     "alreadyHaveAccount": "Already have an account?",
@@ -101,7 +99,8 @@
       "favorites": "Favorites",
       "forLater": "For later",
       "editProfile": "Edit profile",
-      "logOut": "Log Out"
+      "logOut": "Log Out",
+      "password": "Password"
     },
     "subscription": {
       "title": "Subscription plan",

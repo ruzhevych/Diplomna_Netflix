@@ -98,7 +98,7 @@ export default function RatingAndComments({ contentId, contentType, vote_average
   }
 
   return (
-    <div className="max-w-6xl mx-auto gap-8 my-10 bg-[#141414]/80 p-6 rounded-xl">
+    <div className="max-w-full mx-auto gap-8 my-1 p-6 rounded-xl">
       {/* ----- Rating Section ----- */}
       <h3 className="text-lg font-semibold mb-3">{t("ratingAndComments.yourRating")}</h3>
       {isRatingLoading ? (
@@ -131,7 +131,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
       <p className="text-gray-400 text-sm">{t("ratingAndComments.totalRating", { vote_average })}</p>
 
       {/* ----- Comments Section ----- */}
-      <h3 className="text-lg font-semibold mt-10 mb-4">{t("ratingAndComments.commentsTitle")}</h3>
+      <h3 className="text-3xl font-semibold mt-10 mb-4">{t("ratingAndComments.commentsTitle")}
+        
+      </h3>
 
       <div className="flex gap-2 mb-4">
         <input
@@ -152,7 +154,9 @@ export default function RatingAndComments({ contentId, contentType, vote_average
       {isError && (
         <p className="text-red-500">{t("ratingAndComments.commentsError")}</p>
       )}
-
+      <h3 className="text-3xl font-semibold mt-10 mb-4">
+        Futured Reviews
+      </h3>
       <div className="space-y-3">
         {comments.map((c) => (
           <div key={c.id} className="p-3 bg-[#E0E2DB] text-black rounded">

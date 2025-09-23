@@ -10,20 +10,18 @@
     "placeholder": "Пошук"
   },
   "blockedPage": {
+    "title": "Ваш обліковий запис заблоковано",
+    "details": "Будь ласка, перегляньте деталі нижче:",
+    "yourEmail": "Ваш email",
+    "administratorEmail": "Email адміністратора",
+    "blockingReason": "Причина блокування",
+    "blockedOn": "Заблоковано",
+    "unblockingExpected": "Буде розблоковано",
     "loading": "Завантаження...",
     "error": {
-      "title": "Не вдалося отримати інформацію про блокування",
-      "loginAgain": "Увійти знову"
-    },
-    "title": "Ваш акаунт заблоковано",
-    "defaultReason": "Вас заблокував адміністратор.",
-    "yourEmail": "Ваша електронна пошта",
-    "administrator": "Адміністратор",
-    "blockingDate": "Дата блокування",
-    "unblockingExpected": "Очікуване розблокування",
-    "goToHomepage": "Перейти на головну (обмежений доступ)",
-    "logOut": "Вийти",
-    "contactSupport": "Зв'язатися з підтримкою"
+      "title": "Помилка завантаження даних",
+      "loginAgain": "Спробувати знову"
+    }
   },
   "searchResults": {
     "title": "Результати пошуку для:",
@@ -101,7 +99,8 @@
       "favorites": "Обране",
       "forLater": "Переглянути пізніше",
       "editProfile": "Редагувати профіль",
-      "logOut": "Вийти"
+      "logOut": "Вийти",
+      "password": "Пароль"
     },
     "subscription": {
       "title": "План підписки",
