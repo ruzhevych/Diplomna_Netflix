@@ -5,6 +5,7 @@ using Data.Entities.Favorites;
 using Data.Entities.ForLater;
 using Data.Entities.History;
 using Data.Entities.Identity;
+using Data.Entities.Payment;
 using Data.Entities.Subscription;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -38,6 +39,7 @@ public class NetflixDbContext : IdentityDbContext<UserEntity, RoleEntity, long, 
     public DbSet<CommentEntity> Comments { get; set; }
     public DbSet<HistoryEntity> History { get; set; }
     public DbSet<RatingEntity> Rating { get; set; }
+    public DbSet<PaymentEntity> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

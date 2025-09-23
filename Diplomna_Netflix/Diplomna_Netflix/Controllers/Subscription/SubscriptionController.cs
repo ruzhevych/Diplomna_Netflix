@@ -19,29 +19,49 @@ public class SubscriptionController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("my")]
-    public async Task<IActionResult> Get()
+    [HttpPost("add")]
+    public async Task<IActionResult> Add([FromBody] SubscriptionCreateDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
                      User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        var result = await _service.GetByIdAsync(userId);
+        
+        if (!long.TryParse(userId, out var parsedUserId))
+            return BadRequest("Invalid userId");
+        
+        var result = await _service.CreateAsync(dto, parsedUserId);
         if (result == null) return NotFound();
+
         return Ok(result);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] SubscriptionUpdateDto dto)
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMy()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (!long.TryParse(userId, out var parsedUserId))
+            return BadRequest("Invalid userId");
+
+        var result = await _service.GetByUserIdAsync(parsedUserId);
+        if (result == null) return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] SubscriptionUpdateDto dto)
     {
         var success = await _service.UpdateAsync(id, dto);
         return success ? NoContent() : NotFound();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete()
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                     User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        var success = await _service.DeleteAsync(userId);
+        var success = await _service.DeleteAsync(id);
         return success ? NoContent() : NotFound();
     }
+
 }

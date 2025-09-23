@@ -326,7 +326,7 @@ const SeriesDetailsPage = () => {
 
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average} />
+        <RatingAndComments contentId={series.id} contentType="tv" vote_average={(series.vote_average)} />
       </div>
 
       <Footer />

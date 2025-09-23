@@ -55,12 +55,12 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
   };
 
   const handlePlay = (id: number) => {
-    navigate(`/movie/${id}`);
+    navigate(`/tv/${id}`);
   };
 
   const handleAdd = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "movie" };
+      const payload = { contentId: id, contentType: "tv" };
       await AddForLater(payload).unwrap();
       toast.success(t("mediaGrid.addToWatchLaterSuccess"));
       console.log("➕ Added to list:", id);
@@ -71,7 +71,7 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
 
   const handleLike = async (id: number) => {
     try {
-      const payload = { contentId: id, contentType: "movie" };
+      const payload = { contentId: id, contentType: "tv" };
       await addFavorite(payload).unwrap();
       toast.success(t("mediaGrid.addToFavoritesSuccess"));
       console.log("➕ Added to favorites:", id);

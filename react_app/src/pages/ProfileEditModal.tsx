@@ -87,7 +87,7 @@ const ProfileEditModal = ({ isOpen, onClose }: ProfileEditModalProps) => {
               src={
                 avatar
                   ? URL.createObjectURL(avatar)
-                  : `http://localhost:5170${user?.profilePictureUrl}` || "/default-avatar.png"
+                  : user?.profilePictureUrl
               }
               alt={t("profileEditModal.avatarAlt")}
               className="w-28 h-28 rounded-sm object-cover border-1 border-lime-500 shadow-lg"

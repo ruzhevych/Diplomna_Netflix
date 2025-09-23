@@ -15,6 +15,7 @@ import {
   getAnime,
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
+import RowTv from "../components/RowTv";
 
 
 const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
@@ -91,8 +92,8 @@ const HomePage = () => {
 
         <section className="px-2">
           <Row title={t('homePage.movies')} fetcher={() => getPopularMovies(1)} />
-          <Row title={t('homePage.tv')} fetcher={() => getPopularTV(1)} />
-          <Row title={t('homePage.anime')} fetcher={() => getAnime(1)} />
+          <RowTv title={t('homePage.tv')} fetcher={() => getPopularTV(1)} />
+          <RowTv title={t('homePage.anime')} fetcher={() => getAnime(1)} />
           <Row title={t('homePage.cartoons')} fetcher={() => getCartoons(1)} />
           <Row title={t('homePage.newAndPopular')} fetcher={() => getUpcomingMovies(1)} />
           <Top10Row title={t('homePage.top10')} fetcher={() => getPopularTV(1)} />

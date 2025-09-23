@@ -11,6 +11,7 @@ using Core.Interfaces.Email;
 using Core.Interfaces.Favorites;
 using Core.Interfaces.ForLater;
 using Core.Interfaces.History;
+using Core.Interfaces.Payment;
 using Core.Interfaces.Repository;
 using Core.Interfaces.Subscription;
 using Core.Interfaces.User;
@@ -22,6 +23,7 @@ using Core.Services.Email;
 using Core.Services.Favorites;
 using Core.Services.ForLater;
 using Core.Services.History;
+using Core.Services.Payment;
 using Core.Services.Subscription;
 using Core.Services.User;
 using Core.Validators.Authorization;
@@ -70,6 +72,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IMovieHistoryService, MovieHistoryService>();
 builder.Services.AddScoped<IAdminSubscriptionService, AdminSubscriptionService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Identity
 builder.Services.AddIdentity<UserEntity, RoleEntity>()
