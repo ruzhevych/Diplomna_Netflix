@@ -19,8 +19,18 @@ import {
 import { useGetProfileQuery } from "../services/userApi";
 import ChangePasswordRequest from "../components/ChangePasswordRequest";
 import ProfileEditModal from "./ProfileEditModal";
-import cib_visa from "../../public/cib_visa.png";
+import visa from "../../public/visa.png";
+import mastercard from "../../public/mastercard.png"
+import amex from "../../public/amex.png"
 import { useTranslation } from "react-i18next";
+import {
+  useDeleteCardMutation,
+  useGetCardsQuery,
+  useUpdateCardMutation,
+} from "../services/paymentApi";
+import type { CardDTO, CardUpdateDTO } from "../types/payment";
+import EditCardModal from "../components/PaymentEditSection";
+import { useCancelSubscriptionMutation } from "../services/subscriptionApi";
 
 const ProfilePage = () => {
   const { t } = useTranslation();
@@ -28,6 +38,44 @@ const ProfilePage = () => {
   const { data: user, error, isLoading } = useGetProfileQuery();
   const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
+  const { data: cards, isLoading: cardsLoading } = useGetCardsQuery();
+  const [updateCard] = useUpdateCardMutation();
+  const [editingCard, setEditingCard] = useState<CardDTO | null>(null);
+  const [cancelSubscription] = useCancelSubscriptionMutation();
+  const [deleteCard] = useDeleteCardMutation();
+
+  const handleUpdateCard = async (userId: number, card: CardUpdateDTO) => {
+    // приклад: відкриваєш модалку редагування
+    await updateCard({
+      id: userId,
+      dto: {
+        cardNumber: card.cardNumber,
+        cardholderName: card.cardholderName,
+        cvv: card.cvv,
+        expMonth: card.expMonth,
+        expYear: card.expYear,
+      },
+    });
+  };
+
+  const handleCancel = async () => {
+  try {
+    if (!user?.subscriptionId) return;
+
+    // 1. Видаляємо підписку
+    await cancelSubscription(user.subscriptionId).unwrap();
+
+    // 2. Видаляємо спосіб оплати
+    if (user?.cardId) {
+      await deleteCard(user.cardId).unwrap();
+    }
+
+    // 3. Перенаправляємо на головну
+    navigate("/");
+  } catch (err) {
+    console.error("Cancel subscription failed:", err);
+  }
+};
 
   const tabs = [
     { id: "overview", label: t("profile.menu.overview"), icon: User },
@@ -147,38 +195,121 @@ const ProfilePage = () => {
               </div>
             </section>
           )}
+
           {activeTab === "subscription" && (
-            <section className="rounded-sm p-6 shadow-lg">
+            <section className="p-6">
               <h3 className="text-3xl font-semibold text-white pb-6">
                 {t("profile.subscription.title")}
               </h3>
-              <div className="bg-lime-600 rounded-md mb-6 shadow-lg">
-                <div className="p-4 space-y-2 text-white">
-                  <h4 className="text-lg font-semibold">
-                    {t(`profile.subscription.planType.${user?.subscriptionType || "Standart"}`)}
-                  </h4>
-                  <p className="text-sm text-gray-200">{t("profile.subscription.details")}</p>
-                  <p className="text-sm text-gray-300">
-                    {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
-                  </p>
-                  <p className="text-sm text-gray-300">
-                    {t("profile.subscription.nextPayment")}: {t("profile.subscription.nextDate")}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <img
-                      src={cib_visa}
-                      alt="Visa"
-                      className="h-6"
-                    />
-                    <span className="tracking-widest">•••• •••• •••• 4444</span>
-                  </div>
-                </div>
-                <button className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition">
-                  {t("profile.subscription.changePlan")}
-                </button>
-              </div>
+
+              {cardsLoading && (
+                <p className="text-gray-400">{t("profile.loading")}</p>
+              )}
+
+              {!cardsLoading && (
+                <>
+                  {cards?.map((card) => (
+                    <div key={card.id} className="mb-6">
+                      {/* Блок з планом */}
+                      <div className="bg-lime-800/70 rounded-lg shadow-lg overflow-hidden border border-lime-700">
+                        <div className="p-4 text-white space-y-2">
+                          <h4 className="text-lg font-semibold">
+                            {user?.subscriptionType.toUpperCase() || "Standart"}
+                          </h4>
+                          <p className="text-sm text-gray-200">
+                            {user?.subscriptionType.toLowerCase() === "basic" ? "1 device, 720p (HD)" : 
+                             user?.subscriptionType.toLowerCase() === "standard" ? "2 devices, 1080p (Full HD)" : 
+                             user?.subscriptionType.toLowerCase() === "premium" ? "4 devices, 4K (Ultra HD) + HDR" :
+                             ""}
+                          </p>
+                          <p className="text-sm text-gray-300">
+                            {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
+                          </p>
+                          <p className="text-sm text-gray-300">
+                            {t("profile.subscription.nextPayment")}: {t("profile.subscription.nextDate")}
+                          </p>
+
+                          <div className="flex items-center gap-2 mt-3">
+                            <img
+                              src={
+                                card.brand.toLowerCase() === "visa" ? visa :
+                                card.brand.toLowerCase() === "mastercard" ? mastercard :
+                                card.brand.toLowerCase() === "amex" ? amex :
+                                visa // fallback
+                              }
+                              alt={card.brand}
+                              className="h-6"
+                            />
+                            <span className="tracking-widest text-sm">
+                              •••• •••• •••• {card.last4}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => navigate("/choose-plan")}
+                          className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition border-t border-lime-700">
+                            {t("profile.subscription.changePlan")}
+                        </button>
+                      </div>
+
+                      {/* Блок з наступною оплатою */}
+                      <div className="bg-lime-800/70 rounded-lg shadow-lg overflow-hidden border border-lime-700 mt-4">
+                        <div className="p-4 text-white space-y-2">
+                          <h4 className="text-lg font-semibold">Next payment</h4>
+                          <p className="text-sm text-gray-300">
+                            {t("profile.subscription.nextDate")}
+                          </p>
+                          <p className="text-sm text-gray-300">
+                            {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
+                          </p>
+
+                          <div className="flex items-center gap-2 mt-3">
+                            <img
+                              src={
+                                card.brand.toLowerCase() === "visa" ? visa :
+                                card.brand.toLowerCase() === "mastercard" ? mastercard :
+                                card.brand.toLowerCase() === "amex" ? amex :
+                                visa
+                              }
+                              alt={card.brand}
+                              className="h-6"
+                            />
+                            <span className="tracking-widest text-sm">
+                              •••• •••• •••• {card.last4}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setEditingCard(card)}
+                          className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition border-t border-lime-700"
+                        >
+                          Change payment method
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              <button
+                onClick={handleCancel}
+                className="w-full py-2 bg-[#9A0000] text-white text-sm hover:bg-[#7A0000] transition rounded-sm"
+              >
+                Cancel subscription
+              </button>
             </section>
           )}
+
+          
+          {editingCard && (
+            <EditCardModal
+              card={editingCard}
+              isOpen={!!editingCard}
+              onClose={() => setEditingCard(null)}
+              onUpdate={handleUpdateCard}
+            />
+          )}
+
           {activeTab === "security" && (
             <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg space-y-4">
               <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 border-b border-gray-700">

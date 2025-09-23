@@ -1,5 +1,6 @@
 using Data.Entities.Admin;
 using Data.Entities.Auth;
+using Data.Entities.Payment;
 using Data.Entities.Subscription;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +16,7 @@ public class UserEntity : IdentityUser<long>
     public string? ProfilePictureUrl { get; set; }
     public bool IsBlocked { get; set; } = false;
     public DateTime? BlockUntil { get; set; }
+    public virtual ICollection<PaymentEntity> Cards { get; set; } = new List<PaymentEntity>();
     public ICollection<UserBlockHistoryEntity> BlockHistory { get; set; } = new List<UserBlockHistoryEntity>();
     public virtual ICollection<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
     public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; } = new List<SubscriptionEntity>();
