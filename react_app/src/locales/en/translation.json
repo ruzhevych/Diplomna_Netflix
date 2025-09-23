@@ -267,7 +267,7 @@
     "loadingRating": "Loading your rating...",
     "rateSuccess": "You rated {{stars}} ⭐",
     "rateError": "Error saving rating",
-    "yourRatingText": "Your rating: {{selected}} / 5",
+    "yourRatingText": "Your rating: {{selected}} / 10",
     "totalRating": "Total rating: ⭐ {{vote_average}}+",
     "commentsTitle": "Comments",
     "commentPlaceholder": "Write a comment...",

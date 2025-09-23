@@ -21,4 +21,5 @@ public interface IRepository<T> where T : class
     Task<int> SaveChangesAsync();
     IQueryable<T> Query();
     void RemoveRange(IEnumerable<T> entities);
+    void UpdateRange(IEnumerable<T> entities);
 }

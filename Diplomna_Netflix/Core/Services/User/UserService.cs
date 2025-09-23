@@ -80,6 +80,7 @@ public class UserService : IUserService
     {
         var user = await _userManager.Users
             .Include(u => u.Subscriptions)
+            .Include(u => u.Cards)
             .FirstOrDefaultAsync(u => u.Id.ToString() == id);
 
         if (user == null) return null;
@@ -89,10 +90,17 @@ public class UserService : IUserService
         var activeSub = user.Subscriptions.FirstOrDefault(s => s.IsActive);
         if (activeSub != null)
         {
+            dto.SubscriptionId = activeSub.Id.ToString();
             dto.SubscriptionType = activeSub.Type;
             dto.SubscriptionStart = activeSub.StartDate;
             dto.SubscriptionEnd = activeSub.EndDate;
             dto.SubscriptionIsActive = activeSub.IsActive;
+        }
+        
+        var card = user.Cards.FirstOrDefault(s => s.IsDefault);
+        if (card != null)
+        {
+            dto.CardId = card.Id;
         }
         
         var roles = await _userManager.GetRolesAsync(user);

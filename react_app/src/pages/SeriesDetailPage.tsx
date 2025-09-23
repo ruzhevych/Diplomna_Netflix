@@ -161,10 +161,6 @@ const SeriesDetailsPage = () => {
               {series.vote_average.toFixed(1)} ({series.vote_count} {t("seriesDetails.votes")})
             </p>
 
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              {series.overview}
-            </p>
-
             {/* Additional info */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-400 mb-6">
               { series.genres && (
@@ -326,7 +322,7 @@ const SeriesDetailsPage = () => {
 
       {/* Rating & Comments */}
       <div className="max-w-6xl mx-auto px-4 md:px-0 mt-16 gap-12">
-        <RatingAndComments contentId={series.id} contentType="tv" vote_average={series.vote_average} />
+        <RatingAndComments contentId={series.id} contentType="tv" vote_average={(series.vote_average)} />
       </div>
 
       <Footer />

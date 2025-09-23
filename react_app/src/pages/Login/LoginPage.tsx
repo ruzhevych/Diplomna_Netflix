@@ -28,10 +28,15 @@ const LoginPage = () => {
       const res = await login({ email, password }).unwrap();
       if (res.isBlocked) {
         navigate('/blocked');
-      } else {
+      } 
+      if (res.isActive) {
         loginContext(res.accessToken);
         toast.success("Successful login");
         navigate('/home');
+      } else {
+        loginContext(res.accessToken);
+        toast.info("You need to choose a plan");
+        navigate('/plan-intro');
       }
     } catch (err: any) {
       setError(err?.data?.message || 'An error occurred during login');
@@ -45,8 +50,10 @@ const LoginPage = () => {
       if (res.accessToken && res.isActive) {
         loginContext(res.accessToken);
         navigate("/home");
+        window.location.reload();
       } else {
         setGoogleTempToken(googleToken)
+        loginContext(res.accessToken);
         navigate("/plan-intro");
       }
 

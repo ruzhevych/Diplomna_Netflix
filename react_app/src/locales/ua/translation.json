@@ -267,7 +267,7 @@
     "loadingRating": "Завантаження вашої оцінки...",
     "rateSuccess": "Ви поставили оцінку {{stars}} ⭐",
     "rateError": "Помилка при збереженні оцінки",
-    "yourRatingText": "Ваша оцінка: {{selected}} / 5",
+    "yourRatingText": "Ваша оцінка: {{selected}} / 10",
     "totalRating": "Загальна оцінка: ⭐ {{vote_average}}+",
     "commentsTitle": "Коментарі",
     "commentPlaceholder": "Напишіть коментар...",
