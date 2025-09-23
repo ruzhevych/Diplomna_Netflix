@@ -15,7 +15,7 @@ const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
     <div className="bg-black text-white">
       <Header />
       <div className="mt-20">
-        <MediaTvGrid title="Популярні аніме" fetchData={(page, filters) => getAnime(page ?? 1, filters)} genres={genres}/>
+        <MediaTvGrid title="Популярні аніме" fetchData={(page, filters) => getAnime(page ?? 1, filters)} genres={genres} titleKey={""}/>
       </div>
       <Footer />
     </div>

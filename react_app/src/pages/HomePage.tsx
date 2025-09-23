@@ -6,7 +6,6 @@ import Row from "../components/Row";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer/Footer"
 import { useTranslation } from 'react-i18next';
-
 import {
   getPopularMovies,
   getUpcomingMovies,
@@ -16,12 +15,11 @@ import {
 } from "../services/movieApi";
 import type { Movie } from "../types/movie";
 import RowTv from "../components/RowTv";
-
+import AboutModal from "../components/AboutModal"; 
 
 const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   const [items, setItems] = useState<Movie[]>([]);
   const navigate = useNavigate();
-  
 
   useEffect(() => {
     const load = async () => {
@@ -37,34 +35,38 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
 
   return (
     <div className="mb-10">
-  <h2 className="font-bold mb-4 ml-6 text-3xl text-left">{title}</h2>
-  <div className="flex w-full gap-24 overflow-x-auto scrollbar-hide justify-center items-center">
-    {items.map((item, index) => (
-      <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
-        <span
-          className="absolute -left-20 -top-8 z-0 text-big font-black
-            text-[#0d0d0d]
-            drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
-            [-webkit-text-stroke:2px_#C4FF00]
-            [text-shadow:_0_0_2px_black,0_0_10px_rgba(0,0,0,0.8)]"
-        >
-          {index + 1}
-        </span>
-        <img
-          src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-          alt={item.title || item.original_title}
-          className="relative w-36 rounded-md"
-        />
+      <h2 className="font-bold mb-4 ml-6 text-3xl text-left">{title}</h2>
+      <div className="flex w-full gap-24 overflow-x-auto scrollbar-hide justify-center items-center">
+        {items.map((item, index) => (
+          <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
+            <span
+              className="absolute -left-20 -top-8 z-0 text-big font-black
+                text-[#0d0d0d]
+                drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
+                [-webkit-text-stroke:2px_#C4FF00]
+                [text-shadow:_0_0_2px_black,0_0_10px_rgba(0,0,0,0.8)]"
+            >
+              {index + 1}
+            </span>
+            <img
+              src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+              alt={item.title || item.original_title}
+              className="relative w-36 rounded-md"
+            />
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</div>
+    </div>
   );
 };
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
+  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -78,6 +80,16 @@ const HomePage = () => {
     loadMovies();
   }, []);
 
+  const handleOpenModal = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMovie(null);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -88,7 +100,7 @@ const HomePage = () => {
       
       <Header />
       <div className="mt-20">
-        <HeroBanner />
+        <HeroBanner onAboutClick={handleOpenModal} /> 
 
         <section className="px-2">
           <Row title={t('homePage.movies')} fetcher={() => getPopularMovies(1)} />
@@ -99,8 +111,11 @@ const HomePage = () => {
           <Top10Row title={t('homePage.top10')} fetcher={() => getPopularTV(1)} />
         </section>
       </div>
-      {/* Футер */}
       <Footer />
+
+      {isModalOpen && selectedMovie && (
+        <AboutModal movie={selectedMovie} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
