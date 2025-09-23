@@ -19,6 +19,9 @@ const Header = () => {
   const lastScrollY = useRef(0);
   const [showFilters, setShowFilters] = useState(false);
 
+  const allowedPaths = ["/movies", "/tvseries", "/anime", "/cartoons", "/newandpopular"];
+  const isFilterVisible = allowedPaths.includes(location.pathname);
+
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -40,7 +43,6 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -69,7 +71,7 @@ const Header = () => {
               to={item.path}
               className={`text-white hover:text-lime-400 transition no-underline ${
           location.pathname === item.path ? "border-b-2 border-lime-400 pb-1" : ""
-              }`}
+              }`} reloadDocument
             >
               {item.label}
             </Link>
@@ -78,14 +80,18 @@ const Header = () => {
 
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowFilters(true)}
-            className="text-gray-300 hover:text-lime-400 transition"
-          >
-            <SlidersHorizontal size={22} />
-          </button>
+          {isFilterVisible && (
+            <button
+              onClick={() => setShowFilters(true)}
+              className="text-gray-300 hover:text-lime-400 transition"
+            >
+              <SlidersHorizontal size={22} />
+            </button>
+          )}
+          {showFilters && isFilterVisible && (
+            <FilterPanel onClose={() => setShowFilters(false)} />
+          )}
 
-          {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
 
           <form onSubmit={handleSearch} className="relative hidden md:block">
             <input

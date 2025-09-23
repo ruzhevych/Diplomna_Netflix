@@ -158,6 +158,7 @@ const ProfilePage = () => {
                 <button
                   onClick={() => {
                     navigate("/favorites");
+                    window.location.reload();
                   }}
                   className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black font-semibold rounded-sm transition"
                 >
@@ -167,6 +168,7 @@ const ProfilePage = () => {
                 <button
                   onClick={() => {
                     navigate("/for-later");
+                    window.location.reload();
                   }}
                   className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black font-semibold rounded-sm transition"
                 >
@@ -186,6 +188,7 @@ const ProfilePage = () => {
                   onClick={() => {
                     localStorage.removeItem("accessToken");
                     navigate("/login");
+                    window.location.reload();
                   }}
                   className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-transparent border border-[#C4FF00] hover:bg-[#C4FF00]/80 font-semibold rounded-sm transition"
                 >
