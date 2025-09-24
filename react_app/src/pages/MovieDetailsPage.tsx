@@ -8,6 +8,7 @@ import {
   getMovieVideos,
   getRecomendationsMovies,
   getSimilarMovies,
+  getMovieCredits, 
 } from "../services/movieApi";
 import {
   useAddFavoriteMutation,
@@ -18,12 +19,20 @@ import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { useAddToHistoryMutation } from "../services/historyApi";
-import { Play, Plus, ThumbsUp } from "lucide-react";
+import { Play, Plus, ThumbsUp, ChevronDown } from "lucide-react";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
 import { useTranslation } from "react-i18next";
 
-const MovieDetailsPage = () => {
+
+interface MediaGridProps {
+  title: string;
+  fetchData: (page?: number, filters?: { ratingFrom: number; ratingTo: number; genres: number[] }) => Promise<any>;
+  genres: { id: number; name: string }[];
+}
+
+
+const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const movieId = Number(id);
@@ -34,6 +43,10 @@ const MovieDetailsPage = () => {
   const [similar, setSimilar] = useState<Movie[]>([]);
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [collections, setCollections] = useState<Collection | null>(null);
+  const [director, setDirector] = useState<string | null>(null);
+  const [producers, setProducers] = useState<string[]>([]);
+  const [writers, setWriters] = useState<string[]>([]);
+  const [actors, setActors] = useState<string[]>([]);
 
   const { data: favorites } = useGetFavoritesQuery();
   const [addFavorite] = useAddFavoriteMutation();
@@ -59,6 +72,19 @@ const MovieDetailsPage = () => {
       try {
         const details = await getMovieDetails(movieId);
         setMovie(details);
+
+        const credits = await getMovieCredits(movieId);
+        const newActors = credits.cast.slice(0, 5).map(a => a.name); 
+        setActors(newActors);
+
+        const newProducers = credits.crew.filter(c => c.job === "Producer").map(c => c.name);
+        setProducers(newProducers);
+        
+        const newWriters = credits.crew.filter(c => ["Writer", "Screenplay", "Story"].includes(c.job)).map(c => c.name);
+        setWriters(newWriters);
+        
+        const newDirector = credits.crew.find(c => c.job === "Director")?.name || "N/A";
+        setDirector(newDirector);
 
         const similarMovies = await getSimilarMovies(movieId, 1);
         setSimilar(similarMovies.results || similarMovies);
@@ -115,6 +141,30 @@ const MovieDetailsPage = () => {
     }
   };
 
+  const formatRuntime = (totalMinutes: number) => {
+    if (!totalMinutes) return "—";
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    const hoursText = hours > 0 ? `${hours} hour` : '';
+    const minutesText = minutes > 0 ? `${minutes} min` : '';
+    
+    if (hours > 0 && minutes > 0) {
+      return `${hoursText} ${minutesText}`;
+    } else if (hours > 0) {
+      return hoursText;
+    } else {
+      return minutesText;
+    }
+  };
+
+  const getGenres = (genreIds: number[]) => {
+    return genreIds
+      ?.map((id) => genres.find((g) => g.id === id)?.name)
+      .filter(Boolean)
+      .slice(0, 3); 
+  };
+
   const handlePlay = (id: number) => {
     navigate(`/movie/${id}`);
   };
@@ -140,6 +190,10 @@ const MovieDetailsPage = () => {
       toast.error(t("movieDetails.favorites.error"));
     }
   };
+  
+    const handleExpand = (id: number) => {
+      console.log("🔽 Expand details:", id);
+    };
 
   if (!movie)
     return (
@@ -152,18 +206,18 @@ const MovieDetailsPage = () => {
   const trailer = videos[0];
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-[#191716] text-white min-h-screen">
       <Header />
       <div
         className="relative h-[80vh] top-20 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#191716] via-[#191716]/70 to-transparent"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 md:px-0 -mt-96 relative z-10">
-        <div className="flex flex-col md:flex-row gap-10 animate-fadeIn">
-          <div className="flex-1 flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row gap-24 animate-fadeIn">
+          <div className="flex-1 flex flex-col gap-1">
             <h1 className="text-8xl font-extrabold">{movie.title}</h1>
             {movie.tagline && (
               <p className="italic text-gray-400 text-xl">"{movie.tagline}"</p>
@@ -198,41 +252,50 @@ const MovieDetailsPage = () => {
                 )}
               </button>
             </div>
-            <div className="mt-48 text-gray-300">
+            <div className="mt-56 text-gray-300">
               <div className="grid md:grid-cols-2 gap-24">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-4 text-2xl font-semibold text-gray-200 mb-2">
+                <div className="flex flex-col gap-2 text-sm">
+                  <p className="leading-relaxed text-3xl mb-0 font-regular text-white">{collections?.name}</p>
+                  <div className="text-2xl font-semibold text-gray-400">
                     <span>{movie.release_date?.slice(0, 4)}</span>
-                    <br />
-                    <span>{movie.runtime ? `${movie.runtime} ${t("movieDetails.minutes")}` : "—"}</span>
                   </div>
-                  <div className="flex flex-wrap gap-3 mb-4 text-2xl font-semibold text-gray-400">
-                    {movie.genres?.map((g) => (
-                      <span key={g.id}>{g.name}</span>
+                  <div className="text-2xl font-medium text-gray-400">
+                    {movie.runtime ? formatRuntime(movie.runtime) : "—"}
+                  </div>
+                  <hr className="mb-0 "/>
+                  <div className="flex flex-wrap gap-3 text-2xl font-semibold text-gray-400">
+                    {movie.genres?.map((g, index) => (
+                      <span
+                        key={g.id}
+                        className={`${index > 0 ? ' relative pl-6 before:absolute before:left-0 before:content-["•"] before:text-white/80 before:font-black' : ''}`}
+                      >
+                        {g.name}
+                      </span>
                     ))}
                   </div>
-                  <p className="leading-relaxed mb-6 text-base">{movie.overview}</p>
+                  <hr className="mt-1.5 "/>
+                  <p className="leading-relaxed text-base text-white">{movie.overview}</p>
                 </div>
                 <div className="space-y-2 text-sm">
                   <p>
-                    <span className="text-gray-400 text-lg font-medium">{t("movieDetails.popularity")}:</span>{" "}
-                    {movie.popularity}
+                    <span className="text-gray-400 text-lg font-regular mr-1">{t("movieDetails.popularity")}:</span>{" "}
+                    <span className="text-white text-lg font-regular">{movie.popularity}</span>
                   </p>
                   <p>
-                    <span className="text-gray-400 text-lg font-medium">Director:</span>{" "}
-                    {movie.director}
+                    <span className="text-gray-400 text-lg font-regular">Director:</span>{" "}
+                    <span className="text-white text-lg font-regular">{director}</span>
                   </p>
                   <p>
-                    <span className="text-gray-400 text-lg font-medium">Producers:</span>{" "}
-                    {movie.producers?.join(", ")}
+                    <span className="text-gray-400 text-lg font-regular">Producers:</span>{" "}
+                    <span className="text-white text-lg font-regular">{producers.join(", ")}</span>
                   </p>
                   <p>
-                    <span className="text-gray-400 text-lg font-medium">Actors:</span>{" "}
-                    {movie.actors?.join(", ")}
+                    <span className="text-gray-400 text-lg font-regular">Actors:</span>{" "}
+                    <span className="text-white text-lg font-regular">{actors.join(", ")}</span>
                   </p>
                   <p>
-                    <span className="text-gray-400 text-lg font-medium">Writers:</span>{" "}
-                    {movie.writers?.join(", ")}
+                    <span className="text-gray-400 text-lg font-regular">Writers:</span>{" "}
+                    <span className="text-white text-lg font-regular">{writers.join(", ")}</span>
                   </p>
                 </div>
               </div>
@@ -242,9 +305,9 @@ const MovieDetailsPage = () => {
       </div>
       
       {trailer && (
-        <div ref={trailerRef} id="trailer-section" className="mt-20 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.trailer")}</h2>
-          <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
+        <div ref={trailerRef} id="trailer-section" className="relative mt-20 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn">
+          <h2 className="text-3xl bg-[#3D3B3A] rounded-sm text-center absolute -mt-10 h-24 w-1/6 font-semibold ">{t("movieDetails.trailer")}</h2>
+          <div className="aspect-video z-100 overflow-hidden shadow-2xl z-10 relative">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
               title={trailer.name}
@@ -256,44 +319,83 @@ const MovieDetailsPage = () => {
       )}
 
       {collections != null && (
-        <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn ">
-          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.collection")}</h2>
-          <div className="flex gap-4 overflow-x-auto pb-4">
-            {collections.parts.map((c) => (
+        <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.collection")}</h2>
+          <div className="flex flex-row gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth ">
+
+              {collections.parts.map((c) => (
               <div
                 key={c.id}
-                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                className="cursor-pointer hover:scale-105 transition-transform "
                 onClick={() => navigate(`/movie/${c.id}`)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${c.poster_path}`}
                   alt={c.title}
-                  className="rounded-lg shadow-md"
+                  className="rounded-lg shadow-md w-56 border-r-2 border-[#C4FF00]"
                 />
-                <p className="mt-2 text-center text-sm">{c.title}</p>
+              <div className="bg-[#191716] h-24 rounded-lg p-2 border-b-2 border-r-2 border-[#C4FF00]">
+                <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => handlePlay(c.id)}
+                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                >
+                  <Play size={18} />
+                </button>
+                <button
+                  onClick={() => handleAdd(c.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <Plus size={18} />
+                </button>
+                <button
+                  onClick={() => handleLike(c.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ThumbsUp size={18} />
+                </button>
+                <button
+                  onClick={() => handleExpand(c.id)}
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ChevronDown size={18} />
+                </button>
               </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
+                {getGenres(c.genres)?.map((g, idx) => (
+                  <span key={idx}>{g}</span>
+                ))}
+              </div>
+              </div>
+            </div>
             ))}
+            
+            
           </div>
-        </div>
+          </div>
+       
       )}
 
       {recommendations.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.recommendations")}</h2>
+          <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.recommendations")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {recommendations.map((rec) => (
               <div
                 key={rec.id}
-                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                className="cursor-pointer hover:scale-105 transition-transform"
                 onClick={() => navigate(`/movie/${rec.id}`)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
                   alt={rec.title}
-                  className="rounded-lg shadow-md"
+                  className="rounded-sm shadow-md min-w-56"
                 />
-                <p className="mt-2 text-center text-sm">{rec.title}</p>
               </div>
+              
             ))}
           </div>
         </div>
@@ -301,20 +403,20 @@ const MovieDetailsPage = () => {
 
       {similar.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">{t("movieDetails.similar")}</h2>
+          <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.similar")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {similar.map((sm) => (
               <div
                 key={sm.id}
-                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                className="cursor-pointer hover:scale-105 transition-transform"
                 onClick={() => navigate(`/movie/${sm.id}`)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
                   alt={sm.title}
-                  className="rounded-lg shadow-md"
+                  className="rounded-sm shadow-md min-w-56"
                 />
-                <p className="mt-2 text-center text-sm">{sm.title}</p>
+                
               </div>
             ))}
           </div>

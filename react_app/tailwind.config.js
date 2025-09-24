@@ -9,7 +9,12 @@ module.exports = {
         fadeIn: 'fadeIn 1s ease-in-out',
         fontFamily: {
         unbounded: ["Unbounded", "sans-serif"], 
+        
       },
+      maxWidth: {
+        '8xl': '1440px',
+        '9xl': '1600px',
+      }
       },
       keyframes: {
         fadeIn: {
