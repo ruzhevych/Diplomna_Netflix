@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Movie, TMDBResponse } from '../types/movie';
+import { useAddToHistoryMutation } from '../services/historyApi';
 
 interface RowProps {
   title: string;
@@ -11,6 +12,7 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
   const [items, setItems] = useState<Movie[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [addToHistory] = useAddToHistoryMutation();
 
   useEffect(() => {
     let isMounted = true;
@@ -60,7 +62,14 @@ const Row: React.FC<RowProps> = ({ title, fetcher }) => {
           <div
             key={item.id}
             className="min-w-[230px] cursor-pointer hover:scale-95 transition-transform"
-            onClick={() => navigate(`/movie/${item.id}`)}
+            onClick={async () => {
+              await addToHistory({
+                id: item.id,
+                mediaType: "movie",
+                name: item.title,
+              }).unwrap();
+              navigate(`/movie/${item.id}`);
+            }}
           >
             <img
               src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}

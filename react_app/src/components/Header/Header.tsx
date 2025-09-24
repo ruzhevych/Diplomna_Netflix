@@ -57,8 +57,6 @@ const Header = () => {
   }, []);
 
 
-
-
   const menuItems = [
     { path: "/movies", label: t("menu.movies") },
     { path: "/tvseries", label: t("menu.tvseries") },
@@ -112,13 +110,14 @@ const Header = () => {
               <Search size={18} />
             </button>
           </form>
-
-          <button
+          {isFilterVisible && (
+            <button
             onClick={() => setShowFilters(true)}
             className="text-gray-300 ml-3 hover:text-lime-400 transition"
           >
             <SlidersHorizontal size={22} />
           </button>
+          )}
 
           {showFilters && <FilterPanel onClose={() => setShowFilters(false)} />}
 

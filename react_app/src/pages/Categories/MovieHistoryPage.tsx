@@ -4,7 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { Play, X, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useGetHistoryQuery, useDeleteFromHistoryMutation, useClearHistoryMutation } from "../../services/historyApi";
+import { useGetHistoryQuery, useDeleteFromHistoryMutation, useClearHistoryMutation, useAddToHistoryMutation } from "../../services/historyApi";
 import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
 
 export interface HistoryItemDetails {
@@ -30,6 +30,7 @@ export default function MovieHistoryPage() {
   const { data: history, isLoading, isError } = useGetHistoryQuery();
   const [deleteFromHistory] = useDeleteFromHistoryMutation();
   const [clearHistory] = useClearHistoryMutation();
+  const [addToHistory] = useAddToHistoryMutation();
 
   const [items, setItems] = useState<HistoryItemDetails[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -126,7 +127,14 @@ export default function MovieHistoryPage() {
               <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
                 <div className="flex items-center gap-3 mb-2">
                   <button
-                    onClick={() => navigate(`/${content.mediaType}/${content.movieId}`)}
+                    onClick={async () => { 
+                      await addToHistory({
+                        id: content.movieId,
+                        mediaType: content.mediaType,
+                        name: content.title ?? content.name ?? "No name",
+                        }).unwrap();
+                      navigate(`/${content.mediaType}/${content.movieId}`);
+                    }}
                     className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                   >
                     <Play size={18} />

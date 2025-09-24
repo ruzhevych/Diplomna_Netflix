@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Play, ThumbsUp, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddFavoriteMutation } from "../../services/favoritesApi";
+import { useAddToHistoryMutation } from "../../services/historyApi";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -30,6 +31,7 @@ export default function ForLaterPage() {
   const { data: forLaters, isLoading, isError } = useGetForLatersQuery();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeForLater] = useRemoveForLaterMutation();
+  const [addToHistory] = useAddToHistoryMutation();
 
   const [forLaterItems, setForLaterItems] = useState<ForLaterItem[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -130,7 +132,14 @@ export default function ForLaterPage() {
               <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
                 <div className="flex items-center gap-3 mb-3">
                   <button
-                    onClick={() => navigate(`/${content.contentType}/${content.id}`)}
+                    onClick={async () => { 
+                      await addToHistory({
+                        id: content.id,
+                        mediaType: content.contentType,
+                        name: content.title ?? content.name,
+                        }).unwrap();
+                      navigate(`/${content.contentType}/${content.id}`);
+                    }}
                     className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                   >
                     <Play size={18} />

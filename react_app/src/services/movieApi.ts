@@ -112,6 +112,8 @@ export const getRecomendationsTv = (id: number, page: number) => fetchFromTMDB(`
 export const getSimilarMovies = (id: number, page: number) => fetchFromTMDB(`/movie/${id}/similar`, page);
 export const getSimilarTv = (id: number, page: number) => fetchFromTMDB(`/tv/${id}/similar`, page);
 
+export const getCreditsMovie = (id: number, page: number) => fetchFromTMDB(`/movie/${id}/credits`, page);
+export const getCreditsTv = (id: number, page: number) => fetchFromTMDB(`/tv/${id}/credits`, page);
 
 export interface Video {
   id: string;
