@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useAddFavoriteMutation } from "../services/favoritesApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import { useFilters } from "../context/FilterContext";
+import { useAddToHistoryMutation } from "../services/historyApi";
 
 interface MediaGridProps {
   title: string;
@@ -23,6 +24,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [addFavorite] = useAddFavoriteMutation();
   const [AddForLater] = useAddForLaterMutation();
   const { filters } = useFilters();
+  const [addToHistory] = useAddToHistoryMutation();
 
   const navigate = useNavigate();
 
@@ -51,7 +53,12 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       .slice(0, 3); // Max 3 genres for compactness
   };
 
-  const handlePlay = (id: number) => {
+  const handlePlay = async (id: number, name: string) => {
+    await addToHistory({
+      id: id,
+      mediaType: "movie",
+      name: name,
+    }).unwrap();
     navigate(`/movie/${id}`);
   };
 
@@ -106,7 +113,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
             <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out bg-black/90 p-3 rounded-t-lg">
               <div className="flex items-center gap-3 mb-3">
                 <button
-                  onClick={() => handlePlay(item.id)}
+                  onClick={() => handlePlay(item.id, item.title)}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
