@@ -64,7 +64,7 @@ const LandingPage: React.FC = () => {
               isAuthenticated ? (
                 <Link to="/profile">
                   <img
-                    src={userProfile?.profilePictureUrl ? `http://localhost:5170${userProfile.profilePictureUrl}` : AVATAR_PLACEHOLDER}
+                    src={userProfile?.profilePictureUrl}
                     alt="User Avatar"
                     className={`w-10 h-10 rounded-full border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
                   />

@@ -50,7 +50,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
     return genreIds
       ?.map((id) => genres.find((g) => g.id === id)?.name)
       .filter(Boolean)
-      .slice(0, 3); // Max 3 genres for compactness
+      .slice(0, 3); 
   };
 
   const handlePlay = async (id: number, name: string) => {
