@@ -17,7 +17,7 @@ import {
 import { toast } from "react-toastify";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-import { Play, Plus, ThumbsUp } from "lucide-react";
+import { Play, Plus, ThumbsUp, ChevronDown } from "lucide-react";
 import { useAddToHistoryMutation } from "../services/historyApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import RatingAndComments from "../components/RatingAndComments";
@@ -28,7 +28,8 @@ const SeriesDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const seriesId = Number(id);
   const navigate = useNavigate();
-
+  const containerRef = useRef<HTMLDivElement>(null);
+  const container2Ref = useRef<HTMLDivElement>(null);
   const [series, setSeries] = useState<Series | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [similar, setSimilar] = useState<Series[]>([]);
@@ -47,6 +48,27 @@ const SeriesDetailsPage = () => {
 
   const scrollToTrailer = () => {
     trailerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
+  const scroll = (direction: 'left' | 'right') => {
+    const container = containerRef.current;
+    if (!container) return;
+    const scrollAmount = container.clientWidth;
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
+  const scroll2 = (direction: 'left' | 'right') => {
+    const container2 = container2Ref.current;
+    if (!container2) return;
+    const scrollAmount = container2.clientWidth;
+    container2.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
   };
 
   useEffect(() => {
@@ -108,6 +130,32 @@ const SeriesDetailsPage = () => {
     }
   };
 
+   const handlePlay = (id: number) => {
+    navigate(`/movie/${id}`);
+    window.location.reload()
+  };
+
+  const handleLike = async (id: number) => {
+    try {
+      const payload = { contentId: id, contentType: "movie" };
+      await addFavorite(payload).unwrap();
+      toast.success(t("movieDetails.favorites.added"));
+      console.log("➕ Added to favorites:", id);
+    } catch {
+      toast.error(t("movieDetails.favorites.error"));
+    }
+  };
+  
+    const handleExpand = (id: number) => {
+      console.log("🔽 Expand details:", id);
+    };
+    const getGenres = (genreIds: number[]) => {
+    return genreIds
+      ?.map((id) => genreIds.find((g) => g.id === id)?.name)
+      .filter(Boolean)
+      .slice(0, 3); 
+  };
+
   if (!series) {
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
@@ -143,7 +191,7 @@ const SeriesDetailsPage = () => {
     .join(", ");
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-[#191716] text-white min-h-screen">
       <Header />
 
       {/* Backdrop */}
@@ -151,7 +199,7 @@ const SeriesDetailsPage = () => {
         className="relative h-[80vh] top-20 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#191716] via-[#191716]/70 to-transparent"></div>
       </div>
 
       {/* Details */}
@@ -198,18 +246,25 @@ const SeriesDetailsPage = () => {
             <div className="mt-48 text-gray-300">
               <div className="grid md:grid-cols-2 gap-24">
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-4 text-2xl font-semibold text-gray-200 mb-2">
-                    <span>{series.first_air_date?.slice(0, 4)}</span>
+                  <div className="flex flex-col items-left gap-2 text-2xl font-semibold text-gray-200 mb-2">
+                    <span >{series.first_air_date?.slice(0, 4)}</span>
                     <span>
                       {series.number_of_seasons} {t("seriesDetails.seasons")} •{" "}
                       {series.number_of_episodes} {t("seriesDetails.episodes")}
                     </span>
                   </div>
-                  <div className="flex flex-wrap gap-3 mb-4 text-2xl font-semibold text-gray-400">
-                    {series.genres?.map((g) => (
-                      <span key={g.id}>{g.name}</span>
+                  <hr className="mt-3 mb-0 "/>
+                  <div className="flex flex-wrap gap-3 text-2xl font-semibold text-gray-300/70">
+                    {series.genres?.map((g, index) => (
+                      <span
+                        key={g.id}
+                        className={`${index > 0 ? ' relative pl-6 before:absolute before:left-0 before:content-["•"] before:text-white/80 before:font-black' : ''}`}
+                      >
+                        {g.name}
+                      </span>
                     ))}
                   </div>
+                  <hr className="mt-3 "/>
                   <p className="leading-relaxed mb-6 text-base">
                     {series.overview}
                   </p>
@@ -263,14 +318,9 @@ const SeriesDetailsPage = () => {
 
       {/* Trailer */}
       {trailer && (
-        <div
-          ref={trailerRef}
-          className="mt-20 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn"
-        >
-          <h2 className="text-3xl font-bold mb-6">
-            {t("seriesDetails.trailer")}
-          </h2>
-          <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl">
+        <div ref={trailerRef} id="trailer-section" className="relative mt-36 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn">
+          <h2 className="text-3xl bg-[#3D3B3A] rounded-sm text-center absolute -mt-10 h-24 w-1/6 font-semibold ">{t("movieDetails.trailer")}</h2>
+          <div className="aspect-video z-100 overflow-hidden shadow-2xl z-10 relative">
             <iframe
               src={`https://www.youtube.com/embed/${trailer.key}`}
               title={trailer.name}
@@ -281,10 +331,11 @@ const SeriesDetailsPage = () => {
         </div>
       )}
 
+      
       {series.last_episode_to_air && (
         <div className="mt-16 max-w-7xl mx-auto px-4 md:px-0 animate-fadeIn">
           <h2 className="text-3xl font-bold mb-6">{t("seriesDetails.lastEpisode")}</h2>
-          <div className="flex flex-col md:flex-row gap-6 bg-gray-900 p-6 rounded-2xl shadow-xl">
+          <div className="flex flex-col md:flex-row gap-6 bg-[#191716] p-6 rounded-lg shadow-[0_0_5px_#C4FF00]">
             <img
               src={`https://image.tmdb.org/t/p/w300${series.last_episode_to_air.still_path}`}
               alt={series.last_episode_to_air.name}
@@ -296,7 +347,7 @@ const SeriesDetailsPage = () => {
                 <p className="text-gray-400 text-sm mb-4">
                   {series.last_episode_to_air.air_date} • {t("seriesDetails.episode")} {series.last_episode_to_air.episode_number} ({t("seriesDetails.season")} {series.last_episode_to_air.season_number})
                 </p>
-          <     p className="text-gray-300 leading-relaxed">{series.last_episode_to_air.overview || t("seriesDetails.noOverview")}</p>
+                <p className="text-gray-300 leading-relaxed">{series.last_episode_to_air.overview || t("seriesDetails.noOverview")}</p>
               </div>
             </div>
           </div>
@@ -306,29 +357,79 @@ const SeriesDetailsPage = () => {
       {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <div className="inline-flex justify-between w-full">
           <h2 className="text-3xl font-bold mb-6">
             {t("seriesDetails.recommendations")}
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+          <div className="flex">
+          <button
+            onClick={() => scroll('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+          </div>
+          <div ref={containerRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {recommendations.map((rec) => (
               <div
                 key={rec.id}
-                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
+                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00]"
                 onClick={async () => {
                   await addToHistory({
                     id: rec.id,
                     mediaType: "tv",
                     name: rec.name,
                   }).unwrap();
-                  navigate(`/tv/${rec.id}`);
                 }}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
                   alt={rec.name}
-                  className="rounded-lg shadow-md"
+                  className="rounded-lg shadow-md min-w-64 h-80 object-cover "
                 />
-                <p className="mt-2 text-center text-sm">{rec.name}</p>
+                <div className="bg-[#191716] h-24 rounded-lg p-2 ">
+                <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => handlePlay(rec.id)}
+                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                >
+                  <Play size={18} />
+                </button>
+                <button
+                  onClick={() => handleAdd(rec.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <Plus size={18} />
+                </button>
+                <button
+                  onClick={() => handleLike(rec.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ThumbsUp size={18} />
+                </button>
+                <button
+                  onClick={() => handleExpand(rec.id)}
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
+                {getGenres(rec.genres)?.map((g, idx) => (
+                  <span key={idx}>{g}</span>
+                ))}
+              </div>
+              </div>
               </div>
             ))}
           </div>
@@ -338,29 +439,70 @@ const SeriesDetailsPage = () => {
       {/* Similar */}
       {similar.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-          <h2 className="text-3xl font-bold mb-6">
-            {t("seriesDetails.similar")}
-          </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+          <div className="inline-flex justify-between w-full">
+          <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.similar")}</h2>
+           <div className="flex">
+          <button
+            onClick={() => scroll2('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll2('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+        </div>
+          <div ref={container2Ref} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {similar.map((sm) => (
               <div
                 key={sm.id}
-                className="min-w-[180px] cursor-pointer hover:scale-105 transition-transform"
-                onClick={async () => {
-                  await addToHistory({
-                    id: sm.id,
-                    mediaType: "tv",
-                    name: sm.name,
-                  }).unwrap();
-                  navigate(`/tv/${sm.id}`);
-                }}
+                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00]"
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
-                  alt={sm.name}
-                  className="rounded-lg shadow-md"
+                  alt={sm.title}
+                  className="rounded-sm shadow-md min-w-64 h-80 object-cover "
                 />
-                <p className="mt-2 text-center text-sm">{sm.name}</p>
+                <div className="bg-[#191716] h-24 rounded-lg p-2 ">
+                <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => handlePlay(sm.id)}
+                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                >
+                  <Play size={18} />
+                </button>
+                <button
+                  onClick={() => handleAdd(sm.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <Plus size={18} />
+                </button>
+                <button
+                  onClick={() => handleLike(sm.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ThumbsUp size={18} />
+                </button>
+                <button
+                  onClick={() => handleExpand(sm.id)}
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
+                {getGenres(sm.genres)?.map((g, idx) => (
+                  <span key={idx}>{g}</span>
+                ))}
+              </div>
+              </div>
               </div>
             ))}
           </div>

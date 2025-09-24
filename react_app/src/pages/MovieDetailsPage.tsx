@@ -38,13 +38,14 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
   const { id } = useParams<{ id: string }>();
   const movieId = Number(id);
   const navigate = useNavigate();
-
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [movie, setMovie] = useState<Movie | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [similar, setSimilar] = useState<Movie[]>([]);
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [collections, setCollections] = useState<Collection | null>(null);
-
+  const containerRef = useRef<HTMLDivElement>(null);
+  const container2Ref = useRef<HTMLDivElement>(null);
   const [director, setDirector] = useState<string | null>(null);
   const [producers, setProducers] = useState<string[]>([]);
   const [writers, setWriters] = useState<string[]>([]);
@@ -65,6 +66,27 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
   const scrollToTrailer = () => {
     trailerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const scroll = (direction: 'left' | 'right') => {
+    const container = containerRef.current;
+    if (!container) return;
+    const scrollAmount = container.clientWidth;
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
+  const scroll2 = (direction: 'left' | 'right') => {
+    const container2 = container2Ref.current;
+    if (!container2) return;
+    const scrollAmount = container2.clientWidth;
+    container2.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
 
   useEffect(() => {
     if (!movieId) return;
@@ -171,6 +193,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
 
   const handlePlay = (id: number) => {
     navigate(`/movie/${id}`);
+    window.location.reload()
   };
 
 
@@ -196,11 +219,17 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
   };
   
     const handleExpand = (id: number) => {
-      console.log("🔽 Expand details:", id);
-    };
+  const newExpandedItems = new Set(expandedItems);
+  if (newExpandedItems.has(id)) {
+    newExpandedItems.delete(id);
+  } else {
+    newExpandedItems.add(id);
+  }
+  setExpandedItems(newExpandedItems);
+};
 
 
-  if (!movie)
+  if (!movie){
     return (
       <p className="text-white text-center mt-10 animate-fadeIn">
         {t("movieDetails.loading")}
@@ -211,28 +240,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
   const backdropUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
   const trailer = videos[0];
 
-  const writers = credits?.crew
-    ?.filter((el) => el.department === "Writing")
-    .slice(0, 10)
-    .map((el) => el.name)
-    .join(", ");
 
-  const directors = credits?.crew
-    ?.filter((el) => el.department === "Directing")
-    .slice(0, 5)
-    .map((el) => el.name)
-    .join(", ");
-
-  const producers = credits?.crew
-    ?.filter((el) => el.department === "Production")
-    .slice(0, 10)
-    .map((el) => el.name)
-    .join(", ");
-
-  const actors = credits?.cast
-    ?.slice(0, 15)
-    .map((el) => el.name)
-    .join(", ");
 
   return (
     <div className="bg-[#191716] text-white min-h-screen">
@@ -297,8 +305,8 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
                   <div className="text-2xl font-medium text-gray-400">
                     {movie.runtime ? formatRuntime(movie.runtime) : "—"}
                   </div>
-                  <hr className="mb-0 "/>
-                  <div className="flex flex-wrap gap-3 text-2xl font-semibold text-gray-400">
+                  
+                  <div className="flex flex-wrap gap-3 mb-3  text-2xl font-semibold text-gray-400">
                     {movie.genres?.map((g, index) => (
                       <span
                         key={g.id}
@@ -309,7 +317,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
                     ))}
                   </div>
 
-                  <hr className="mt-1.5 "/>
+                  
                   <p className="leading-relaxed text-base text-white">{movie.overview}</p>
                 </div>
 
@@ -366,15 +374,14 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
 
               <div
                 key={c.id}
-                className="cursor-pointer hover:scale-105 transition-transform "
-                onClick={() => navigate(`/movie/${c.id}`)}
+                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00]"
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${c.poster_path}`}
                   alt={c.title}
-                  className="rounded-lg shadow-md w-56 border-r-2 border-[#C4FF00]"
+                  className="rounded-lg shadow-md w-64 h-80 object-cover"
                 />
-              <div className="bg-[#191716] h-24 rounded-lg p-2 border-b-2 border-r-2 border-[#C4FF00]">
+              <div className="bg-[#191716] h-24 rounded-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={() => handlePlay(c.id)}
@@ -422,22 +429,80 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
       {/* Recommendations */}
       {recommendations.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
-
-          <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.recommendations")}</h2>
-
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+          <div className="inline-flex justify-between w-full">
+            <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.recommendations")}</h2>
+            <div className="flex">
+          <button
+            onClick={() => scroll('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+          </div>
+          
+          
+          <div ref={containerRef} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+            
             {recommendations.map((rec) => (
               <div
                 key={rec.id}
-                className="cursor-pointer hover:scale-105 transition-transform"
-                onClick={() => navigate(`/movie/${rec.id}`)}
+                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00]"
+                
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
                   alt={rec.title}
-                  className="rounded-sm shadow-md min-w-56"
+                  className="rounded-lg shadow-md min-w-64 h-80 object-cover "
                 />
+                <div className="bg-[#191716] h-24 rounded-lg p-2">
+                <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => handlePlay(rec.id)}
+                  className="bg-white text-black rounded-full p-2 hover:scale-105 transition"
+                >
+                  <Play size={18} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleAdd(movie.id); }}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <Plus size={18} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleLike(movie.id); }}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ThumbsUp size={18} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleExpand(movie.id); }}
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ChevronDown size={18} className={`transition-transform duration-300 ${expandedItems.has(movie.id) ? "rotate-180" : ""}`}/>
+                </button>
               </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
+                {getGenres(rec.genres)?.map((g, idx) => (
+                  <span key={idx}>{g}</span>
+                ))}
+              </div>
+              {expandedItems.has(movie.id) && (
+                <div className="mt-4 transition-opacity duration-300 ease-in-out">
+                  <p className="text-sm text-gray-200 overflow-y-auto max-h-24">{movie.overview}</p>
+                </div>
+              )}
+              </div>
+      </div>
             ))}
           </div>
         </div>
@@ -446,20 +511,70 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
       {/* Similar */}
       {similar.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-0 mt-16 animate-fadeIn">
+          <div className="inline-flex justify-between w-full">
           <h2 className="text-3xl font-semibold mb-6">{t("movieDetails.similar")}</h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+           <div className="flex">
+          <button
+            onClick={() => scroll2('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll2('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+        </div>
+          <div ref={container2Ref} className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
             {similar.map((sm) => (
               <div
                 key={sm.id}
-                className="cursor-pointer hover:scale-105 transition-transform"
-                onClick={() => navigate(`/movie/${sm.id}`)}
+                className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00]"
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
                   alt={sm.title}
-                  className="rounded-sm shadow-md min-w-56"
+                  className="rounded-sm shadow-md min-w-64 h-80 object-cover "
                 />
-                
+                <div className="bg-[#191716] h-24 rounded-lg p-2">
+                <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={() => handlePlay(sm.id)}
+                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                >
+                  <Play size={18} />
+                </button>
+                <button
+                  onClick={() => handleAdd(sm.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <Plus size={18} />
+                </button>
+                <button
+                  onClick={() => handleLike(sm.id)}
+                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ThumbsUp size={18} />
+                </button>
+                <button
+                  onClick={() => handleExpand(sm.id)}
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                >
+                  <ChevronDown size={18} />
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
+                <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
+                {getGenres(sm.genres)?.map((g, idx) => (
+                  <span key={idx}>{g}</span>
+                ))}
+              </div>
+              </div>
               </div>
             ))}
           </div>
