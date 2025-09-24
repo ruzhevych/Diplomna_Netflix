@@ -3,6 +3,7 @@ import type { Movie, TMDBResponse } from "../types/movie";
 import { getPopularMovies } from "../services/movieApi";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAddToHistoryMutation } from "../services/historyApi";
 
 interface HeroBannerProps {
   onAboutClick: (movie: Movie) => void;
@@ -12,6 +13,7 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
   const { t } = useTranslation();
   const [movie, setMovie] = useState<Movie | null>(null);
   const navigate = useNavigate();
+  const [addToHistory] = useAddToHistoryMutation();
 
   useEffect(() => {
     (async () => {
@@ -52,7 +54,14 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ onAboutClick }) => {
         </p>
         <div className="mt-8 flex gap-3">
           <button
-            onClick={() => navigate(`/movie/${movie.id}`)}
+            onClick={async () => {
+                  await addToHistory({
+                    id: movie.id,
+                    mediaType: "movie",
+                    name: movie.title,
+                  }).unwrap();
+                  navigate(`/movie/${movie.id}`);
+                }}
             className="bg-[#C4FF00] hover:bg-lime-600 text-black px-8 py-2 rounded-sm w-50 text-lg font-semibold transition"
           >
             {t("heroBanner.watchButton")}

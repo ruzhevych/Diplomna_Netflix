@@ -131,6 +131,10 @@ export const getMovieCredits = (id: number): Promise<Credits> =>
   fetchDatailsFromTMDB(`/movie/${id}/credits`);
 
 
+export const getCreditsMovie = (id: number, page: number) => fetchFromTMDB(`/movie/${id}/credits`, page);
+export const getCreditsTv = (id: number, page: number) => fetchFromTMDB(`/tv/${id}/credits`, page);
+
+
 export interface Video {
   id: string;
   key: string;       

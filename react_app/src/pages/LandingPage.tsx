@@ -101,29 +101,31 @@ const LandingPage: React.FC = () => {
               Movies, series and lots of other content <br /> without limits
             </Trans>
           </h1>
-          <h2 className="text-lg md:text-2xl mb-4">
-            <Trans i18nKey="landingPage.heroSubtitle">
-              From <span className="text-[#C4FF00]">4,99 EUR</span>. You can cancel subscription anytime
-            </Trans>
-          </h2>
-          <p className="mb-6">
-            {t("landingPage.heroText")}
-          </p>
-          <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
-            <input
-              type="email"
-              placeholder={t("landingPage.emailPlaceholder")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-3 w-full sm:w-112 bg-black/70 border border-gray-500"
-            />
-            <button
-              onClick={() => navigate("/register", { state: { email } })}
-              className="bg-[#C4FF00]/70 px-6 py-3 rounded-sm font-bold text-lg hover:bg-[#C4FF00]/60 transition"
-            >
-              {t("landingPage.startButton")}
-            </button>
-          </div>
+          {!isAuthenticated && (
+            <>
+              <h2 className="text-lg md:text-2xl mb-4">
+                <Trans i18nKey="landingPage.heroSubtitle">
+                  From <span className="text-[#C4FF00]">4,99 EUR</span>. You can cancel subscription anytime
+                </Trans>
+              </h2>
+              <p className="mb-6">{t("landingPage.heroText")}</p>
+              <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
+                <input
+                  type="email"
+                  placeholder={t("landingPage.emailPlaceholder")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="px-4 py-3 w-full sm:w-112 bg-black/70 border border-gray-500"
+                />
+                <button
+                  onClick={() => navigate("/register", { state: { email } })}
+                  className="bg-[#C4FF00]/70 px-6 py-3 rounded-sm font-bold text-lg hover:bg-[#C4FF00]/60 transition"
+                >
+                  {t("landingPage.startButton")}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -237,15 +239,22 @@ const LandingPage: React.FC = () => {
                   <p className="text-gray-300 mb-6">
                     {selectedMovie.overview || t("landingPage.noDescription")}
                   </p>
-                  <a
-                    href="/login"
+                  <button
+                    onClick={() => {
+                      if (isAuthenticated) {
+                        navigate(`/movie/${selectedMovie.id}`);
+                      } else {
+                        navigate("/login");
+                      }
+                    }}
                     className="border text-white no-underline px-6 py-3 rounded-lg hover:bg-[#555555] transition flex items-center justify-center gap-2 font-bold"
                   >
                     {t("landingPage.startButton")}
                     <svg fill="currentColor" viewBox="0 24 24" className="w-5 h-5">
                       <path d="M5 3l14 9-14 9z" />
                     </svg>
-                  </a>
+                  </button>
+
                 </div>
               </div>
             </div>
