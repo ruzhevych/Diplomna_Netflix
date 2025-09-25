@@ -1,7 +1,7 @@
 
 
 const Footer = () => (
-  <footer className="bg-black text-gray-400 text-sm mt-12 border-t border-gray-700">
+  <footer className="bg-[#191716] text-gray-400 text-sm mt-12 border-t border-gray-700">
     <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
       <div>
         <p className="mb-2">

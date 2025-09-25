@@ -147,19 +147,23 @@ const LandingPage: React.FC = () => {
       </div>
       <section className="bg-black py-12 px-6">
         <div className="max-w-6xl mx-auto relative">
+          <div className="inline-flex justify-between w-full">
           <h2 className="text-2xl font-bold mb-6 text-white">{t("landingPage.popularNow")}</h2>
-          <button
-            onClick={() => scroll("left")}
-            className="absolute left-0 top-56 -translate-y-1/2 z-30 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+          <div className="flex">
+            <button
+            onClick={() => scroll('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
           >
-            &#8592;
+            <span className="text-5xl font-regular">‹</span>
           </button>
           <button
-            onClick={() => scroll("right")}
-            className="absolute right-0 top-56 -translate-y-1/2 z-30 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+            onClick={() => scroll('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
           >
-            &#8594;
+            <span className="text-5xl font-regular">›</span>
           </button>
+          </div>
+        </div>
           <div
             ref={scrollRef}
             className="flex gap-4 overflow-x-auto overflow-y-visible scrollbar-hide scroll-smooth py-2 px-4"
