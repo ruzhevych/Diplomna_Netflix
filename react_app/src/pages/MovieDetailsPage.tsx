@@ -412,9 +412,9 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
-                {getGenres(c.genres)?.map((g, idx) => (
-                  <span key={idx}>{g}</span>
-                ))}
+                {c.genres && getGenres(c.genres.map(g => g.id))?.map((g, idx) => (
+                <span key={idx}>{g}</span>
+              ))}
               </div>
               </div>
             </div>
@@ -492,9 +492,9 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
-                {getGenres(rec.genres)?.map((g, idx) => (
-                  <span key={idx}>{g}</span>
-                ))}
+                {rec.genres && getGenres(rec.genres.map(g => g.id))?.map((g, idx) => (
+                <span key={idx}>{g}</span>
+              ))}
               </div>
               {expandedItems.has(movie.id) && (
                 <div className="mt-4 transition-opacity duration-300 ease-in-out">
@@ -570,9 +570,9 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
-                {getGenres(sm.genres)?.map((g, idx) => (
-                  <span key={idx}>{g}</span>
-                ))}
+                {sm.genres && getGenres(sm.genres.map(g => g.id))?.map((g, idx) => (
+                <span key={idx}>{g}</span>
+              ))}
               </div>
               </div>
               </div>
