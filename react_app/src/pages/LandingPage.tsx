@@ -54,10 +54,12 @@ const LandingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-[#191716] text-white min-h-screen">
       <header className="absolute top-0 left-0 w-full z-20">
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
-          <img src={logo} alt="Logo" className="w-32 md:w-40" />
+          <Link to="/home">
+            <img src={logo} alt="Logo" className="w-28 md:w-40" />
+          </Link>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
             {isAuthReady ? (
@@ -66,7 +68,7 @@ const LandingPage: React.FC = () => {
                   <img
                     src={userProfile?.profilePictureUrl}
                     alt="User Avatar"
-                    className={`w-10 h-10 rounded-full border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
+                    className={`w-10 h-10 rounded-sm border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
                   />
                 </Link>
               ) : (
@@ -101,14 +103,16 @@ const LandingPage: React.FC = () => {
               Movies, series and lots of other content <br /> without limits
             </Trans>
           </h1>
-          {!isAuthenticated && (
-            <>
+          
               <h2 className="text-lg md:text-2xl mb-4">
                 <Trans i18nKey="landingPage.heroSubtitle">
                   From <span className="text-[#C4FF00]">4,99 EUR</span>. You can cancel subscription anytime
                 </Trans>
               </h2>
-              <p className="mb-6">{t("landingPage.heroText")}</p>
+              
+              {!isAuthenticated && (
+            <>
+            <p className="mb-6">{t("landingPage.heroText")}</p>
               <div className="flex rounded-sm flex-col sm:flex-row justify-center gap-4">
                 <input
                   type="email"
@@ -134,7 +138,7 @@ const LandingPage: React.FC = () => {
       <div className="relative">
         <div
           className="absolute -top-11 left-0 w-full h-10
-                      bg-gradient-to-r from-[#C4FF00]/20 via-[#C4FF00]/100 to-[#C4FF00]/20
+                      bg-gradient-to-t from-[#191716]/20 via-[#191716]  to-[#C4FF00]/100 
                       rounded-t-[50%]
                       shadow-[0_-20px_30px_rgba(0,0,0,0.6)]"
         />
@@ -143,12 +147,12 @@ const LandingPage: React.FC = () => {
       {/* ====================================================================================== */}
 
       <div className="relative">
-        <div className="absolute -top-10 left-0 w-full h-12 bg-black rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
+        <div className="absolute -top-10 left-0 w-full h-12 bg-gradient-to-b from-black via-[#0f0d0d] to-[#0f0d0d] rounded-t-[50%] shadow-[0_-20px_20px_rgba(0,255,0,0.4)]" />
       </div>
-      <section className="bg-black py-12 px-6">
+      <section className="bg-gradient-to-b from-[#0f0d0d] via-black/50 to-[#191716] py-12 px-6">
         <div className="max-w-6xl mx-auto relative">
           <div className="inline-flex justify-between w-full">
-          <h2 className="text-2xl font-bold mb-6 text-white">{t("landingPage.popularNow")}</h2>
+          <h2 className="text-4xl font-bold mb-6 text-white">{t("landingPage.popularNow")}</h2>
           <div className="flex">
             <button
             onClick={() => scroll('left')}
@@ -268,9 +272,9 @@ const LandingPage: React.FC = () => {
 
       {/* ====================================================================================== */}
 
-      <section className="bg-black py-16 px-6">
+      <section className="bg-gradient-to-t from-[#191716] via-black/50 to-[#191716] py-16 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-2xl font-bold text-white mb-8 tracking-wide">
+          <h2 className="text-4xl font-bold text-white mb-8 tracking-wide">
             {t("landingPage.moreReasons")}
           </h2>
           <div className="grid md:grid-cols-4 gap-8 text-center">
@@ -316,9 +320,9 @@ const LandingPage: React.FC = () => {
 
       {/* ====================================================================================== */}
 
-      <section className="bg-black py-12 px-6">
+      <section className="bg-gradient-to-t from-[#191716] via-black/50 to-[#191716] py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-2xl font-bold text-white mb-8 tracking-wide">
+          <h2 className="text-4xl  font-bold text-white mb-8 tracking-wide">
             {t("landingPage.faq.title")}
           </h2>
           <div className="space-y-2">
