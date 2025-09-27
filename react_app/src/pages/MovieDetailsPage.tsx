@@ -596,3 +596,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
 };
 
 export default MovieDetailsPage;
+
+
+
+

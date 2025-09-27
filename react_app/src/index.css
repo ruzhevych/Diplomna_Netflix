@@ -27,7 +27,12 @@ LIME - #C4FF00
 }
 
 .text-big{
-  font-size: 200px;
+  font-size: 250px;
+}
+
+.footer{
+  bottom: 0;
+
 }
 
 .scrollbar-hide {

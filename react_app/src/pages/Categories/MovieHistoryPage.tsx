@@ -68,7 +68,7 @@ export default function MovieHistoryPage() {
         );
         setItems(results);
       } catch (err: any) {
-        toast.error("Failed to load history 😢");
+        toast.error("Failed to load history ");
       } finally {
         setLoadingDetails(false);
       }
@@ -80,9 +80,9 @@ export default function MovieHistoryPage() {
   const handleRemove = async (movieId: number) => {
     try {
       await deleteFromHistory(movieId).unwrap();
-      toast.info("Removed from history ❌");
+      toast.info("Removed from history");
     } catch {
-      toast.error("Failed to remove 😢");
+      toast.error("Failed to remove ");
     }
   };
 
@@ -91,7 +91,7 @@ export default function MovieHistoryPage() {
       await clearHistory().unwrap();
       toast.info("History cleared 🗑️");
     } catch {
-      toast.error("Failed to clear history 😢");
+      toast.error("Failed to clear history ");
     }
   };
 
@@ -104,7 +104,7 @@ export default function MovieHistoryPage() {
           {items.length > 0 && (
             <button
               onClick={handleClear}
-              className="border border-red-400 text-red-400 px-4 py-2 rounded hover:bg-red-700 transition"
+              className="border border-lime-400 font-semibold text-white px-4 py-2 rounded hover:bg-lime-700/40 transition"
             >
               Clear History
             </button>
@@ -113,7 +113,7 @@ export default function MovieHistoryPage() {
 
         {(isLoading || loadingDetails) && <p className="text-gray-400">Loading...</p>}
         {isError && <p className="text-red-500">Error loading history</p>}
-        {!isLoading && items.length === 0 && <p className="text-gray-400">History is empty 😢</p>}
+        {!isLoading && items.length === 0 && <p className="text-gray-400">History is empty</p>}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {items.map((content) => (
@@ -142,7 +142,7 @@ export default function MovieHistoryPage() {
 
                   <button
                     onClick={() => handleRemove(content.movieId)}
-                    className="ml-auto border border-red-400 text-red-400 rounded-full p-2 hover:bg-red-700 transition"
+                    className="ml-auto border border-red-400 text-white rounded-full p-2 hover:bg-red-700 transition"
                   >
                     <X size={18} />
                   </button>

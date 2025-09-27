@@ -123,65 +123,66 @@ const Header = () => {
 
           <LanguageSwitcher />
 
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen((p) => !p)}
-              className="flex items-center gap-1 focus:outline-none"
-            >
-              {user?.profilePictureUrl ? (
-                <img
-                  src={user?.profilePictureUrl}
-                  alt={user.fullName}
-                  className="w-8 h-8 rounded-sm object-cover shadow-xl "
-                />
-              ) : (
-                <div className="bg-gradient-to-br from-[#C4FF00] to-[#C4FF00]/50 w-8 h-8 text-black rounded-sm flex items-center justify-center text-xs font-bold shadow-xl">
-                  {getInitials(user?.fullName || "")}
-                </div>
-              )}
-                <ChevronDown
-                            className="-mr-1 h-5 w-5 text-gray-400 transition-transform duration-200"
-                            aria-hidden="true"
-                            style={{ transform: menuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                          />
-                <path d="M5.25 7.5L10 12.25 14.75 7.5H5.25z" />
-              
-            </button>
+         <div className="relative">
+  <button
+    onClick={() => setMenuOpen((p) => !p)}
+    className="flex items-center gap-1 focus:outline-none"
+  >
+    {user?.profilePictureUrl ? (
+      <img
+        src={user?.profilePictureUrl}
+        alt={user.fullName}
+        className="w-8 h-8 rounded-sm object-cover shadow-xl"
+      />
+    ) : (
+      <div className="bg-gradient-to-br from-[#C4FF00] to-[#C4FF00]/50 w-8 h-8 text-black rounded-sm flex items-center justify-center text-xs font-bold shadow-xl">
+        {getInitials(user?.fullName || "")}
+      </div>
+    )}
+    <ChevronDown
+      className="-mr-1 h-5 w-5 text-gray-400 transition-transform duration-200"
+      style={{ transform: menuOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+    />
+  </button>
 
-            {menuOpen && (
-              <div className="absolute  left-1/3 -translate-x-1/2 mt-2 w-48 bg-black/60 text-white rounded-sm shadow-lg py-1 z-50">
-                <Link
-                  to="/profile"
-                  className="flex no-underline items-center gap-2 px-4 py-2 text-white hover:bg-neutral-800"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
-                  Account
-                </Link>
-                {/* <Link
-                  to="/profiles"
-                  className="flex no-underline items-center gap-2 text-white px-4 py-2 hover:bg-neutral-800"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3L19 5c0-1.66-1.34-3-3-3s-3 1.34-3 3v3c0 1.66 1.34 3 3 3zM6 11c1.66 0 2.99-1.34 2.99-3L9 5c0-1.66-1.34-3-3-3S3 3.34 3 5v3c0 1.66 1.34 3 3 3zm10 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zM6 13c-2.33 0-7 1.17-7 3.5V19h7v-2.5c0-2.33 4.67-3.5 7-3.5z" />
-                  </svg>
-                  Managing Profiles
-                </Link> */}
-                <div className="border-t w-10/12 items-center justify-center ml-4 border-neutral-700 my-2" />
-                <button
-                  onClick={() => {
-                    
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                  }}
-                  className="flex items-left items-center gap-2 flex-1 px-4 py-2  hover:font-semibold rounded-sm transition">
-                  <LogOut size={18} />
-                  {t("profile.overview.logOut")}
-                </button>
-              </div>
-            )}
-          </div>
+  {menuOpen && (
+    <div
+      className="
+        absolute 
+        left-1/2 -translate-x-1/2 
+        mt-2 
+        w-48 
+        bg-black/80 
+        text-white 
+        rounded-md 
+        shadow-lg 
+        py-1 
+        z-50
+      "
+    >
+      <Link
+        to="/profile"
+        className="flex no-underline items-center gap-2 px-4 py-2 text-white hover:bg-neutral-800"
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+        Account
+      </Link>
+      <div className="border-t border-neutral-700 my-2" />
+      <button
+        onClick={() => {
+          localStorage.removeItem("accessToken");
+          navigate("/login");
+        }}
+        className="flex items-center gap-2 px-4 py-2 w-full hover:bg-neutral-800 rounded-sm transition"
+      >
+        <LogOut size={18} />
+        {t("profile.overview.logOut")}
+      </button>
+    </div>
+  )}
+</div>
         </div>
       </div>
     </header>

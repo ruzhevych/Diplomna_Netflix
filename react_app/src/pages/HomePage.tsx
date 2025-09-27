@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
+
 import "../index.css";
 import Header from "../components/Header/Header";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef} from "react";
 import Row from "../components/Row";
 import HeroBanner from "../components/HeroBanner";
 import Footer from "../components/Footer/Footer"
@@ -20,31 +21,58 @@ import AboutModal from "../components/AboutModal";
 const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   const [items, setItems] = useState<Movie[]>([]);
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const load = async () => {
       try {
         const data = await fetcher();
-        setItems(data.results.slice(0, 7));
+        setItems(data.results.slice(0, 10));
       } catch (err) {
         console.error("Помилка завантаження:", err);
       }
     };
     load();
   }, [fetcher]);
+  const scroll = (direction: 'left' | 'right') => {
+    const container = containerRef.current;
+    if (!container) return;
+    const scrollAmount = container.clientWidth;
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
 
   return (
-    <div className="mb-10">
-      <h2 className="font-bold mb-4 ml-6 text-3xl text-left">{title}</h2>
-      <div className="flex w-full gap-24 overflow-x-auto scrollbar-hide justify-center items-center">
+    <div className="relative p-4 mb-10">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="font-bold mb-4 text-3xl text-left">{title}</h2>
+       <div className="flex gap-1 mr-5">
+          <button
+            onClick={() => scroll('left')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">‹</span>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="w-8 h-12 text-white flex items-center justify-center rounded-md hover:bg-opacity-75 transition-colors duration-200"
+          >
+            <span className="text-5xl font-regular">›</span>
+          </button>
+        </div>
+      </div>
+      
+      <div ref={containerRef} className="flex overflow-x-auto gap-2 scrollbar-hide scroll-smooth">
         {items.map((item, index) => (
-          <div key={item.id} className="relative flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
+          <div key={item.id} className="relative ml-32 flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
             <span
-              className="absolute -left-20 -top-8 z-0 text-big font-black
+              className="absolute -left-24 -top-24 z-0 text-big font-black
                 text-[#0d0d0d]
                 drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
-                [-webkit-text-stroke:2px_#C4FF00]
-                [text-shadow:_0_0_2px_black,0_0_10px_rgba(0,0,0,0.8)]"
+                [-webkit-text-stroke:8px_#C4FF00]
+                [text-shadow:_0_0_px_black,0_0_10px_rgba(0,0,0,0.8)]"
             >
               {index + 1}
             </span>
