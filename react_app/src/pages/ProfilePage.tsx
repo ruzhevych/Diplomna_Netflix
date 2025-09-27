@@ -56,6 +56,7 @@ const ProfilePage = () => {
         expYear: card.expYear,
       },
     });
+    window.location.reload()
   };
 
   const handleCancel = async () => {
@@ -110,7 +111,6 @@ const ProfilePage = () => {
                       : "text-[#9c9797] hover:text-[#C4FF00]/90 "
                   }`}
                 >
-                  
                   {tab.label}
                 </li>
               );
@@ -250,7 +250,7 @@ const ProfilePage = () => {
 
           {activeTab === "subscription" && (
             <section className="p-6">
-              <h3 className="text-3xl font-semibold text-white pb-6">
+              <h3 className="text-4xl font-bold text-white pb-6">
                 {t("profile.subscription.title")}
               </h3>
 
@@ -263,25 +263,25 @@ const ProfilePage = () => {
                   {cards?.map((card) => (
                     <div key={card.id} className="mb-6">
                       {/* Блок з планом */}
-                      <div className="bg-lime-800/70  rounded-lg shadow-lg overflow-hidden border border-lime-700">
-                        <div className="p-4 text-white  space-y-2">
+                      <div className="bg-[#C4FF00]/20  rounded-lg shadow-lg overflow-hidden border-t-2 border-[#C4FF00]">
+                        <div className="p-4 text-white space-y-2">
                           <h4 className="text-lg font-semibold">
                             {user?.subscriptionType.toUpperCase() || "Standart"}
                           </h4>
-                          <p className="text-sm text-gray-200">
+                          <p className="text-lg font-medium">
                             {user?.subscriptionType.toLowerCase() === "basic" ? "1 device, 720p (HD)" : 
                              user?.subscriptionType.toLowerCase() === "standard" ? "2 devices, 1080p (Full HD)" : 
                              user?.subscriptionType.toLowerCase() === "premium" ? "4 devices, 4K (Ultra HD) + HDR" :
                              ""}
                           </p>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-lg font-medium">
                             {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
                           </p>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-lg font-medium">
                             {t("profile.subscription.nextPayment")}: {t("profile.subscription.nextDate")}
                           </p>
 
-                          <div className="flex items-center gap-2 mt-3">
+                          <div className="flex items-center text-lg font-medium gap-2 mt-3">
                             <img
                               src={
                                 card.brand.toLowerCase() === "visa" ? visa :
@@ -299,22 +299,22 @@ const ProfilePage = () => {
                         </div>
                         <button
                           onClick={() => navigate("/choose-plan")}
-                          className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition border-t border-lime-700">
+                          className="w-full py-2 text-white text-lg font-medium hover:bg-black/20 transition border-t-2 border-[#C4FF00]">
                             {t("profile.subscription.changePlan")}
                         </button>
                       </div>
 
-                      <div className="bg-lime-800/70 rounded-lg shadow-lg overflow-hidden border border-lime-700 mt-4">
+                      <div className="bg-[#C4FF00]/20 rounded-lg shadow-lg overflow-hidden border-t-2 border-[#C4FF00] mt-4">
                         <div className="p-4 text-white space-y-2">
                           <h4 className="text-lg font-semibold">Next payment</h4>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-lg font-medium text-gray-300">
                             {t("profile.subscription.nextDate")}
                           </p>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-lg font-medium text-gray-300">
                             {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
                           </p>
 
-                          <div className="flex items-center gap-2 mt-3">
+                          <div className="flex font-medium items-center gap-2 mt-3">
                             <img
                               src={
                                 card.brand.toLowerCase() === "visa" ? visa :
@@ -332,7 +332,7 @@ const ProfilePage = () => {
                         </div>
                         <button
                           onClick={() => setEditingCard(card)}
-                          className="w-full py-2 bg-black/40 text-white text-sm hover:bg-black/60 transition border-t border-lime-700"
+                          className="w-full py-2 text-white text-lg font-medium hover:bg-black/20 transition border-t-2 border-[#C4FF00]"
                         >
                           Change payment method
                         </button>
@@ -344,7 +344,7 @@ const ProfilePage = () => {
 
               <button
                 onClick={handleCancel}
-                className="w-full py-2 bg-[#9A0000] text-white text-sm hover:bg-[#7A0000] transition rounded-sm"
+                className="w-full py-2 bg-[#9A0000] text-white text-lg font-medium hover:bg-[#7A0000] transition rounded-sm"
               >
                 Cancel subscription
               </button>
@@ -362,22 +362,25 @@ const ProfilePage = () => {
           )}
 
           {activeTab === "security" && (
-            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg space-y-4">
-              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 border-b border-gray-700">
+            <section className=" backdrop-blur-md rounded-sm p-6 space-y-4">
+              <h3 className="text-4xl font-bold text-gray-100 pb-3 mb-6 border-b border-gray-700">
                 {t("profile.security.title")}
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="text-lg font-medium mb-4">
                 {t("profile.security.description")}
               </p>
-              <ChangePasswordRequest email={user?.email || ""} />
+              <p className="text-lg font-medium mb-4">
+                <ChangePasswordRequest email={user?.email || ""} />         
+              </p>
+              
             </section>
           )}
           {activeTab === "devices" && (
             <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
-              <h3 className="text-xl font-semibold text-gray-100 pb-3 mb-6 -b -gray-700">
+              <h3 className="text-4xl font-bold text-gray-100 pb-3 mb-6 -b -gray-700">
                 {t("profile.devices.title")}
               </h3>
-              <p className="text-gray-400">{t("profile.devices.description")}</p>
+              <p className="text-lg font-medium text-gray-400">{t("profile.devices.description")}</p>
             </section>
           )}
           {user?.role === "Admin" && activeTab === "admin" && (

@@ -19,7 +19,7 @@ const LanguageSwitcher = () => {
       <div>
         <button
           type="button"
-          className="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-white font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+          className="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-white font-semibold "
           onClick={() => setIsOpen(!isOpen)}
         >
           {currentLanguage}
@@ -32,7 +32,7 @@ const LanguageSwitcher = () => {
       </div>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-20 origin-top-right rounded-md bg-[#191716] shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <div className="absolute right-0 mt-2 w-20 origin-top-right rounded-md bg-[#191716] ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             <button
               onClick={() => changeLanguage('ua')}
