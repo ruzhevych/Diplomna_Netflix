@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { useUpdateUserMutation } from "../services/userApi";
+// Примітка: Оскільки компілятор не може знайти цей шлях, 
+// ми припускаємо, що це зовнішній файл, який існує у вашій структурі.
+import { useUpdateUserMutation } from "../services/userApi"; 
 import type { UserProfile } from "../types/user";
 import { User, Mail, Lock, Image as ImageIcon, X } from "lucide-react";
-import { useTranslation } from "react-i18next";
+// Примітка: Припускаємо, що це зовнішня бібліотека.
+import { useTranslation } from "react-i18next"; 
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -12,7 +15,7 @@ interface ProfileEditModalProps {
 }
 
 const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProps) => {
-  const { t } = useTranslation();
+  const { t } = typeof useTranslation === 'function' ? useTranslation() : { t: (key: string) => key };
   
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +24,6 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
 
   const [updateUser] = useUpdateUserMutation();
 
-  // Synchronize user data with the form's initial state when the modal opens
   useEffect(() => {
     if (isOpen && user) {
       setFullName(user.fullName || "");
@@ -29,7 +31,6 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
     }
   }, [isOpen, user]);
 
-  // Reset the state when the modal closes
   useEffect(() => {
     if (!isOpen) {
       setPassword("");
@@ -44,15 +45,39 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
     const formData = new FormData();
     formData.append("Id", user.id.toString());
     
+
+    formData.append("FullName", fullName);
+    formData.append("Email", email);
+
+    let shouldUpdate = false; 
+
+
     if (field === 'fullName') {
-      formData.append("FullName", fullName);
+        if (fullName.trim() !== (user.fullName || '').trim()) {
+            shouldUpdate = true;
+        }
     } else if (field === 'email') {
-      formData.append("Email", email);
+        if (email.trim() !== (user.email || '').trim()) {
+            shouldUpdate = true;
+        }
     } else if (field === 'password') {
-      if (password) formData.append("Password", password);
+        if (password) {
+            formData.append("Password", password);
+            shouldUpdate = true;
+        }
     } else if (field === 'photo') {
-      if (avatar) formData.append("ProfilePictureFile", avatar);
+        if (avatar) {
+            formData.append("ProfilePictureFile", avatar);
+            shouldUpdate = true;
+        }
     }
+
+    if (!shouldUpdate) {
+        onClose();
+        return;
+    }
+
+
 
     try {
       await updateUser(formData).unwrap();
@@ -71,7 +96,7 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
         className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 opacity-100"
       />
       <div
-        className="relative bg-[#191716] backdrop-blur-xl p-8 rounded-lg  w-full max-w-lg text-white
+        className="relative bg-[#191716] backdrop-blur-xl p-8 rounded-lg w-full max-w-lg text-white
                     transform transition-all duration-300 scale-100 opacity-100 shadow-[0_0_5px_#C4FF00]"
       >
         <button
@@ -96,7 +121,7 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
                       : user?.profilePictureUrl
                   }
                   alt={t("profileEditModal.avatarAlt")}
-                  className="w-28 h-28 rounded-sm object-cover border-1 border-lime-500"
+                  className="w-56 h-56 rounded-sm object-cover border-1 border-lime-500"
                 />
                 <label className="absolute bottom-0 right-0 bg-lime-500 text-black p-2 rounded-full cursor-pointer hover:bg-lime-600 transition">
                   <ImageIcon size={18} />
@@ -113,46 +138,46 @@ const ProfileEditModal = ({ isOpen, onClose, field, user }: ProfileEditModalProp
 
           {field === 'fullName' && (
             <div className="relative">
-              
+              <User className="absolute top-4 left-3 text-gray-400" size={20} />
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder={t("profileEditModal.namePlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
               />
             </div>
           )}
 
           {field === 'email' && (
             <div className="relative">
-              
+              <Mail className="absolute left-3 top-4 text-gray-400" size={20} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("profileEditModal.emailPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-sm bg-[#191716] text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
               />
             </div>
           )}
 
           {field === 'password' && (
             <div className="relative">
-              
+              <Lock className="absolute left-3 top-4 text-gray-400" size={20} />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("profileEditModal.passwordPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-sm bg-[#191716] text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#191716] border-1 border-gray-600 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-500 outline-none transition"
               />
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full py-2.5 bg-[#C4FF00] hover:bg-lime-600 text-black font-semibold rounded-lg text-xl transition duration-200  shadow-lime-500/30"
+            className="w-full py-2.5 bg-[#C4FF00] hover:bg-lime-600 text-black font-semibold rounded-lg text-xl transition duration-200 shadow-lime-500/30"
           >
             {t("profileEditModal.saveChanges")}
           </button>
