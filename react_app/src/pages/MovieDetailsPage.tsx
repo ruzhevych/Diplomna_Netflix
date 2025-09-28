@@ -191,9 +191,14 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
       .slice(0, 3); 
   };
 
-  const handlePlay = (id: number) => {
+  const handlePlay = async (id: number, name: string) => {
+    await addToHistory({
+      id: id,
+      mediaType: "movie",
+      name: name,
+    }).unwrap();
     navigate(`/movie/${id}`);
-    window.location.reload()
+    window.location.reload();
   };
 
 
@@ -201,8 +206,12 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
     try {
       await AddForLater({ contentId: id, contentType: "movie" }).unwrap();
       toast.success(t("movieDetails.forLater.added"));
-    } catch {
-      toast.error(t("movieDetails.forLater.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 
@@ -213,8 +222,12 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
       await addFavorite(payload).unwrap();
       toast.success(t("movieDetails.favorites.added"));
       console.log("➕ Added to favorites:", id);
-    } catch {
-      toast.error(t("movieDetails.favorites.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
   
@@ -384,7 +397,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
               <div className="bg-[#191716] h-24 rounded-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={() => handlePlay(c.id)}
+                  onClick={() => handlePlay(c.id, c.title)}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
@@ -464,7 +477,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
                 <div className="bg-[#191716] h-24 rounded-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={() => handlePlay(rec.id)}
+                  onClick={() => handlePlay(rec.id, rec.title)}
                   className="bg-white text-black rounded-full p-2 hover:scale-105 transition"
                 >
                   <Play size={18} />
@@ -542,7 +555,7 @@ const MovieDetailsPage = ({ title, fetchData, genres }: MediaGridProps) => {
                 <div className="bg-[#191716] h-24 rounded-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={() => handlePlay(sm.id)}
+                  onClick={() => handlePlay(sm.id, sm.title)}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />

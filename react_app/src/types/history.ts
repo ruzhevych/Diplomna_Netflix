@@ -1,19 +1,19 @@
 export interface HistoryItem {
-  id: number;     
+  id: number;
   name: string
   mediaType: "movie" | "tv"; 
 }
 
 export interface GetHistoryItem {
-  id: number;       
+  id: number;    
+  movieId: number;   
   name: string
   mediaType: "movie" | "tv";  
   viewedAt: string;
 }
 
-
-
 export interface HistoryItemDetails {
+  id: number;
   movieId: number;
   mediaType: "movie" | "tv";
   title?: string;

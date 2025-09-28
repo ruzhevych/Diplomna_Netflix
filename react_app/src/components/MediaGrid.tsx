@@ -6,6 +6,7 @@ import { useAddFavoriteMutation } from "../services/favoritesApi";
 import { useAddForLaterMutation } from "../services/forLaterApi";
 import { useFilters } from "../context/FilterContext";
 import { useAddToHistoryMutation } from "../services/historyApi";
+import { useTranslation } from "react-i18next";
 
 interface MediaGridProps {
   title: string;
@@ -25,6 +26,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
   const [AddForLater] = useAddForLaterMutation();
   const { filters } = useFilters();
   const [addToHistory] = useAddToHistoryMutation();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -60,6 +62,7 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       name: name,
     }).unwrap();
     navigate(`/movie/${id}`);
+    window.location.reload();
   };
 
   const handleAdd = async (id: number) => {
@@ -68,8 +71,12 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       await AddForLater(payload).unwrap();
       toast.success("Added to 'Watch Later' list");
       console.log("➕ Added to list:", id);
-    } catch {
-      toast.error("Failed to add to 'Watch Later' list 😢");
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 
@@ -79,8 +86,12 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
       await addFavorite(payload).unwrap();
       toast.success("Added to favorites 👍");
       console.log("➕ Added to favorites:", id);
-    } catch {
-      toast.error("Failed to add to favorites 😢");
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 

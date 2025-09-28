@@ -34,18 +34,21 @@ public class MovieHistoryController : ControllerBase
         return Ok(history);
     }
     
-    [HttpDelete("delete/{movieId}")]
-    public async Task<IActionResult> DeleteFromHistory(int movieId)
+    [HttpDelete("delete/{Id}")]
+    public async Task<IActionResult> DeleteFromHistory(int id)
     {
-        var result = await _historyService.DeleteFromHistoryAsync(movieId);
-        return result ? Ok("Entry removed from history") : NotFound("Entry not found");
+        var result = await _historyService.DeleteFromHistoryAsync(id);
+        if (!result)
+            return NotFound(new { success = false, message = "Entry not found" });
+
+        return Ok(new { success = true, message = "Entry removed from history" });
     }
 
     [HttpDelete("clear")]
     public async Task<IActionResult> ClearHistory()
     {
         var count = await _historyService.ClearHistoryAsync();
-        return Ok($"{count} items deleted from history");
+        return Ok(new { success = true, deleted = count, message = $"{count} items deleted from history" });
     }
 
 }

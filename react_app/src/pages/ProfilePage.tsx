@@ -137,7 +137,7 @@ const ProfilePage = () => {
                 
                 {user?.profilePictureUrl ? (
                   <img
-                    src={user?.profilePictureUrl}
+                    src={`http://localhost:5170/${user?.profilePictureUrl}`}
                     alt={user.fullName}
                     className="w-64 h-64 rounded-sm object-cover "
                   />
@@ -198,7 +198,7 @@ const ProfilePage = () => {
                   {/* -------------------- BUTTONS --------------------- */}
                    <div className="">
                     <button
-                      onClick={() => navigate("/movie/history", { state: { user } })}
+                      onClick={() => {navigate("/movie/history", { state: { user } }); window.location.reload();}}
                       className="w-full flex items-center mt-4 justify-center gap-2 flex-1 px-4 py-2 mb-4 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black rounded-sm transition font-semibold"
                     >
                       

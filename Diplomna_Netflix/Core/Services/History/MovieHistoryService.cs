@@ -61,18 +61,19 @@ public class MovieHistoryService : IMovieHistoryService
             .OrderByDescending(h => h.ViewedAt)
             .Select(h => new MediaItemDto
             {
-                Id = h.MovieId,
+                Id = h.Id,
+                MovieId = h.MovieId,
                 MediaType = h.MediaType,
                 ViewedAt = h.ViewedAt
             })
             .ToListAsync();
     }
 
-    public async Task<bool> DeleteFromHistoryAsync(int movieId)
+    public async Task<bool> DeleteFromHistoryAsync(int id)
     {
         var user = await GetCurrentUserAsync();
         var history = await _historyRepo.Query()
-            .FirstOrDefaultAsync(h => h.MovieId == movieId && h.UserId == user.Id);
+            .FirstOrDefaultAsync(h => h.Id == id && h.UserId == user.Id);
 
         if (history == null)
             return false;

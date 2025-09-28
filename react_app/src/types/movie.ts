@@ -4,6 +4,7 @@ export interface Movie {
   belongs_to_collection?: BelongsToCollection | null;
   budget?: number;
   genres?: Genre[] | undefined;
+  genre_ids?: Genre_Ids[] | undefined;
   homepage?: string;
   id: number;
   imdb_id?: string | null;
@@ -35,6 +36,7 @@ export interface Series {
   episode_run_time?: number[];
   first_air_date: string;
   genres?: Genre[];
+  genre_ids?: Genre_Ids[] | undefined;
   homepage?: string;
   id: number;
   in_production?: boolean;
@@ -74,6 +76,10 @@ export interface BelongsToCollection {
 export interface Genre {
   id: number;
   name: string;
+}
+
+export interface Genre_Ids{
+  id: number;
 }
 
 export interface ProductionCompany {
