@@ -24,7 +24,8 @@ import RatingAndComments from "../components/RatingAndComments";
 import { useTranslation } from "react-i18next";
 
 const SeriesDetailsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; 
   const { id } = useParams<{ id: string }>();
   const seriesId = Number(id);
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const SeriesDetailsPage = () => {
   const [similar, setSimilar] = useState<Series[]>([]);
   const [recommendations, setRecommendations] = useState<Series[]>([]);
   const [creditsTv, setCreditsTv] = useState<Credits | null>(null);
+  const [openedRec, setOpenedRec] = useState<null | typeof recommendations[0]>(null);
 
   const { data: favorites } = useGetFavoritesQuery();
   const [addFavorite] = useAddFavoriteMutation();
@@ -75,10 +77,10 @@ const SeriesDetailsPage = () => {
     if (!seriesId) return;
     (async () => {
       try {
-        const details = await getSeriesDetails(seriesId);
+        const details = await getSeriesDetails(seriesId, currentLanguage);
         setSeries(details);
 
-        const vids = await getSeriesVideos(seriesId);
+        const vids = await getSeriesVideos(seriesId, currentLanguage);
         setVideos(
           vids.results.filter(
             (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -86,14 +88,14 @@ const SeriesDetailsPage = () => {
         );
 
         
-        setSimilar((await getSimilarTv(seriesId, 1)).results || []);
-        setRecommendations((await getRecomendationsTv(seriesId, 1)).results || []);
-        setCreditsTv(await getCreditsTv(seriesId, 1));
+        setSimilar((await getSimilarTv(seriesId, 1, currentLanguage)).results || []);
+        setRecommendations((await getRecomendationsTv(seriesId, 1, currentLanguage)).results || []);
+        setCreditsTv(await getCreditsTv(seriesId, 1, currentLanguage));
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [seriesId]);
+  }, [seriesId, currentLanguage]);
 
   useEffect(() => {
     if (favorites) {
@@ -149,12 +151,12 @@ const SeriesDetailsPage = () => {
     const handleExpand = (id: number) => {
       console.log("🔽 Expand details:", id);
     };
-    const getGenres = (genreIds: number[]) => {
-    return genreIds
-      ?.map((id) => genreIds.find((g) => g.id === id)?.name)
-      .filter(Boolean)
-      .slice(0, 3); 
-  };
+  //   const getGenres = (genreIds: number[]) => {
+  //   return genreIds
+  //     ?.map((id) => genreIds.find((g) => g.id === id)?.name)
+  //     .filter(Boolean)
+  //     .slice(0, 3); 
+  // };
 
   if (!series) {
     return (
@@ -415,7 +417,7 @@ const SeriesDetailsPage = () => {
                   <ThumbsUp size={18} />
                 </button>
                 <button
-                  onClick={() => handleExpand(rec.id)}
+                  onClick={() => setOpenedRec(rec)}
                   className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                 >
                   <ChevronDown size={18} />
@@ -425,10 +427,25 @@ const SeriesDetailsPage = () => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
-                {rec.genres && getGenres(rec.genres.map(g => g.id))?.map((g, idx) => (
-                <span key={idx}>{g}</span>
-              ))}
+                
               </div>
+              {openedRec && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 ">
+                <div className="bg-[#191716] max-w-lg w-full rounded-lg p-6 relative shadow-[0_0_2px_#C4FF00] animate-fadeIn">
+                  <button
+                    onClick={() => setOpenedRec(null)}
+                    className="absolute top-2 right-2 text-[#C4FF00] hover:text-gray-400"
+                  >
+                    ✕
+                  </button>
+                  <h3 className="text-[#C4FF00] text-xl mb-4">{openedRec.name}</h3>
+                  <hr />
+                  <p className="text-sm text-gray-200 overflow-y-auto max-h-64">
+                    {openedRec.overview}
+                  </p>
+                </div>
+              </div>
+            )}
               </div>
               </div>
             ))}
@@ -464,7 +481,7 @@ const SeriesDetailsPage = () => {
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
-                  alt={sm.title}
+                  alt={sm.name}
                   className="rounded-sm shadow-md min-w-64 h-80 object-cover "
                 />
                 <div className="bg-[#191716] h-24 rounded-lg p-2 ">
@@ -488,7 +505,7 @@ const SeriesDetailsPage = () => {
                   <ThumbsUp size={18} />
                 </button>
                 <button
-                  onClick={() => handleExpand(sm.id)}
+                  onClick={() => setOpenedRec(sm)}
                   className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
                 >
                   <ChevronDown size={18} />
@@ -498,10 +515,25 @@ const SeriesDetailsPage = () => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
-                {sm.genres && getGenres(sm.genres.map(g => g.id))?.map((g, idx) => (
-                <span key={idx}>{g}</span>
-              ))}
+                
               </div>
+              {openedRec && (
+              <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50 ">
+                <div className="bg-[#191716] max-w-lg w-full rounded-lg p-6 relative shadow-[0_0_2px_#C4FF00] animate-fadeIn">
+                  <button
+                    onClick={() => setOpenedRec(null)}
+                    className="absolute top-2 right-2 text-[#C4FF00] hover:text-gray-400"
+                  >
+                    ✕
+                  </button>
+                  <h3 className="text-[#C4FF00] text-xl mb-4">{openedRec.name}</h3>
+                  <hr />
+                  <p className="text-sm text-gray-200 overflow-y-auto max-h-64">
+                    {openedRec.overview}
+                  </p>
+                </div>
+              </div>
+            )}
               </div>
               </div>
             ))}

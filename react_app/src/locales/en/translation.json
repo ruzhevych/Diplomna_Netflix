@@ -150,6 +150,10 @@
     "minutes": "min",
     "trailer": "Watch",
     "collection": "Collection",
+    "director":"Director",
+    "producers":"Producers",
+    "actors":"Actors",
+    "writers":"Writers",
     "recommendations": "Recommendations",
     "similar": "Similar movies",
     "forLater": {
@@ -223,6 +227,8 @@
   "choosePlan": {
     "backButton": "Back",
     "title": "Choose your tariff plan",
+    "save": "Let's Go",
+
     "plans": {
       "basic": {
         "name": "Basic",
@@ -236,6 +242,7 @@
         "name": "Premium",
         "quality": "Best"
       }
+      
     },
     "labels": {
       "price": "Monthly price",

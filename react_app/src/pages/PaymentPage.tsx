@@ -24,7 +24,6 @@ const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // сюди передаємо всі дані з ChoosePlanPage
   const { selectedPlan, fullName, email, password, googleTempToken } = location.state || {};
 
   const planInfo = selectedPlan ? plans[selectedPlan.toLowerCase()] : null;

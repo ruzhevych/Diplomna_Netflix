@@ -18,7 +18,7 @@ import type { Movie } from "../types/movie";
 import RowTv from "../components/RowTv";
 import AboutModal from "../components/AboutModal"; 
 
-const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
+const Top10Row = ({ title, fetcher, languageCode }: { title: string; fetcher: (page: number, lang: string) => Promise<any>; languageCode: string }) => {
   const [items, setItems] = useState<Movie[]>([]);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -26,14 +26,15 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetcher();
+        const data = await fetcher(1, languageCode); 
         setItems(data.results.slice(0, 10));
       } catch (err) {
         console.error("Помилка завантаження:", err);
       }
     };
     load();
-  }, [fetcher]);
+  }, [fetcher, languageCode]);
+  
   const scroll = (direction: 'left' | 'right') => {
     const container = containerRef.current;
     if (!container) return;
@@ -64,9 +65,9 @@ const Top10Row = ({ title, fetcher }: { title: string; fetcher: any }) => {
         </div>
       </div>
       
-      <div ref={containerRef} className="flex overflow-x-auto gap-2 scrollbar-hide scroll-smooth">
+      <div ref={containerRef} className="flex overflow-x-auto gap-2 scrollbar-hide overflow-y-hidden scroll-smooth">
         {items.map((item, index) => (
-          <div key={item.id} className="relative ml-32 flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
+          <div key={item.id} className="relative ml-28 flex-shrink-0 hover:scale-95 transition-transform" onClick={() => navigate(`/tv/${item.id}`)}>
             <span
               className="absolute -left-24 -top-24 z-0 text-big font-black
                 text-[#0d0d0d]
@@ -92,6 +93,9 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   
+  // КЛЮЧОВИЙ КРОК 1: Отримуємо поточну мову
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; // 'ua' або 'en'
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
@@ -99,14 +103,14 @@ const HomePage = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await getPopularMovies(1);
+        const data = await getPopularMovies(1, currentLanguage); 
         setMovies(data.results);
       } catch (err) {
         console.error("Помилка при завантаженні фільмів:", err);
       }
     };
     loadMovies();
-  }, []);
+  }, [currentLanguage]);
 
   const handleOpenModal = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -122,7 +126,6 @@ const HomePage = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-  const { t } = useTranslation();
   return (
     <div className="bg-black/95 text-white overflow-x-auto scrollbar-hide">
       
@@ -131,12 +134,16 @@ const HomePage = () => {
         <HeroBanner onAboutClick={handleOpenModal} /> 
 
         <section className="px-2">
-          <Row title={t('homePage.movies')} fetcher={() => getPopularMovies(1)} />
-          <RowTv title={t('homePage.tv')} fetcher={() => getPopularTV(1)} />
-          <RowTv title={t('homePage.anime')} fetcher={() => getAnime(1)} />
-          <Row title={t('homePage.cartoons')} fetcher={() => getCartoons(1)} />
-          <Row title={t('homePage.newAndPopular')} fetcher={() => getUpcomingMovies(1)} />
-          <Top10Row title={t('homePage.top10')} fetcher={() => getPopularTV(1)} />
+          <Row title={t('homePage.movies')} fetcher={() => getPopularMovies(1, currentLanguage)} />
+          <RowTv title={t('homePage.tv')} fetcher={() => getPopularTV(1, currentLanguage)} />
+          <RowTv title={t('homePage.anime')} fetcher={() => getAnime(1, currentLanguage)} />
+          <Row title={t('homePage.cartoons')} fetcher={() => getCartoons(1, currentLanguage)} />
+          <Row title={t('homePage.newAndPopular')} fetcher={() => getUpcomingMovies(1, currentLanguage)} />
+          <Top10Row 
+              title={t('homePage.top10')} 
+              fetcher={(page: number, lang: string) => getPopularTV(page, lang)}
+              languageCode={currentLanguage} 
+          />
         </section>
       </div>
       <Footer />
