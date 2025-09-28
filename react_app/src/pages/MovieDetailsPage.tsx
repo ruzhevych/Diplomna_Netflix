@@ -186,9 +186,14 @@ const MovieDetailsPage = () => {
   };
 
 
-  const handlePlay = (id: number) => {
+  const handlePlay = async (id: number, name: string) => {
+    await addToHistory({
+      id: id,
+      mediaType: "movie",
+      name: name,
+    }).unwrap();
     navigate(`/movie/${id}`);
-    window.location.reload()
+    window.location.reload();
   };
 
 
@@ -196,8 +201,12 @@ const MovieDetailsPage = () => {
     try {
       await AddForLater({ contentId: id, contentType: "movie" }).unwrap();
       toast.success(t("movieDetails.forLater.added"));
-    } catch {
-      toast.error(t("movieDetails.forLater.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 
@@ -208,8 +217,12 @@ const MovieDetailsPage = () => {
       await addFavorite(payload).unwrap();
       toast.success(t("movieDetails.favorites.added"));
       console.log("➕ Added to favorites:", id);
-    } catch {
-      toast.error(t("movieDetails.favorites.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
   
@@ -383,7 +396,7 @@ const MovieDetailsPage = () => {
               <div className="bg-[#191716] h-24 rounded-b-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={(e) => { e.stopPropagation(); handlePlay(c.id); }}
+                  onClick={(e) => { e.stopPropagation(); handlePlay(c.id, c.title); }}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
@@ -460,7 +473,7 @@ const MovieDetailsPage = () => {
                 <div className="bg-[#191716] h-24 rounded-b-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={(e) => { e.stopPropagation(); handlePlay(rec.id); }}
+                  onClick={(e) => { e.stopPropagation(); handlePlay(rec.id, rec.title); }}
                   className="bg-white text-black rounded-full p-2 hover:scale-105 transition"
                 >
                   <Play size={18} />
@@ -532,7 +545,7 @@ const MovieDetailsPage = () => {
                 <div className="bg-[#191716] h-24 rounded-b-lg p-2">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={(e) => { e.stopPropagation(); handlePlay(sm.id); }}
+                  onClick={(e) => { e.stopPropagation(); handlePlay(sm.id, sm.title); }}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />

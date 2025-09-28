@@ -20,12 +20,18 @@ public class FavoritesController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] FavoriteCreateDto dto)
-
     {
-        if (dto == null)
-            return BadRequest("DTO is null");
-        var result = await _favoriteService.AddAsync(dto);
-        return Ok(result);
+        try
+        {
+            if (dto == null)
+                return BadRequest("DTO is null");
+            var result = await _favoriteService.AddAsync(dto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpGet]

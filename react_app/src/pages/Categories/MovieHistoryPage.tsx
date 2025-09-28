@@ -9,6 +9,7 @@ import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
 import { useTranslation } from "react-i18next";
 
 export interface HistoryItemDetails {
+  id: number;
   movieId: number;
   mediaType: "movie" | "tv";
   title?: string;
@@ -51,19 +52,21 @@ export default function MovieHistoryPage() {
         const results = await Promise.all(
           history.map(async (h) => {
             if (h.mediaType === "movie") {
-              const data = await getMovieDetails(h.id, currentLanguage);
+              const data = await getMovieDetails(h.movieId, currentLanguage);
               return {
                 ...data,
+                id: h.id,
                 mediaType: "movie",
-                movieId: h.id,
+                movieId: h.movieId,
                 viewedAt: h.viewedAt || "",
               };
             } else {
-              const data = await getSeriesDetails(h.id, currentLanguage);
+              const data = await getSeriesDetails(h.movieId, currentLanguage);
               return {
                 ...data,
+                id: h.id,
                 mediaType: "tv",
-                movieId: h.id,
+                movieId: h.movieId,
                 viewedAt: h.viewedAt || "",
               };
             }
@@ -80,9 +83,10 @@ export default function MovieHistoryPage() {
     loadDetails();
   }, [history]);
 
-  const handleRemove = async (movieId: number) => {
+  const handleRemove = async (Id: number) => {
     try {
-      await deleteFromHistory(movieId).unwrap();
+      await deleteFromHistory(Id).unwrap();
+      setItems((prev) => prev.filter((item) => item.id !== Id));
       toast.info("Removed from history");
     } catch {
       toast.error("Failed to remove ");
@@ -97,7 +101,7 @@ export default function MovieHistoryPage() {
       toast.error("Failed to clear history ");
     }
   };
-
+  
   return (
     <div className="bg-black text-white min-h-screen">
       <Header />
@@ -120,7 +124,7 @@ export default function MovieHistoryPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {items.map((content) => (
-            <div key={content.movieId} className="relative group cursor-pointer rounded-lg overflow-hidden bg-black">
+            <div key={content.id} className="relative group cursor-pointer rounded-lg overflow-hidden bg-black">
               <img
                 src={content.poster_path ? `${IMAGE_BASE_URL}${content.poster_path}` : "/no-poster.png"}
                 alt={content.title || content.name}
@@ -144,7 +148,7 @@ export default function MovieHistoryPage() {
                   </button>
 
                   <button
-                    onClick={() => handleRemove(content.movieId)}
+                    onClick={() => handleRemove(content.id)}
                     className="ml-auto border border-red-400 text-white rounded-full p-2 hover:bg-red-700 transition"
                   >
                     <X size={18} />

@@ -20,8 +20,8 @@ export const historyApi = createApi({
       }),
     }),
     deleteFromHistory: builder.mutation<void, number>({
-      query: (movieId) => ({
-        url: `/delete/${movieId}`,
+      query: (Id) => ({
+        url: `/delete/${Id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["MovieHistory"],

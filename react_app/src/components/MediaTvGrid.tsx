@@ -61,8 +61,9 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
       id: id,
       mediaType: "tv",
       name: name,
-                  }).unwrap();
+    }).unwrap();
     navigate(`/tv/${id}`);
+    window.location.reload();
   };
 
   const handleAdd = async (id: number) => {
@@ -71,8 +72,12 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
       await AddForLater(payload).unwrap();
       toast.success(t("mediaGrid.addToWatchLaterSuccess"));
       console.log("➕ Added to list:", id);
-    } catch {
-      toast.error(t("mediaGrid.addToWatchLaterError"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 
@@ -82,8 +87,12 @@ const MediaGrid = ({ titleKey, fetchData, genres }: MediaGridProps) => {
       await addFavorite(payload).unwrap();
       toast.success(t("mediaGrid.addToFavoritesSuccess"));
       console.log("➕ Added to favorites:", id);
-    } catch {
-      toast.error(t("mediaGrid.addToFavoritesError"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 

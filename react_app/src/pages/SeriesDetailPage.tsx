@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { type Credits, type Series } from "../types/movie";
+import { type Credits, type Genre, type Series } from "../types/movie";
 import {
   type Video,
   getSeriesDetails,
@@ -8,6 +8,7 @@ import {
   getSimilarTv,
   getRecomendationsTv,
   getCreditsTv,
+  getTvGenres,
 } from "../services/movieApi";
 import {
   useAddFavoriteMutation,
@@ -36,6 +37,7 @@ const SeriesDetailsPage = () => {
   const [similar, setSimilar] = useState<Series[]>([]);
   const [recommendations, setRecommendations] = useState<Series[]>([]);
   const [creditsTv, setCreditsTv] = useState<Credits | null>(null);
+  const [tvGenres, setTvGenres] = useState<Genre[]>([]);
   const [openedRec, setOpenedRec] = useState<null | typeof recommendations[0]>(null);
 
   const { data: favorites } = useGetFavoritesQuery();
@@ -87,7 +89,10 @@ const SeriesDetailsPage = () => {
           )
         );
 
-        
+        const tvList = await getTvGenres(1);
+        setTvGenres(tvList.genres);
+        setCreditsTv(await getCreditsTv(seriesId, 1));
+
         setSimilar((await getSimilarTv(seriesId, 1, currentLanguage)).results || []);
         setRecommendations((await getRecomendationsTv(seriesId, 1, currentLanguage)).results || []);
         setCreditsTv(await getCreditsTv(seriesId, 1, currentLanguage));
@@ -127,14 +132,23 @@ const SeriesDetailsPage = () => {
     try {
       await AddForLater({ contentId: id, contentType: "tv" }).unwrap();
       toast.success(t("seriesDetails.forLater.added"));
-    } catch {
-      toast.error(t("seriesDetails.forLater.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
 
-   const handlePlay = (id: number) => {
-    navigate(`/movie/${id}`);
-    window.location.reload()
+   const handlePlay = async (id: number, name: string) => {
+    await addToHistory({
+      id: id,
+      mediaType: "tv",
+      name: name,
+    }).unwrap();
+    navigate(`/tv/${id}`);
+    window.location.reload();
   };
 
   const handleLike = async (id: number) => {
@@ -143,20 +157,18 @@ const SeriesDetailsPage = () => {
       await addFavorite(payload).unwrap();
       toast.success(t("movieDetails.favorites.added"));
       console.log("➕ Added to favorites:", id);
-    } catch {
-      toast.error(t("movieDetails.favorites.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+      } else {
+        toast.error(t("mediaGrid.addToWatchLaterError"));
+      }
     }
   };
   
     const handleExpand = (id: number) => {
       console.log("🔽 Expand details:", id);
     };
-  //   const getGenres = (genreIds: number[]) => {
-  //   return genreIds
-  //     ?.map((id) => genreIds.find((g) => g.id === id)?.name)
-  //     .filter(Boolean)
-  //     .slice(0, 3); 
-  // };
 
   if (!series) {
     return (
@@ -399,7 +411,7 @@ const SeriesDetailsPage = () => {
                 <div className="bg-[#191716] h-24 rounded-lg p-2 ">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={() => handlePlay(rec.id)}
+                  onClick={() => handlePlay(rec.id, rec.name)}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
@@ -427,7 +439,7 @@ const SeriesDetailsPage = () => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">6+</span>
-                
+
               </div>
               {openedRec && (
               <div className="fixed inset-0 flex items-center justify-center z-50 ">
@@ -487,7 +499,7 @@ const SeriesDetailsPage = () => {
                 <div className="bg-[#191716] h-24 rounded-lg p-2 ">
                 <div className="flex items-center gap-2 mb-3">
                 <button
-                  onClick={() => handlePlay(sm.id)}
+                  onClick={() => handlePlay(sm.id, sm.name)}
                   className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
@@ -515,7 +527,7 @@ const SeriesDetailsPage = () => {
               <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                 <span className="px-2 py-0.5 border border-gray-500 rounded">HD</span>
                 <span className="px-2 py-0.5 border border-gray-500 rounded">12+</span>
-                
+
               </div>
               {openedRec && (
               <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50 ">
