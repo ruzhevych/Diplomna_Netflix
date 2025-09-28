@@ -151,6 +151,11 @@
     "trailer": "Дививтися",
     "collection": "Колекція",
     "recommendations": "Рекомендовані",
+    "director":"Директор",
+    "producers":"Продюсери",
+    "actors":"Актори",
+    "writers":"Сценаристи",
+    "watchButton":"Дивитися",
     "similar": "Схожі фільми",
     "forLater": {
       "added": "Додано у список на потім",
@@ -223,6 +228,7 @@
   "choosePlan": {
     "backButton": "Назад",
     "title": "Оберіть свій тарифний план",
+    "save": "Вперед!",
     "plans": {
       "basic": {
         "name": "Базовий",

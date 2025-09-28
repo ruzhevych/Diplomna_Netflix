@@ -114,25 +114,25 @@ const MediaGrid = ({ title, fetchData, genres }: MediaGridProps) => {
               <div className="flex items-center gap-3 mb-3">
                 <button
                   onClick={() => handlePlay(item.id, item.title)}
-                  className="bg-white text-black rounded-full p-2 hover:scale-110 transition"
+                  className="bg-[#C4FF00] text-black rounded-full p-2 hover:scale-110 transition"
                 >
                   <Play size={18} />
                 </button>
                 <button
                   onClick={() => handleAdd(item.id)}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="border border-gray-400 rounded-full p-2 text-[#C4FF00] hover:bg-gray-700 transition"
                 >
                   <Plus size={18} />
                 </button>
                 <button
                   onClick={() => handleLike(item.id)}
-                  className="border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="border border-gray-400 rounded-full p-2 text-[#C4FF00] hover:bg-gray-700 transition"
                 >
                   <ThumbsUp size={18} />
                 </button>
                 <button
                   onClick={() => handleExpand(item.id)}
-                  className="ml-auto border border-gray-400 rounded-full p-2 text-white hover:bg-gray-700 transition"
+                  className="ml-auto border border-gray-400 rounded-full p-2 text-[#C4FF00] hover:bg-gray-700 transition"
                 >
                   <ChevronDown size={18} />
                 </button>

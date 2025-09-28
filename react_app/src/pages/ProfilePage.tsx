@@ -76,7 +76,7 @@ const ProfilePage = () => {
     { id: "overview", label: t("profile.menu.overview"), icon: User },
     { id: "subscription", label: t("profile.menu.subscription"), icon: CreditCard },
     { id: "security", label: t("profile.menu.security"), icon: Shield },
-    { id: "devices", label: t("profile.menu.devices"), icon: MonitorSmartphone },
+    //{ id: "devices", label: t("profile.menu.devices"), icon: MonitorSmartphone },
     ...(user?.role === "Admin"
       ? [{ id: "admin", label: t("profile.menu.adminPanel"), icon: Users }]
       : []),
@@ -102,7 +102,6 @@ const ProfilePage = () => {
         <aside className="w-full md:w-72 mt-3 backdrop-blur-md rounded-sm p-2">
           <ul className="space-y-3 text-lg md:text-xl font-bold">
             {tabs.map((tab) => {
-              
               return (
                 <li
                   key={tab.id}
@@ -124,7 +123,7 @@ const ProfilePage = () => {
           {/* Tabs */}
           {activeTab === "overview" && (
             <section className="backdrop-blur-md rounded-2xl p-6 ">
-              <h3 className="space-y-3 text-lg md:text-xl font-bold">
+              <h3 className="space-y-3 text-4xl md:text-4xl mb-10 font-bold">
                 {t("profile.overview.title")}
               </h3>
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
@@ -137,7 +136,7 @@ const ProfilePage = () => {
                 
                 {user?.profilePictureUrl ? (
                   <img
-                    src={user?.profilePictureUrl}
+                    src={user?.profilePictureUrl ? `http://localhost:5170/${user.profilePictureUrl}` : "/default-avatar.png"}
                     alt={user.fullName}
                     className="w-64 h-64 rounded-sm object-cover "
                   />
@@ -378,14 +377,14 @@ const ProfilePage = () => {
               
             </section>
           )}
-          {activeTab === "devices" && (
-            <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg ">
+{/*           {activeTab === "devices" && (
+            <section className=" backdrop-blur-md rounded-sm p-6 ">
               <h3 className="text-4xl font-bold text-gray-100 pb-3 mb-6 -b -gray-700">
                 {t("profile.devices.title")}
               </h3>
               <p className="text-lg font-medium text-gray-400">{t("profile.devices.description")}</p>
             </section>
-          )}
+          )} */}
           {user?.role === "Admin" && activeTab === "admin" && (
             <section className="bg-[#141414]/80 backdrop-blur-md rounded-sm p-6 shadow-lg">
               <button
