@@ -91,6 +91,12 @@
       "devices": "Devices",
       "adminPanel": "Admin Panel"
     },
+    "LogOutModal": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to log out?",
+      "cancel": "Cancel",
+      "confirmLogout": "Log Out"
+    },
     "overview": {
       "title": "User Profile",
       "name": "Name",
