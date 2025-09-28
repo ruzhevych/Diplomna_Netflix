@@ -12,14 +12,17 @@ import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useAuth } from "../context/AuthContext";
 import { useGetProfileQuery } from "../services/userApi";
 
+
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const AVATAR_PLACEHOLDER = "https://via.placeholder.com/40/C4FF00/000000?text=👤";
 
 const LandingPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; 
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
+
 
   const { isAuthenticated, isAuthReady } = useAuth();
   
@@ -43,7 +46,7 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data: TMDBResponse<Movie> = await getPopularMovies(1);
+        const data: TMDBResponse<Movie> = await getPopularMovies(1, currentLanguage);
         setMovies(data.results.slice(0, 10));
       } catch (err) {
         console.error("Помилка завантаження:", err);
@@ -66,7 +69,7 @@ const LandingPage: React.FC = () => {
               isAuthenticated ? (
                 <Link to="/profile">
                   <img
-                    src={userProfile?.profilePictureUrl}
+                    src={userProfile?.profilePictureUrl ? `http://localhost:5170/${userProfile.profilePictureUrl}` : "/default-avatar.png"}
                     alt="User Avatar"
                     className={`w-10 h-10 rounded-sm border-2 border-[#C4FF00] cursor-pointer transition ${isProfileLoading ? 'animate-pulse' : ''}`}
                   />
@@ -179,9 +182,10 @@ const LandingPage: React.FC = () => {
                          rounded-lg transform transition-transform duration-500 hover:scale-105"
                 onClick={() => setSelectedMovie(movie)}
               >
-                <div className="gradient-text absolute -left-5 top-2 z-20 text-9xl font-extrabold
-                                drop-shadow-[1px_1px_1px_rgba(196,255,0,0.9)]
-                                [-webkit-text-stroke:2px_lime]">
+                <div className=" absolute -left-4 -top-16 z-20 text-[180px] font-extrabold
+                                 drop-shadow-[1px_1px_5px_rgba(196,255,0,0.9)]
+                                 [-webkit-text-stroke:2px_lime]
+                                text-transparent">
                   {index + 1}
                 </div>
 

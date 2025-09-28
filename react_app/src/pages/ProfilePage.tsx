@@ -166,6 +166,7 @@ const ProfilePage = () => {
                     {/* Name field */}
                     <div className="flex flex-col">
                       <label htmlFor="name" className="text-sm md:text-lg font-semibold text-white mb-1">{t("profile.overview.name")}</label>
+
                       <div className="relative">
                         <input
                           id="name"

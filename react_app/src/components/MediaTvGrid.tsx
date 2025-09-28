@@ -11,7 +11,7 @@ import { useAddToHistoryMutation } from "../services/historyApi";
 interface MediaGridProps {
   titleKey: string;
 
-  title: string;
+  
   fetchData: (page?: number, filters?: { ratingFrom: number; ratingTo: number; genres: number[] }) => Promise<any>;
 
   genres: { id: number; name: string }[];

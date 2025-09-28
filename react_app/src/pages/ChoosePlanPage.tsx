@@ -209,7 +209,7 @@ const ChoosePlanPage = () => {
             className="bg-gradient-to-r w-full from-green-600/0 to-[#C4FF00]/60 text-2xl text-white font-semibold px-8 py-2 rounded-lg text-right disabled:opacity-60"
           >
             {isAuthenticated
-              ? t("choosePlan.buttons.save")
+              ? t("choosePlan.save")
               : t("choosePlan.buttons.next")}
           </button>
         </div>

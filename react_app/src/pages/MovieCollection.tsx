@@ -4,19 +4,20 @@ import { getCollections } from "../services/movieApi";
 import type { Collection } from "../types/movie";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-
+import { useTranslation } from "react-i18next";
 
 const MovieCollection = () => {
   const { id } = useParams<{ id: string }>();
   const collectionId = Number(id);
-
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; 
   const [collection, setCollection] = useState<Collection | null>(null);
 
   useEffect(() => {
     if (!collectionId) return;
     (async () => {
       try {
-        const data = await getCollections(collectionId, 1);
+        const data = await getCollections(collectionId, 1,currentLanguage);
         setCollection(data);
       } catch (e) {
         console.error(e);
