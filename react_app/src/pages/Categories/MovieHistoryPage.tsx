@@ -6,6 +6,7 @@ import { Play, X, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useGetHistoryQuery, useDeleteFromHistoryMutation, useClearHistoryMutation, useAddToHistoryMutation } from "../../services/historyApi";
 import { getMovieDetails, getSeriesDetails } from "../../services/movieApi";
+import { useTranslation } from "react-i18next";
 
 export interface HistoryItemDetails {
   id: number;
@@ -32,6 +33,8 @@ export default function MovieHistoryPage() {
   const [deleteFromHistory] = useDeleteFromHistoryMutation();
   const [clearHistory] = useClearHistoryMutation();
   const [addToHistory] = useAddToHistoryMutation();
+  const { t, i18n } = useTranslation();
+    const currentLanguage = i18n.language;
 
   const [items, setItems] = useState<HistoryItemDetails[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -49,7 +52,7 @@ export default function MovieHistoryPage() {
         const results = await Promise.all(
           history.map(async (h) => {
             if (h.mediaType === "movie") {
-              const data = await getMovieDetails(h.movieId);
+              const data = await getMovieDetails(h.movieId, currentLanguage);
               return {
                 ...data,
                 id: h.id,
@@ -58,7 +61,7 @@ export default function MovieHistoryPage() {
                 viewedAt: h.viewedAt || "",
               };
             } else {
-              const data = await getSeriesDetails(h.movieId);
+              const data = await getSeriesDetails(h.movieId, currentLanguage);
               return {
                 ...data,
                 id: h.id,

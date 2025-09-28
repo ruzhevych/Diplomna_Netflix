@@ -91,6 +91,12 @@
       "devices": "Devices",
       "adminPanel": "Admin Panel"
     },
+    "LogOutModal": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to log out?",
+      "cancel": "Cancel",
+      "confirmLogout": "Log Out"
+    },
     "overview": {
       "title": "User Profile",
       "name": "Name",
@@ -150,6 +156,10 @@
     "minutes": "min",
     "trailer": "Watch",
     "collection": "Collection",
+    "director":"Director",
+    "producers":"Producers",
+    "actors":"Actors",
+    "writers":"Writers",
     "recommendations": "Recommendations",
     "similar": "Similar movies",
     "forLater": {
@@ -223,6 +233,8 @@
   "choosePlan": {
     "backButton": "Back",
     "title": "Choose your tariff plan",
+    "save": "Let's Go",
+
     "plans": {
       "basic": {
         "name": "Basic",
@@ -236,6 +248,7 @@
         "name": "Premium",
         "quality": "Best"
       }
+      
     },
     "labels": {
       "price": "Monthly price",

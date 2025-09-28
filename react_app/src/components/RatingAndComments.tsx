@@ -12,6 +12,7 @@ import {
   useGetCommentsQuery,
   useAddCommentMutation,
   useDeleteCommentMutation,
+  useUpdateCommentMutation
 } from "../services/commentApi";
 import type { CommentCreateDto } from "../types/comment";
 import CommentEditModal from "../pages/CommentEditModal";
@@ -27,6 +28,7 @@ interface Props {
 
 export default function RatingAndComments({ contentId, contentType, vote_average }: Props) {
   const { t } = useTranslation();
+   const [updateComment] = useUpdateCommentMutation();
   // ----- Rating -----
   const [hover, setHover] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -163,56 +165,94 @@ const { data: allRatings = [] } = useGetAllRatingsQuery({
       </h3>
       <div className="space-y-3">
         {comments.map((c) => (
-          
-          <div key={c.id} className="p-3 bg-[#E0E2DB] text-black rounded-lg">
-            <div className="flex justify-between items-start mb-1">
-              <div className="flex items-center gap-2">
-                {c.userProfilePictureUrl && (
-                  <img
-                    src={
-                      c.userProfilePictureUrl}
-                    alt={c.userName}
-                    className="w-8 h-8 rounded-sm"
-                  />
-                )}
-                <span className="font-medium">{c.userName}</span>
-                <span className="text-[#191716]/60 font-bold text-md">
-                  {new Date(c.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              
-              {c.userName === currentUser?.fullName && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedComment({ id: c.id, content: c.content });
-                      setIsEditing(true);
-                    }}
-                    aria-label={t("ratingAndComments.editCommentButton")}
-                  >
-                    <img src={edit_icon} alt="edit" className="w-3 h-3" />
-                  </button>
-                  <button
-                    className="flex gap-2"
-                    onClick={() => handleDeleteComment(c.id)}
-                    aria-label={t("ratingAndComments.deleteCommentButton")}
-                  >
-                    <img src={delete_icon} alt="delete" className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-            </div>
-            <p className="mt-2">{c.content}</p>
-            {isEditing && selectedComment?.id === c.id && (
-              <CommentEditModal
-                isOpen={isEditing}
-                onClose={() => setIsEditing(false)}
-                commentId={selectedComment.id}
-                initialContent={selectedComment.content}
-              />
-            )}
-          </div>
-        ))}
+  <div key={c.id} className="p-3 bg-[#E0E2DB] text-black rounded-lg">
+    <div className="flex justify-between items-start mb-1">
+      <div className="flex items-center gap-2">
+        {c.userProfilePictureUrl && (
+          <img
+            src={
+              c.userProfilePictureUrl
+                ? `http://localhost:5170/${c.userProfilePictureUrl}`
+                : "/default-avatar.png"
+            }
+            alt={c.userName}
+            className="w-8 h-8 rounded-sm"
+          />
+        )}
+        <span className="font-medium">{c.userName}</span>
+        <span className="text-[#191716]/60 font-bold text-md">
+          {new Date(c.createdAt).toLocaleDateString()}
+        </span>
+      </div>
+
+      {c.userName === currentUser?.fullName && (
+        <div className="flex gap-2">
+          {!isEditing || selectedComment?.id !== c.id ? (
+            <>
+              <button
+                onClick={() => {
+                  setSelectedComment({ id: c.id, content: c.content });
+                  setIsEditing(true);
+                }}
+              >
+                <img src={edit_icon} alt="edit" className="w-3 h-3" />
+              </button>
+              <button onClick={() => handleDeleteComment(c.id)}>
+                <img src={delete_icon} alt="delete" className="w-3 h-3" />
+              </button>
+            </>
+          ) : null}
+        </div>
+      )}
+    </div>
+    {isEditing && selectedComment?.id === c.id ? (
+      <div className="mt-2 flex flex-col gap-2">
+        <textarea
+          value={selectedComment.content}
+          onChange={(e) =>
+            setSelectedComment((prev) =>
+              prev ? { ...prev, content: e.target.value } : prev
+            )
+          }
+          className="w-full px-3 py-2 rounded bg-[#E0E2DB] border border-black text-black resize-none"
+          rows={4}
+        />
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => {
+              setIsEditing(false);
+              setSelectedComment(null);
+            }}
+            className="text-red-600 font-semibold"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              if (!selectedComment) return;
+              try {
+                await updateComment({
+                  commentId: selectedComment.id,
+                  newContent: selectedComment.content,
+                }).unwrap();
+                toast.success("Коментар оновлено!");
+                setIsEditing(false);
+                setSelectedComment(null);
+              } catch (err) {
+                toast.error("Помилка при оновленні");
+              }
+            }}
+            className="bg-[#C4FF00] hover:bg-[#C4FF00]/90 text-black px-4 py-1 rounded-sm font-medium"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    ) : (
+      <p className="mt-2">{c.content}</p>
+    )}
+  </div>
+))}
       </div>
     </div>
   );

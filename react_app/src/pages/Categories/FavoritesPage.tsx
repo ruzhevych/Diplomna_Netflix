@@ -11,6 +11,7 @@ import { Play, Plus, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddForLaterMutation } from "../../services/forLaterApi";
 import { useAddToHistoryMutation } from "../../services/historyApi";
+import { useTranslation } from "react-i18next";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -31,6 +32,8 @@ export default function FavoritesPage() {
   const [addForLater] = useAddForLaterMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [addToHistory] = useAddToHistoryMutation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   const [items, setItems] = useState<FavoriteItem[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -47,7 +50,7 @@ export default function FavoritesPage() {
       try {
         const detailsPromises = favorites.map(async (fav) => {
           if (fav.contentType === "movie") {
-            const data = await getMovieDetails(fav.contentId);
+            const data = await getMovieDetails(fav.contentId, currentLanguage);
             return {
               ...data,
               contentType: "movie" as const,
@@ -55,7 +58,7 @@ export default function FavoritesPage() {
               favoriteId: fav.id,
             };
           } else {
-            const data = await getSeriesDetails(fav.contentId);
+            const data = await getSeriesDetails(fav.contentId, currentLanguage);
             return {
               ...data,
               contentType: "tv" as const,

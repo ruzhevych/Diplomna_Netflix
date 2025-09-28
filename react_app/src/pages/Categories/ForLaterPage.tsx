@@ -11,6 +11,7 @@ import { Play, ThumbsUp, ChevronDown, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddFavoriteMutation } from "../../services/favoritesApi";
 import { useAddToHistoryMutation } from "../../services/historyApi";
+import { useTranslation } from "react-i18next";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -32,6 +33,8 @@ export default function ForLaterPage() {
   const [addFavorite] = useAddFavoriteMutation();
   const [removeForLater] = useRemoveForLaterMutation();
   const [addToHistory] = useAddToHistoryMutation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   const [forLaterItems, setForLaterItems] = useState<ForLaterItem[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -48,7 +51,7 @@ export default function ForLaterPage() {
       try {
         const detailsPromises = forLaters.map(async (fl) => {
           if (fl.contentType === "movie") {
-            const data = await getMovieDetails(fl.contentId);
+            const data = await getMovieDetails(fl.contentId, currentLanguage);
             return {
               ...data,
               contentType: "movie" as const,
@@ -56,7 +59,7 @@ export default function ForLaterPage() {
               forLaterId: fl.id,
             };
           } else {
-            const data = await getSeriesDetails(fl.contentId);
+            const data = await getSeriesDetails(fl.contentId, currentLanguage);
             return {
               ...data,
               contentType: "tv" as const,

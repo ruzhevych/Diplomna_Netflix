@@ -91,6 +91,12 @@
       "devices": "Пристрої",
       "adminPanel": "Панель адміністратора"
     },
+    "LogOutModal": {
+      "message": "Ви впевнені, що хочете вийти?",
+      "title": "Підтвердити вихід",
+      "cancel": "Скасувати",
+      "confirmLogout": "Вийти"
+    },
     "overview": {
       "title": "Профіль користувача",
       "name": "Ім'я",
@@ -151,6 +157,11 @@
     "trailer": "Дививтися",
     "collection": "Колекція",
     "recommendations": "Рекомендовані",
+    "director":"Директор",
+    "producers":"Продюсери",
+    "actors":"Актори",
+    "writers":"Сценаристи",
+    "watchButton":"Дивитися",
     "similar": "Схожі фільми",
     "forLater": {
       "added": "Додано у список на потім",
@@ -223,6 +234,7 @@
   "choosePlan": {
     "backButton": "Назад",
     "title": "Оберіть свій тарифний план",
+    "save": "Вперед!",
     "plans": {
       "basic": {
         "name": "Базовий",
