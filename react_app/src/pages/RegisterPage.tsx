@@ -79,7 +79,7 @@ const RegisterPage = () => {
       style={{ backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/login-bg.png')" }}
     >
       
-      <div className="absolute left-96 top-8">
+      <div className="absolute left-20 top-8">
         <img src={logo} alt="logo" className="l-10 w-32" />
       </div>
 

@@ -8,7 +8,6 @@ import {
   getSimilarTv,
   getRecomendationsTv,
   getCreditsTv,
-  getTvGenres,
 } from "../services/movieApi";
 import {
   useAddFavoriteMutation,
@@ -89,10 +88,6 @@ const SeriesDetailsPage = () => {
           )
         );
 
-        const tvList = await getTvGenres(1);
-        setTvGenres(tvList.genres);
-        setCreditsTv(await getCreditsTv(seriesId, 1));
-
         setSimilar((await getSimilarTv(seriesId, 1, currentLanguage)).results || []);
         setRecommendations((await getRecomendationsTv(seriesId, 1, currentLanguage)).results || []);
         setCreditsTv(await getCreditsTv(seriesId, 1, currentLanguage));
@@ -123,8 +118,12 @@ const SeriesDetailsPage = () => {
         setInFavorites(true);
         toast.success(t("seriesDetails.favorites.added"));
       }
-    } catch {
-      toast.error(t("seriesDetails.favorites.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info("Вже у списку на потім"); // 👈 нове повідомлення
+      } else {
+        toast.error("Помилка додавання в список на потім");
+      }
     }
   };
 
@@ -134,9 +133,9 @@ const SeriesDetailsPage = () => {
       toast.success(t("seriesDetails.forLater.added"));
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+        toast.info("Вже у списку на потім"); // 👈 нове повідомлення
       } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
+        toast.error("Помилка додавання в список на потім");
       }
     }
   };
@@ -159,9 +158,9 @@ const SeriesDetailsPage = () => {
       console.log("➕ Added to favorites:", id);
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+        toast.info("Вже у списку улюбленних"); // 👈 нове повідомлення
       } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
+        toast.error("Помилка додавання в улюбленне");
       }
     }
   };

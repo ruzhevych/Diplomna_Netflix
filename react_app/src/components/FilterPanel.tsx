@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useFilters } from "../context/FilterContext";
 import { getMovieGenres, getTvGenres } from "../services/movieApi";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Genre {
   id: number;
@@ -14,6 +15,8 @@ const FilterPanel = ({ onClose }: { onClose: () => void }) => {
   const [localFilters, setLocalFilters] = useState(filters); // локальні зміни
   const [genres, setGenres] = useState<Genre[]>([]);
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; // 'ua' або 'en'
 
   useEffect(() => {
     const loadGenres = async () => {
@@ -22,13 +25,13 @@ const FilterPanel = ({ onClose }: { onClose: () => void }) => {
         location.pathname.includes("cartoons") ||
         location.pathname.includes("new")
       ) {
-        const res = await getMovieGenres(1);
+        const res = await getMovieGenres(1, currentLanguage);
         setGenres(res.genres);
       } else if (
         location.pathname.includes("series") ||
         location.pathname.includes("anime")
       ) {
-        const res = await getTvGenres(1);
+        const res = await getTvGenres(1, currentLanguage);
         setGenres(res.genres);
       }
     };
