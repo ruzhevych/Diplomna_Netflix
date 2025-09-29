@@ -150,7 +150,7 @@ const ProfilePage = () => {
                   
                   {user?.profilePictureUrl ? (
                     <img
-                      src={user?.profilePictureUrl}
+                      src={`http://localhost:5170${user?.profilePictureUrl}`}
                       alt={user.fullName}
                       className="w-64 h-64 rounded-sm object-cover "
                     />
@@ -166,7 +166,6 @@ const ProfilePage = () => {
                     {/* Name field */}
                     <div className="flex flex-col">
                       <label htmlFor="name" className="text-sm md:text-lg font-semibold text-white mb-1">{t("profile.overview.name")}</label>
-
                       <div className="relative">
                         <input
                           id="name"
@@ -179,164 +178,6 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                  {/* -------------------- BUTTONS --------------------- */}
-                   <div className="">
-                    <button
-                      onClick={() => {navigate("/movie/history", { state: { user } }); window.location.reload();}}
-                      className="w-full flex items-center mt-4 justify-center gap-2 flex-1 px-4 py-2 mb-4 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black rounded-sm transition font-semibold"
-                    >
-                      
-                      {t("profile.overview.watchHistory")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/favorites");
-                        window.location.reload();
-                      }}
-                      className="w-full flex items-center justify-center gap-2 flex-1 px-4 py-2 mb-4 bg-[#C4FF00] hover:bg-[#C4FF00]/80 text-black font-semibold rounded-sm transition"
-                    >
-                      {t("profile.overview.favorites")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/for-later");
-                        window.location.reload();
-                      }}
-                      className="w-full flex items-center justify-center gap-2 flex-1 px-4 py-2 mb-4 bg-[#a09d9c] hover:bg-[#3D3B3A]/80 text-black font-semibold rounded-sm transition"
-                    >
-                      
-                      {t("profile.overview.forLater")}
-                    </button>
-                  </div>
-                  <div className="">
-                    {/* <button
-                      onClick={() => setIsEditOpen(true)}
-                      className="w-full mb-4 flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#3D3B3A]  hover:bg-[#3D3B3A]/80 rounded-sm transition font-medium"
-                    >
-                      
-                      {t("profile.overview.editProfile")}
-                    </button> */}
-                    <button
-                      onClick={() => {
-                        localStorage.removeItem("accessToken");
-                        navigate("/login");
-                        window.location.reload();
-                      }}
-                      className="w-full flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-[#ca0101] hover:bg-[#ca0101]/80 font-semibold rounded-sm transition"
-                    >
-                      
-                      {t("profile.overview.logOut")}
-                    </button>
-                  </div>
-                {/* -------------------- BUTTONS --------------------- */}
-                </div>
-              </div>
-             
-            </section>
-          )}
-
-          {activeTab === "subscription" && (
-            <section className="p-6">
-              <h3 className="text-4xl font-bold text-white pb-6">
-                {t("profile.subscription.title")}
-              </h3>
-
-              {cardsLoading && (
-                <p className="text-gray-400">{t("profile.loading")}</p>
-              )}
-
-              {!cardsLoading && (
-                <>
-                  {cards?.map((card) => (
-                    <div key={card.id} className="mb-6">
-                      {/* Блок з планом */}
-                      <div className="bg-[#C4FF00]/20 rounded-lg overflow-hidden border-t-2 border-[#C4FF00]">
-                        <div className="p-4 text-white space-y-2">
-                          <h4 className="text-lg font-semibold">
-                            {user?.subscriptionType.toUpperCase() || "Standart"}
-                          </h4>
-                          <p className="text-lg font-medium">
-                            {user?.subscriptionType.toLowerCase() === "basic" ? "1 device, 720p (HD)" : 
-                             user?.subscriptionType.toLowerCase() === "standard" ? "2 devices, 1080p (Full HD)" : 
-                             user?.subscriptionType.toLowerCase() === "premium" ? "4 devices, 4K (Ultra HD) + HDR" :
-                             ""}
-                          </p>
-                          <p className="text-lg font-medium">
-                            {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
-                          </p>
-                          <p className="text-lg font-medium">
-                            {t("profile.subscription.nextPayment")}: {t("profile.subscription.nextDate")}
-                          </p>
-
-                          <div className="flex items-center text-lg font-medium gap-2 mt-3">
-                            <img
-                              src={
-                                card.brand.toLowerCase() === "visa" ? visa :
-                                card.brand.toLowerCase() === "mastercard" ? mastercard :
-                                card.brand.toLowerCase() === "amex" ? amex :
-                                visa // fallback
-                              }
-                              alt={card.brand}
-                              className="h-6"
-                            />
-                            <span className="tracking-widest text-sm">
-                              •••• •••• •••• {card.last4}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => navigate("/choose-plan")}
-                          className="w-full py-2 text-white text-lg font-medium hover:bg-black/20 transition border-t-2 border-[#C4FF00]">
-                            {t("profile.subscription.changePlan")}
-                        </button>
-                      </div>
-
-                      <div className="bg-[#C4FF00]/20 rounded-lg shadow-lg overflow-hidden border-t-2 border-[#C4FF00] mt-4">
-                        <div className="p-4 text-white space-y-2">
-                          <h4 className="text-lg font-semibold">Next payment</h4>
-                          <p className="text-lg font-medium text-gray-300">
-                            {t("profile.subscription.nextDate")}
-                          </p>
-                          <p className="text-lg font-medium text-gray-300">
-                            {t("profile.subscription.startDate")}: {t("profile.subscription.date")}
-                          </p>
-
-                          <div className="flex font-medium items-center gap-2 mt-3">
-                            <img
-                              src={
-                                card.brand.toLowerCase() === "visa" ? visa :
-                                card.brand.toLowerCase() === "mastercard" ? mastercard :
-                                card.brand.toLowerCase() === "amex" ? amex :
-                                visa
-                              }
-                              alt={card.brand}
-                              className="h-6"
-                            />
-                            <span className="tracking-widest text-sm">
-                              •••• •••• •••• {card.last4}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setEditingCard(card)}
-                          className="w-full py-2 text-white text-lg font-medium hover:bg-black/20 transition border-t-2 border-[#C4FF00]"
-                        >
-                          Change payment method
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-
-              <button
-                onClick={handleCancel}
-                className="w-full py-2 bg-[#9A0000] text-white text-lg font-medium hover:bg-[#7A0000] transition rounded-sm"
-              >
-                Cancel subscription
-              </button>
-            </section>
-          )}
                     <div className="flex flex-col">
                       <label htmlFor="email" className="text-lg font-semibold text-white mb-1">{t("profile.overview.email")}</label>
                       <div className="relative">

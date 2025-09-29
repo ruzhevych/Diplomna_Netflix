@@ -161,8 +161,12 @@ const MovieDetailsPage = () => {
         setInFavorites(true);
         toast.success(t("movieDetails.favorites.added"));
       }
-    } catch {
-      toast.error(t("movieDetails.favorites.error"));
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info("Вже у списку улюбленних"); // 👈 нове повідомлення
+      } else {
+        toast.error("Помилка додавання в улюбленне");
+      }
     }
   };
 
@@ -202,12 +206,12 @@ const MovieDetailsPage = () => {
       await AddForLater({ contentId: id, contentType: "movie" }).unwrap();
       toast.success(t("movieDetails.forLater.added"));
     } catch (err: any) {
-      if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
-      } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
-      }
-    }
+          if (err?.status === 409) {
+            toast.info("Вже у списку на потім"); // 👈 нове повідомлення
+          } else {
+            toast.error("Помилка додавання в список на потім");
+          }
+        }
   };
 
 
@@ -219,9 +223,9 @@ const MovieDetailsPage = () => {
       console.log("➕ Added to favorites:", id);
     } catch (err: any) {
       if (err?.status === 409) {
-        toast.info(t("mediaGrid.alreadyInWatchLater")); // 👈 нове повідомлення
+        toast.info("Вже у списку улюбленних"); // 👈 нове повідомлення
       } else {
-        toast.error(t("mediaGrid.addToWatchLaterError"));
+        toast.error("Помилка додавання в улюбленне");
       }
     }
   };
@@ -386,7 +390,7 @@ const MovieDetailsPage = () => {
               <div
                 key={c.id}
                 className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] min-w-[256px]"
-                onClick={() => handlePlay(c.id)} // Клік на картку веде на фільм
+                onClick={() => handlePlay(c.id, c.title)} // Клік на картку веде на фільм
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${c.poster_path}`}
@@ -463,7 +467,7 @@ const MovieDetailsPage = () => {
               <div
                 key={rec.id}
                 className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] relative min-w-[256px]"
-                onClick={() => handlePlay(rec.id)}
+                onClick={() => handlePlay(rec.id, rec.title)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`}
@@ -535,7 +539,7 @@ const MovieDetailsPage = () => {
               <div
                 key={sm.id}
                 className="cursor-pointer hover:scale-105 transition-transform rounded-lg border-b-2 border-r-2 border-[#C4FF00] min-w-[256px]"
-                onClick={() => handlePlay(sm.id)}
+                onClick={() => handlePlay(sm.id, sm.title)}
               >
                 <img
                   src={`https://image.tmdb.org/t/p/w300${sm.poster_path}`}
@@ -613,7 +617,7 @@ const MovieDetailsPage = () => {
                   <div className="mt-6 flex justify-end">
                       <button
                           onClick={() => {
-                              handlePlay(openedRec.id);
+                              handlePlay(openedRec.id, openedRec.title);
                               setOpenedRec(null);
                           }}
                           className="bg-[#C4FF00] text-black font-semibold px-6 py-2 rounded-full hover:bg-lime-600 transition"

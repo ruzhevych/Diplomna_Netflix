@@ -85,8 +85,12 @@ export default function FavoritesPage() {
       const payload = { contentId: id, contentType: type };
       await addForLater(payload).unwrap();
       toast.success("Added to 'Watch Later' list ❤️");
-    } catch {
-      toast.error("Failed to add to 'Watch Later' list 😢");
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info("Вже у списку на потім"); // 👈 нове повідомлення
+      } else {
+        toast.error("Помилка додавання в список на потім");
+      }
     }
   };
 

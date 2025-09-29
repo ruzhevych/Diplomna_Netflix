@@ -86,8 +86,12 @@ export default function ForLaterPage() {
       const payload = { contentId: id, contentType: type };
       await addFavorite(payload).unwrap();
       toast.success("Added to favorites ❤️");
-    } catch {
-      toast.error("Failed to add to favorites 😢");
+    } catch (err: any) {
+      if (err?.status === 409) {
+        toast.info("Вже у списку улюбленних"); // 👈 нове повідомлення
+      } else {
+        toast.error("Помилка додавання в улюбленні");
+      }
     }
   };
 
